@@ -7,5 +7,5 @@ RUN pip install -r requirements.txt
 
 COPY src/back/ .
 
-ENTRYPOINT [ "gunicorn", "--bind", "0.0.0.0:31337", "--workers", "1", "--worker-connections", "2048", "app:app" ]
+ENTRYPOINT [ "gunicorn", "--bind", "0.0.0.0:31337", "--workers", "4", "--worker-connections", "2048", "app:app" ]
 
