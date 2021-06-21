@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask
 
 from sqlalchemy_utils import database_exists, create_database, drop_database
@@ -14,7 +16,7 @@ app.register_blueprint(comments_blueprint)
 
 
 def init_database():
-    if database_exists(engine.url):
+    if os.getenv('TB_DROP_BD', default=None) is not None and database_exists(engine.url):
         drop_database(engine.url)
     create_database(engine.url)
     BaseModel.metadata.create_all(engine)

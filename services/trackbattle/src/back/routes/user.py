@@ -1,12 +1,11 @@
 from uuid import uuid4
 
-from flask import request, make_response, jsonify, Blueprint
+from flask import request, make_response, Blueprint
 from sqlalchemy import and_
 
-from models.user import User
 from models.sessions import make_session
-
-from routes.common import CONTENT_TYPE_FROM_URL, AUTH_HEADER, get_authenticated_user_in_session
+from models.user import User
+from routes.common import CONTENT_TYPE_FROM_URL, AUTH_HEADER
 
 
 def extract_nickname_and_password_hash():
@@ -39,10 +38,12 @@ def create():
             return make_response(f'username {nickname} already exists', 409)
 
         auth_token = str(uuid4())
-        new_user = User(auth_token=auth_token,
-                        nickname=nickname,
-                        password_sha256=password_sha256,
-                        posts=[])
+        new_user = User(
+            auth_token=auth_token,
+            nickname=nickname,
+            password_sha256=password_sha256,
+            posts=[]
+        )
 
         session.add(new_user)
 
@@ -76,13 +77,3 @@ def auth():
 
         return response
 
-
-@users_blueprint.route("/api/users/my-posts", methods=['GET'])
-def my_posts():
-    with make_session() as session:
-        user = get_authenticated_user_in_session(session)
-
-        if user is None:
-            return make_response('not authenticated', 401)
-
-        return jsonify(posts=user.posts)

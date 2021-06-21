@@ -10,13 +10,17 @@ CONTENT_TYPE_JSON = 'application/json'
 
 def get_authenticated_user():
     with make_session() as session:
-        return get_authenticated_user_in_session(session)
+        return get_authenticated_user_using_session(session)
 
 
-def get_authenticated_user_in_session(session):
+def get_authenticated_user_using_session(session):
     auth_header = request.headers.get(AUTH_HEADER, default=None)
 
     if auth_header is None:
         return None
 
     return session.query(User).filter(User.auth_token == auth_header).first()
+
+
+def is_authenticated(session):
+    return get_authenticated_user_using_session(session) is not None

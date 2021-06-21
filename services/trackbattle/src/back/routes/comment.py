@@ -9,5 +9,5 @@ def create():
 
 
 @comments_blueprint.route("/api/comments/<comment_id>", methods=['GET', 'PUT'])
-def access(comment_id):
+def comment(comment_id):
     return "<p>Hello, World!</p>"
