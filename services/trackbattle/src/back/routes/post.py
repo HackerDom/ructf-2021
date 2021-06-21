@@ -126,7 +126,7 @@ def latest():
 
 
 @posts_blueprint.route("/api/posts/my", methods=['GET'])
-def my_posts():
+def my():
     user = get_authenticated_user()
 
     if user is None:

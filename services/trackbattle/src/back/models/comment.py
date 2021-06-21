@@ -12,7 +12,7 @@ class Comment(BaseModel):
     description = Column(String)
     likes_amount = Column(Integer)
     author_nickname = Column(String)
-    post_id = Column(Integer)
+    post_id = Column(String)
     publishing_date = Column(DateTime, default=datetime.datetime.utcnow)
 
     def __repr__(self):
