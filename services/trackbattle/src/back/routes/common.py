@@ -1,4 +1,4 @@
-from flask import request
+from flask import request, make_response, jsonify
 
 from models.user import User
 from models.sessions import make_session
@@ -24,3 +24,74 @@ def get_authenticated_user_using_session(session):
 
 def is_authenticated(session):
     return get_authenticated_user_using_session(session) is not None
+
+
+def get_not_authenticated_response():
+    return make_response(
+        jsonify(
+            status='error',
+            message='not authenticated'
+        ),
+        401
+    )
+
+
+def get_authentication_failed_response():
+    return make_response(
+        jsonify(
+            status='error',
+            message='invalid nickname or password'
+        ),
+        401
+    )
+
+
+def get_expected_json_response():
+    return get_invalid_request_response('expected json as body of request')
+
+
+def get_expected_json_argument_response(arg_name):
+    return make_response(
+        jsonify(
+            status='error',
+            message=f'expected argument "{arg_name}", but not found'
+        ),
+        400
+    )
+
+
+def get_success_auth_response(auth_token):
+    response = make_response(
+        jsonify(
+            status='success',
+            auth_token=auth_token
+        ),
+        200
+    )
+    response.headers[AUTH_HEADER] = auth_token
+
+    return response
+
+
+def get_entity_not_found_response(entity_type, entity_id):
+    return make_response(
+        jsonify(
+            status='error',
+            message=f"{entity_type.__name__.lower()} '{entity_id}' not found",
+            id=entity_id
+        ),
+        404
+    )
+
+
+def get_invalid_request_response(message):
+    return make_response(
+        jsonify(
+            status='error',
+            message=message),
+        400
+    )
+
+
+def find_entity_by_id_in_session(session, entity_type, entity_id):
+    return session.query(entity_type).filter(entity_type.id == entity_id).first()
