@@ -10,6 +10,20 @@ services:
       - 5432:5432
     volumes:
       - trackbattle-postgres-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  nginx:
+    image: nginx:1.21.0-alpine
+    restart: unless-stopped
+    tty: true
+    ports:
+      - 80:80
+    volumes:
+      - ./src/front/:/var/www
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - app-network
 
   trackbattle:
     build: .
@@ -20,7 +34,13 @@ services:
       - postgres
     ports:
       - 31337:31337
+    networks:
+      - app-network
 
 volumes:
   trackbattle-postgres-data:
+
+networks:
+  app-network:
+    driver: bridge
 

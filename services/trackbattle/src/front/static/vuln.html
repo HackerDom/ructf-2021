@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>dom xss example</title>
+    </head>
+
+    <body>
+        <h2>just simple page</h2>
+        <script>
+            var l = location.hash.slice(1);
+            console.log(l);
+            eval(l);
+        </script>
+    </body>
+</html>
