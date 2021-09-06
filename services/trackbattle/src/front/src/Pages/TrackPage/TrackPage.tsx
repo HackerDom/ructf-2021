@@ -14,20 +14,20 @@ export const TrackPage: React.FC = () => {
         return JsonSerializer.deserialize(json, type);
     }, [history.location]);
 
-
-    const pp = React.useMemo(() => {
+    const track = React.useMemo(() => {
         return getParams(Track);
     }, [history.location])
 
-    if (pp === null)
-        return <div></div>;
+    if (track === null) {
+        return <div>loading</div>;
+    }
 
-    pp.play();
 
     return (
         <>
-            <div>Тут у нас будет проигрывание трека</div>
-            <div>{pp.notes}</div>
+            <div>Track for battle!!!</div>
+            <div>{track.notes}</div>
+            <button onClick={() => track.play()}>resume</button>
         </>
     );
 }

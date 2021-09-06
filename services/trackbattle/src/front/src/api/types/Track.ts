@@ -1,5 +1,6 @@
 import {JsonObject, JsonProperty} from "json2typescript";
 import {FunctionConverter} from "../../Utilities/Converters";
+import {AudioPlayer, Note} from "../../Pages/TrackPage/AudioPlayer";
 
 @JsonObject("Track")
 export class Track {
@@ -7,7 +8,9 @@ export class Track {
     notes: string = "";
 
     @JsonProperty("play", FunctionConverter, true)
-    play = () => {
-        return 1;
+    play = async () => {
+        await this.player.play(this.notes.split("") as Note[])
     }
+
+    player: AudioPlayer = new AudioPlayer();
 }
