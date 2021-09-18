@@ -1,0 +1,27 @@
+---
+- name: Uploading service {{ service_name }}
+  debug:
+    msg: "Uploading {{ service_name }}"
+
+- name: Copy service {{ service_name }}
+  synchronize:
+    src: "{{ playbook_dir }}/../services/{{ service_name }}/"
+    dest: "/home/{{ service_name }}/"
+    rsync_opts: ["--exclude=.rsync-filter", "--exclude=before_image_build.sh"]
+
+- name: Check permissions
+  file: dest="/home/{{ service_name }}/build.sh" mode=1755
+
+- name: Copy systemd unit {{ service_name }}
+  synchronize:
+    src: "{{ playbook_dir }}/../services/{{ service_name }}/{{ service_name }}.service"
+    dest: "/etc/systemd/system/{{ service_name }}.service"
+
+- name: "Systemd daemon-reload"
+  systemd: daemon_reload=yes
+
+- name: Enable service {{ service_name }}
+  systemd: name={{ service_name }} enabled=yes
+
+- name: Build service for {{ service_name }}
+  command: /home/{{ service_name }}/build.sh
