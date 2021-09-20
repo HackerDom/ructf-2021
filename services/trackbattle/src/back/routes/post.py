@@ -68,7 +68,7 @@ def update_post(likes_amount=None, session=None, post=None):
         likes = int(likes_amount)
 
         if likes < 0 or likes > 10 ** 6:
-            return get_invalid_request_response('invalid amount of likes')
+            return get_invalid_request_response('invalid likes amount')
 
         post.likes_amount = likes
 

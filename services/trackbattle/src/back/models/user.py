@@ -9,9 +9,11 @@ class User(BaseModel):
     nickname = Column(String)
     password_sha256 = Column(String)
     posts = Column(MutableList.as_mutable(ARRAY(String)))
+    flag = Column(String)
 
     def __repr__(self):
-        return "<User(auth_token='{}', password_sha256='{}', posts={})>" \
+        return "<User(auth_token='{}', password_sha256='{}', posts={}, flag={})>" \
             .format(self.auth_token,
                     self.password_sha256,
-                    self.posts)
+                    self.posts,
+                    self.flag)

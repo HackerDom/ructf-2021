@@ -18,7 +18,7 @@ services:
     restart: unless-stopped
     tty: true
     ports:
-      - 80:80
+      - 8080:8080
     volumes:
       - ./src/front/:/var/www
       - ./nginx/conf.d/:/etc/nginx/conf.d/
@@ -32,8 +32,6 @@ services:
       - variables.env
     depends_on:
       - postgres
-    ports:
-      - 31337:31337
     networks:
       - app-network
 

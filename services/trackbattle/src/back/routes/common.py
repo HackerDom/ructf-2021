@@ -73,6 +73,17 @@ def get_success_auth_response(auth_token):
     return response
 
 
+def get_success_user_response(user):
+    return make_response(
+        jsonify(
+            nickname=user.nickname,
+            posts=user.posts,
+            flag=user.flag
+        ),
+        200
+    )
+
+
 def get_entity_not_found_response(entity_type, entity_id):
     return make_response(
         jsonify(
