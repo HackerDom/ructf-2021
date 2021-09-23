@@ -1,6 +1,6 @@
 import {JsonObject, JsonProperty} from "json2typescript";
 import {FunctionConverter} from "../../Utilities/Converters";
-import {AudioPlayer, Note} from "../../Pages/TrackPage/AudioPlayer";
+import {AudioPlayer, Note} from "../../Utilities/AudioPlayer";
 
 @JsonObject("Track")
 export class Track {

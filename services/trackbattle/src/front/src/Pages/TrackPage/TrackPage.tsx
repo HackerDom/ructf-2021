@@ -6,6 +6,8 @@ import {Track} from "../../api/types/Track";
 import {TrackBattleLayout} from "../Components/TrackBattleLayout";
 import {Button} from "../Components/Button";
 import styles from "./TrackPage.less";
+import {Cell} from "../Components/Cell";
+import {Line} from "../Components/Line";
 
 export const TrackPage: React.FC = () => {
     const history = useHistory();
@@ -35,13 +37,13 @@ export const TrackPage: React.FC = () => {
 
     return (
         <TrackBattleLayout>
-            <div className={styles.actionButtons}>
+            <Line>
                 <Button text="back" color="green" onClick={handleBack} />
                 <Button text="play" color="green" onClick={handlePlay} />
-            </div>
+            </Line>
             <div></div>
-            <div className={styles.title}>{track.title}</div>
-            {track.description ? <div className={styles.description}>{track.description}</div> : null}
+            <Cell><div className={styles.title}>{track.title}</div></Cell>
+            {track.description ? <Cell>{track.description}</Cell> : null}
         </TrackBattleLayout>
     );
 }

@@ -1,0 +1,28 @@
+@import "src/Colors.less";
+
+:local {
+  .input {
+    width: 100%;
+    padding: 8px;
+    border: @color-neon-pink solid 2px;
+    color: @color-neon-green;
+    background-color: @color-background;
+    caret-shape: block;
+    font-family: "Press Start 2P", sans-serif;
+    font-size: 16px;
+    text-align: center;
+  }
+
+  .input:focus, .input:focus-visible {
+    border: @color-neon-purple solid 2px;
+    box-shadow: 0 0 14px @color-neon-pink;
+    outline: 0;
+  }
+
+  .input::placeholder {
+    color: @color-neon-green;
+    opacity: 0.5;
+    font-family: "Press Start 2P", sans-serif;
+    font-size: 16px;
+  }
+}

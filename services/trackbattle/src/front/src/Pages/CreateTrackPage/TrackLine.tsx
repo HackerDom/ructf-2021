@@ -1,5 +1,6 @@
 import * as React from "react";
-import styles from "./TrackLine.less";
+import {Line} from "../Components/Line";
+import {Cell} from "../Components/Cell";
 
 interface Props {
     lineNumber: number;
@@ -8,13 +9,13 @@ interface Props {
 
 export const TrackLine: React.FC<Props> = (props) => {
     return (
-        <div className={styles.line}>
-            <div>
+        <Line>
+            <Cell>
                 {props.lineNumber.toString().padStart(4, "0")}
-            </div>
-            <div>
+            </Cell>
+            <Cell>
                 {props.note}
-            </div>
-        </div>
+            </Cell>
+        </Line>
     )
 }

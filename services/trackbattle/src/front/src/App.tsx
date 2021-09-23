@@ -7,6 +7,7 @@ import {TrackPage} from "./Pages/TrackPage/TrackPage";
 import {CreateTrackPage} from "./Pages/CreateTrackPage/CreateTrackPage";
 import {BattlePage} from "./Pages/BattlePage/BattlePage";
 import {LatestPage} from "./Pages/LatestPage/LatestPage";
+import {LoginPage} from "./Pages/LoginPage";
 
 export const App: React.FC = () => {
     return (
@@ -15,6 +16,11 @@ export const App: React.FC = () => {
                 <Route
                     path="/user/create"
                     component={CreateUserPage}
+                    exact
+                />
+                <Route
+                    path="/login"
+                    component={LoginPage}
                     exact
                 />
                 <Route
