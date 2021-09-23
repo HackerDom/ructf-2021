@@ -1,5 +1,5 @@
 import React from 'react';
-import './App.css';
+import './App.less';
 import {HashRouter, Route, Switch} from "react-router-dom";
 import {CreateUserPage} from "./Pages/CreateUserPage/CreateUserPage";
 import {UserProfilePage} from "./Pages/UserProfilePage/UserProfilePage";

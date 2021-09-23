@@ -4,6 +4,12 @@ import {AudioPlayer, Note} from "../../Pages/TrackPage/AudioPlayer";
 
 @JsonObject("Track")
 export class Track {
+    @JsonProperty("title", String, false)
+    title: string = "";
+
+    @JsonProperty("description", String, true)
+    description: string = "";
+
     @JsonProperty("notes", String, false)
     notes: string = "";
 
