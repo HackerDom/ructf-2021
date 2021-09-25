@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net5.0</TargetFramework>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Vostok.Applications.AspNetCore" Version="0.2.13" />
+      <PackageReference Include="Vostok.Hosting" Version="0.3.23" />
+    </ItemGroup>
+
+</Project>
