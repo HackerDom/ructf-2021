@@ -70,12 +70,12 @@ export class api {
         return this.fetch<{ posts: string[] }>("/posts/latest/50", request)
     }
 
-    public static async getMyPosts(): Promise<Result<{ posts: string[] }>> {
+    public static async getMyPosts(): Promise<Result<{ post_ids: string[] }>> {
         const request: RequestInit = {
             method: "GET",
             headers: {[this.authHeader]: LocalStorage.getAuth() || ""}
         };
-        return this.fetch<{ posts: string[] }>("/posts/my", request)
+        return this.fetch<{ post_ids: string[] }>("/posts/my", request)
     }
 
     public static async getPost(postId: string): Promise<Result<Post>> {

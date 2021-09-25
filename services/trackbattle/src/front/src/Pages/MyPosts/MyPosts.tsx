@@ -4,6 +4,7 @@ import {useHistory} from "react-router-dom";
 import {Posts} from "../LatestPage/Posts";
 import {Button} from "../Components/Button";
 import {Cell} from "../Components/Cell";
+import {TrackBattleLayout} from "../Components/TrackBattleLayout";
 
 export const MyPosts: React.FC = () => {
     const history = useHistory();
@@ -12,7 +13,7 @@ export const MyPosts: React.FC = () => {
     React.useEffect(() => {
         const loadPosts = async () => {
             const response = await api.getMyPosts();
-            setPosts(response.data?.posts || null);
+            setPosts(response.data?.post_ids || null);
         }
 
         void loadPosts();
@@ -23,7 +24,7 @@ export const MyPosts: React.FC = () => {
     }
 
     return (
-        <div>
+        <TrackBattleLayout>
             {posts?.length ? (
                 <>
                     <Posts postIds={posts}/>
@@ -34,6 +35,6 @@ export const MyPosts: React.FC = () => {
                     <Button color={"green"} text={"Create your first battle"} onClick={handleCreate} />
                 </>
             )}
-        </div>
+        </TrackBattleLayout>
     );
 };

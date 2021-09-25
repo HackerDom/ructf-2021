@@ -39,6 +39,8 @@ export class AudioPlayer {
                 } else {
                     notes.push(music[i] as Note);
                 }
+            } else {
+                notes.push(music[i] as Note);
             }
         }
         await this.play(notes);

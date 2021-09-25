@@ -8,6 +8,7 @@ import {CreateTrackPage} from "./Pages/CreateTrackPage/CreateTrackPage";
 import {BattlePage} from "./Pages/BattlePage/BattlePage";
 import {LatestPage} from "./Pages/LatestPage/LatestPage";
 import {LoginPage} from "./Pages/LoginPage";
+import {MyPosts} from "./Pages/MyPosts/MyPosts";
 
 export const App: React.FC = () => {
     return (
@@ -46,6 +47,11 @@ export const App: React.FC = () => {
                 <Route
                     path="/battle/:battleId"
                     component={BattlePage}
+                    exact
+                />
+                <Route
+                    path="/user/tracks"
+                    component={MyPosts}
                     exact
                 />
                 <Redirect

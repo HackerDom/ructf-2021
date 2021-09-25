@@ -22,7 +22,7 @@ export const UserProfilePage: React.FC = () => {
     }, [])
 
     const handlePosts = () => {
-        history.push("/");
+        history.push("/user/tracks");
     }
 
     return (
