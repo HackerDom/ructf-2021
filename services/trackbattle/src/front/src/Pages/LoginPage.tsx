@@ -6,6 +6,10 @@ import {Line} from "./Components/Line";
 import {Button} from "./Components/Button";
 import {Input} from "./Components/Input";
 import {Cell} from "./Components/Cell";
+import {api} from "../api/api";
+import {LocalStorage} from "../Utilities/LocalStorage";
+import {createObject} from "../Utilities/ObjectCreator";
+import {sha256} from "../Utilities/HashConverter";
 
 export const LoginPage: React.FC = () => {
     const history = useHistory();
@@ -16,11 +20,26 @@ export const LoginPage: React.FC = () => {
         history.push("/latest");
     }
 
-    const handleLogin = () => {
+    const handleLogin = async () => {
         if (!user.nickname || !user.password_sha256) {
             setError("Fill username and password");
             return;
         }
+
+        const request = createObject(User, {nickname: user.nickname, password_sha256: await sha256(user.password_sha256)});
+        const result = await api.loginUser(request);
+
+        if (!result.data) {
+            setError(result.error || "Unknown error");
+            return;
+        }
+
+        LocalStorage.setAuth(result.data.auth_token);
+        history.push("/");
+    }
+
+    const handleSignup = () => {
+        history.push("/user/create")
     }
 
     const handleSetUser = (value: Partial<User>) => {
@@ -32,6 +51,7 @@ export const LoginPage: React.FC = () => {
         <TrackBattleLayout>
             <Line>
                 <Button text="back" color="green" onClick={handleBack} />
+                <Button text="Create an account" color="green" onClick={handleSignup} />
                 <Button text="login" color="green" onClick={handleLogin} />
             </Line>
             <Input value={user.nickname} placeholder={"Enter user name"} onChange={v => handleSetUser({nickname: v})} />

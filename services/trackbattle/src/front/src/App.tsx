@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.less';
-import {HashRouter, Route, Switch} from "react-router-dom";
+import {HashRouter, Redirect, Route, Switch} from "react-router-dom";
 import {CreateUserPage} from "./Pages/CreateUserPage/CreateUserPage";
 import {UserProfilePage} from "./Pages/UserProfilePage/UserProfilePage";
 import {TrackPage} from "./Pages/TrackPage/TrackPage";
@@ -19,17 +19,22 @@ export const App: React.FC = () => {
                     exact
                 />
                 <Route
-                    path="/login"
+                    path="/user/login"
                     component={LoginPage}
                     exact
                 />
                 <Route
-                    path="/user/:userId"
+                    path="/user"
                     component={UserProfilePage}
                     exact
                 />
                 <Route
                     path="/track/create"
+                    component={CreateTrackPage}
+                    exact
+                />
+                <Route
+                    path="/track/create/:inReplyTo"
                     component={CreateTrackPage}
                     exact
                 />
@@ -41,6 +46,11 @@ export const App: React.FC = () => {
                 <Route
                     path="/battle/:battleId"
                     component={BattlePage}
+                    exact
+                />
+                <Redirect
+                    path="/logout"
+                    to="/"
                     exact
                 />
                 <Route

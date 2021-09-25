@@ -1,14 +1,49 @@
 import React from "react";
-import {Link} from "react-router-dom";
+import {useHistory} from "react-router-dom";
+import {Cell} from "../Components/Cell";
+import {Button} from "../Components/Button";
+import {TrackBattleLayout} from "../Components/TrackBattleLayout";
+import {api} from "../../api/api";
+import {LocalStorage} from "../../Utilities/LocalStorage";
+import {Posts} from "./Posts";
 
 export const LatestPage: React.FC = () => {
-    return (<>
-        <Link to={"/track/create"}>Create track</Link>
-        <br />
-        <Link to={"/track?notes=AEAEAGGGEGEGAAAEAEA&title=track&description=this is track for battle!!!"}>Go to track</Link>
-        <br />
-        <Link to={"/user/create"}>Create User</Link>
-        <br />
-        <Link to={"/login"}>Login</Link>
-    </>);
+    const history = useHistory();
+    const [posts, setPosts] = React.useState<string[] | null>(null);
+
+    React.useEffect(() => {
+        const loadPosts = async () => {
+            const response = await api.getLatest();
+            setPosts(response.data?.posts || null);
+        }
+
+        void loadPosts();
+    }, [])
+
+    const handleCreate = () => {
+        history.push("/track/create");
+    }
+
+    if (!posts) {
+        return (
+            <TrackBattleLayout>
+                {!LocalStorage.getAuth() ? (
+                    <Cell center>You have to create user to battle with other users</Cell>
+                ) : null}
+            </TrackBattleLayout>
+        )
+    }
+
+    return (
+        <TrackBattleLayout>
+            {posts.length ? (
+                <>
+                    <Button color={"green"} text={"Start new battle"} onClick={handleCreate} />
+                    <Posts postIds={posts}/>
+                </>
+            ) : (
+                <Cell center>There are no battles yet</Cell>
+            )}
+        </TrackBattleLayout>
+    )
 }

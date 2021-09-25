@@ -8,13 +8,14 @@ import {Button} from "../Components/Button";
 import styles from "./TrackPage.less";
 import {Cell} from "../Components/Cell";
 import {Line} from "../Components/Line";
+import {fromBase64} from "../../Utilities/HashConverter";
 
 export const TrackPage: React.FC = () => {
     const history = useHistory();
 
     const getParams = React.useCallback(<T, >(type: {new (): T;}): T | null => {
         const query = history.location.search[0] === "?" ? history.location.search.substring(1) : history.location.search;
-        const json = querystring.parse(query);
+        const json = querystring.parse(fromBase64(query));
 
         return JsonSerializer.deserialize(json, type);
     }, [history.location]);
@@ -28,7 +29,7 @@ export const TrackPage: React.FC = () => {
     }
 
     const handleBack = () => {
-        history.push("/latest");
+        history.goBack();
     }
 
     const handlePlay = () => {
@@ -41,9 +42,8 @@ export const TrackPage: React.FC = () => {
                 <Button text="back" color="green" onClick={handleBack} />
                 <Button text="play" color="green" onClick={handlePlay} />
             </Line>
-            <div></div>
-            <Cell><div className={styles.title}>{track.title}</div></Cell>
-            {track.description ? <Cell>{track.description}</Cell> : null}
+            {track.title ? <Cell><div className={styles.title}>{track.title}</div></Cell> : null}
+            {track.description ? <Cell center>{track.description}</Cell> : null}
         </TrackBattleLayout>
     );
 }

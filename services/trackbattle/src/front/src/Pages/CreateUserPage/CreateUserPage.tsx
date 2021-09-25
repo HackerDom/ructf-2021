@@ -38,6 +38,10 @@ export const CreateUserPage: React.FC = () => {
         history.push("/");
     }
 
+    const handleLogin = () => {
+        history.push("/user/login");
+    }
+
     const handleSetUser = (value: Partial<User>) => {
         setUser({...user, ...value});
         setError(null);
@@ -47,6 +51,7 @@ export const CreateUserPage: React.FC = () => {
         <TrackBattleLayout>
             <Line>
                 <Button text="back" color="green" onClick={handleBack} />
+                <Button text="I have an account" color="green" onClick={handleLogin} />
                 <Button text="create" color="green" onClick={handleCreate} />
             </Line>
             <Input value={user.nickname} placeholder={"Enter user name"} onChange={v => handleSetUser({nickname: v})} />

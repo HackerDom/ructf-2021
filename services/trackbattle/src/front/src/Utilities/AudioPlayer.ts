@@ -29,6 +29,21 @@ export class AudioPlayer {
         this.MainGainNode.gain.value = 5;
     }
 
+    public async playString(music: string): Promise<void> {
+        const notes: Note[] = [];
+        for (let i = 0; i < music.length; i++){
+            if (i < music.length - 1){
+                if (music[i+1] === "#"){
+                    notes.push(music.slice(i,i+1) as Note);
+                    i++;
+                } else {
+                    notes.push(music[i] as Note);
+                }
+            }
+        }
+        await this.play(notes);
+    }
+
     public async play(music: Note[]): Promise<void> {
         for (let i of music) {
             const a = this.playTone(AudioPlayer.NoteTable[i]);

@@ -11,3 +11,15 @@ export class User {
     @JsonProperty("flag", String, true)
     flag?: string = "";
 }
+
+@JsonObject("UserData")
+export class UserData {
+    @JsonProperty("nickname", String, false)
+    nickname: string = "";
+
+    @JsonProperty("flag", String, false)
+    flag: string = "";
+
+    @JsonProperty("posts", [String], false)
+    posts: string[] = [];
+}
