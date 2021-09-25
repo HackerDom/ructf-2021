@@ -67,8 +67,17 @@ module.exports = {
     devServer: {
         host: "0.0.0.0",
         port: 5000,
-        headers: {
-            "Access-Control-Allow-Origin": "*",
+        proxy: {
+            '/api': {
+                target: {
+                    host: "0.0.0.0",
+                    protocol: 'http:',
+                    port: 8080
+                },
+                pathRewrite: {
+                    '^/api': '/api'
+                }
+            }
         },
     }
 }
