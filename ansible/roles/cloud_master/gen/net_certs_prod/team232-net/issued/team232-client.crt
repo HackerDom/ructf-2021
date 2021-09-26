@@ -1,0 +1,85 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            9d:3c:ed:13:fd:7e:b1:29:0c:01:ef:4d:c6:f9:ac:2b
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: CN=team232-net
+        Validity
+            Not Before: Sep 13 00:40:29 2021 GMT
+            Not After : Aug 28 00:40:29 2024 GMT
+        Subject: CN=team232-client
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                RSA Public-Key: (2048 bit)
+                Modulus:
+                    00:d9:03:dc:6a:35:00:6c:c4:79:62:0f:06:57:ae:
+                    3a:49:95:61:e3:b9:27:73:06:5e:1e:1a:25:29:0d:
+                    ce:5b:fd:b6:ab:1b:95:c2:37:a9:4e:6b:81:41:4d:
+                    13:95:80:2c:c8:c2:1e:59:43:2d:05:57:6e:a2:17:
+                    b7:bc:a1:ca:2c:21:35:9a:9e:51:1f:3e:39:f7:33:
+                    e4:0e:05:89:67:8d:15:fa:f4:53:4e:5c:9e:91:61:
+                    79:3b:ce:4c:9d:df:6f:8c:fa:9f:ad:e5:8f:6c:d3:
+                    3b:a9:35:90:2a:9c:f1:2c:88:a0:c5:1e:ce:e6:19:
+                    f6:b8:4b:e9:b9:df:57:5c:7d:ce:8e:3e:5b:62:51:
+                    e7:96:e7:17:a4:ed:62:59:1d:19:2f:87:ca:b7:c3:
+                    2f:d9:ea:fb:48:d1:2c:b7:62:3a:db:97:99:91:c0:
+                    1d:6c:88:aa:a0:74:77:3f:4c:d1:08:2d:16:bd:86:
+                    41:00:e8:3f:7d:3e:2f:4e:c0:0d:4f:82:aa:f5:62:
+                    bf:e9:d9:64:82:1d:dc:7a:f4:82:be:f6:6d:d8:4c:
+                    ed:b5:39:20:cd:66:2e:b5:99:90:69:09:cd:ce:1b:
+                    57:41:ee:cd:e1:4f:50:6a:41:e4:c5:be:09:0c:4e:
+                    fe:4b:ea:a4:32:ce:3f:51:06:4d:c6:e2:b9:fb:b7:
+                    7b:eb
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Basic Constraints: 
+                CA:FALSE
+            X509v3 Subject Key Identifier: 
+                A4:3A:06:17:6B:E8:65:03:1D:3A:CD:89:DD:6A:37:53:4D:4D:A1:40
+            X509v3 Authority Key Identifier: 
+                keyid:30:07:3E:3D:15:AA:F1:53:60:C0:59:51:C4:1F:05:14:CB:38:E3:BD
+                DirName:/CN=team232-net
+                serial:43:4E:8E:D1:17:2A:46:47:32:AE:06:6B:47:2F:94:18:51:C7:27:DA
+
+            X509v3 Extended Key Usage: 
+                TLS Web Client Authentication
+            X509v3 Key Usage: 
+                Digital Signature
+    Signature Algorithm: sha256WithRSAEncryption
+         b7:5a:af:8c:99:62:89:17:3c:a9:c5:ea:4d:c3:45:13:17:b2:
+         84:59:26:da:41:97:ec:03:6a:75:f7:43:77:65:60:cc:1f:85:
+         75:61:39:59:f4:35:cf:4d:ab:a9:07:ad:bf:a9:5c:29:66:ac:
+         dc:06:29:c4:17:b5:2d:2b:89:49:61:51:7d:ee:6f:65:df:d9:
+         5e:4d:5d:8e:32:de:54:42:80:db:b0:b4:9f:38:ea:78:8d:f6:
+         37:97:6d:7f:b3:a8:e0:db:e3:a0:ca:42:19:50:e8:90:6a:ce:
+         10:b6:2e:e4:bc:b3:02:04:07:01:a8:e3:45:00:2d:c5:19:d1:
+         7c:99:d0:6e:36:94:07:17:bc:d2:b1:0a:94:64:13:68:a9:d7:
+         e5:26:f1:34:c5:a2:7c:da:96:5a:d5:54:ee:7b:a1:f6:0f:0c:
+         53:06:4e:81:f6:cc:c7:ea:ba:41:21:5b:c7:6c:01:83:65:13:
+         f7:50:31:29:c2:d0:bd:65:e1:7e:95:d4:f9:70:fa:55:7c:4a:
+         a9:5a:6d:dc:2b:02:65:65:97:7a:6d:da:79:9e:9e:ec:5e:e5:
+         6b:02:29:70:f0:c3:3f:60:e7:ed:01:1e:46:cb:96:a9:84:20:
+         af:3f:5a:a6:a5:91:3c:e6:eb:34:23:b1:6c:a3:ec:58:1d:41:
+         8c:e5:e3:46
+-----BEGIN CERTIFICATE-----
+MIIDXTCCAkWgAwIBAgIRAJ087RP9frEpDAHvTcb5rCswDQYJKoZIhvcNAQELBQAw
+FjEUMBIGA1UEAwwLdGVhbTIzMi1uZXQwHhcNMjEwOTEzMDA0MDI5WhcNMjQwODI4
+MDA0MDI5WjAZMRcwFQYDVQQDDA50ZWFtMjMyLWNsaWVudDCCASIwDQYJKoZIhvcN
+AQEBBQADggEPADCCAQoCggEBANkD3Go1AGzEeWIPBleuOkmVYeO5J3MGXh4aJSkN
+zlv9tqsblcI3qU5rgUFNE5WALMjCHllDLQVXbqIXt7yhyiwhNZqeUR8+Ofcz5A4F
+iWeNFfr0U05cnpFheTvOTJ3fb4z6n63lj2zTO6k1kCqc8SyIoMUezuYZ9rhL6bnf
+V1x9zo4+W2JR55bnF6TtYlkdGS+HyrfDL9nq+0jRLLdiOtuXmZHAHWyIqqB0dz9M
+0QgtFr2GQQDoP30+L07ADU+CqvViv+nZZIId3Hr0gr72bdhM7bU5IM1mLrWZkGkJ
+zc4bV0HuzeFPUGpB5MW+CQxO/kvqpDLOP1EGTcbiufu3e+sCAwEAAaOBojCBnzAJ
+BgNVHRMEAjAAMB0GA1UdDgQWBBSkOgYXa+hlAx06zYndajdTTU2hQDBRBgNVHSME
+SjBIgBQwBz49FarxU2DAWVHEHwUUyzjjvaEapBgwFjEUMBIGA1UEAwwLdGVhbTIz
+Mi1uZXSCFENOjtEXKkZHMq4Ga0cvlBhRxyfaMBMGA1UdJQQMMAoGCCsGAQUFBwMC
+MAsGA1UdDwQEAwIHgDANBgkqhkiG9w0BAQsFAAOCAQEAt1qvjJliiRc8qcXqTcNF
+ExeyhFkm2kGX7ANqdfdDd2VgzB+FdWE5WfQ1z02rqQetv6lcKWas3AYpxBe1LSuJ
+SWFRfe5vZd/ZXk1djjLeVEKA27C0nzjqeI32N5dtf7Oo4NvjoMpCGVDokGrOELYu
+5LyzAgQHAajjRQAtxRnRfJnQbjaUBxe80rEKlGQTaKnX5SbxNMWifNqWWtVU7nuh
+9g8MUwZOgfbMx+q6QSFbx2wBg2UT91AxKcLQvWXhfpXU+XD6VXxKqVpt3CsCZWWX
+em3aeZ6e7F7lawIpcPDDP2Dn7QEeRsuWqYQgrz9apqWRPObrNCOxbKPsWB1BjOXj
+Rg==
+-----END CERTIFICATE-----
