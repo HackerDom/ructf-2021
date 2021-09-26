@@ -174,23 +174,34 @@ function logout() {
 
 
 function createEmployee() {
+    let firstName = $("#first-name-f").val();
+    let secondName = $("#second-name-f").val();
+    let middleName = $("#middle-name-f").val();
+    let number = $("#number-f").val();
+    let cardholder = $("#cardholder-f").val();
+    let cvv = $("#cvv-f").val();
+    let country = $("#country-f").val();
+    let city = $("#city-f").val();
+    let description = $("#description-f").val();
+    let tags = $("#tags-f").val();
+
     let newEmployee = createObj("NewEmployee", {
         "name": createObj("FullName", {
-            "firstname": "firstName",
-            "secondname": "secondName",
-            "middlename": "middleName",
+            "firstname": firstName,
+            "secondname": secondName,
+            "middlename": middleName,
         }),
         "card": createObj("BankCard", {
-            "number": "number",
-            "cardholder": "cardholder",
-            "cvv": "cvv",
+            "number": number,
+            "cardholder": cardholder,
+            "cvv": cvv,
         }),
         "location": createObj("Location", {
-            "country": "country",
-            "city": "city",
+            "country": country,
+            "city": city,
         }),
-        "description": "newuser",
-        "tagsList": ["tag1", "tag2"],
+        "description": description,
+        "tagsList": tags.split(', '),
     });
 
     makePostRequest("/add_employee", newEmployee.serializeBinary(), function (e) {

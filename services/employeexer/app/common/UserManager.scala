@@ -37,16 +37,12 @@ class UserManager(jedisPool: JedisPool) extends WithJedis(jedisPool) {
   }
 
   def validateUserPassword(username: String, password: String): Boolean = {
-    println(username)
-    println(password)
     withJedis { jedis =>
       val passwordHash = jedis.get(s"user/$username")
-      println(passwordHash)
-      if (passwordHash == null) {
+        if (passwordHash == null) {
         false
       } else {
-        println(Utils.baseHash(password))
-        Utils.baseHash(password) == passwordHash
+            Utils.baseHash(password) == passwordHash
       }
     }
   }

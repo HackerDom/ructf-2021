@@ -3,12 +3,12 @@ package controllers
 import com.google.protobuf.InvalidProtocolBufferException
 import common.{SessionManager, Store, UserManager, UserManagerException}
 import index.RuntimeIndex
-import org.request.{Employee, NewEmployee, UserPair}
+import org.request.{Employee, Employees, NewEmployee, UserPair}
 import play.api.libs.json.Json
 import play.api.mvc.{Cookie, _}
 import redis.clients.jedis.JedisPool
 
-import java.io.{FileInputStream, InputStream}
+import java.io.{ByteArrayInputStream, FileInputStream, InputStream}
 import java.nio.file.Paths
 import java.util.UUID
 import javax.inject._
@@ -37,12 +37,12 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
   }
 
   def addEmployee(): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
-    withAuth(request, { _ =>
+    withAuth(request, { username =>
       request.body.asRaw match {
         case Some(rawObject) =>
           Context.parse(NewEmployee.parseFrom, new FileInputStream(rawObject.asFile)) match {
             case Some(value) =>
-              val employee = new Employee(UUID.randomUUID().toString, value)
+              val employee = new Employee(UUID.randomUUID().toString, value, username)
               Context.store += employee.id -> employee.toByteArray
               Context.index.index(employee)
 
@@ -54,9 +54,43 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
     })
   }
 
+  private def withRequiredParam(param: String, request: Request[AnyContent], block: String => Result): Result = {
+    request.getQueryString(param) match {
+      case Some(param) => block(param)
+      case None => BadRequest(s"Missing required parameter '$param'")
+    }
+  }
+
+  def fetchEmployeeAsOwner(): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
+    withAuth(request, { username =>
+      withRequiredParam("employee_ids", request, { rawEmployee_ids =>
+        val employeeIds = rawEmployee_ids.split(',')
+
+        val employees = employeeIds.flatMap { employee_id =>
+          Context.store.get(employee_id) match {
+            case Some(rawEmployee) =>
+              Context.parse(Employee.parseFrom, new ByteArrayInputStream(rawEmployee)) match {
+                case Some(employee) => if (employee.owner == username) Some(employee) else None
+                case None => None
+              }
+            case None => None
+          }
+        }
+
+        if (employees.length == employeeIds.length)
+          Ok(new Employees(employees).toByteArray)
+        else {
+          val existingIds = employees.map { employee => employee.id}.toSet
+          val nonExistingIds = employeeIds.filter { employee => !existingIds.contains(employee)}
+          BadRequest(s"Incorrect employee ids: ${nonExistingIds.mkString(", ")}")
+        }
+      })
+    })
+  }
+
   def addEmployeePage(): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
     withAuth(request, { username =>
-      Ok(views.html.index("Add new employee", username))
+      Ok(views.html.new_employee("Add new employee", username))
     })
   }
 
@@ -65,12 +99,10 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
   }
 
   def register(): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
-    println("reg!")
     request.body.asRaw match {
       case Some(rawObject) =>
         Context.parse(UserPair.parseFrom, new FileInputStream(rawObject.asFile)) match {
           case Some(userPair) =>
-            println(userPair)
             try {
               Context.userManager.addUser(userPair.username, userPair.password)
               setUserCookie(userPair)

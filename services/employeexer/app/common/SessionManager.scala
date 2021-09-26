@@ -7,11 +7,8 @@ import scala.util.Random
 
 class SessionManager(private val jedisPool: JedisPool) extends WithJedis(jedisPool) {
   def create(username: String): String = {
-    println(s"Create session for $username")
-    val salt = "salt:" + Random.alphanumeric.take(32).mkString("")
-    println(salt)
+    val salt = "salt/" + Random.alphanumeric.take(32).mkString("")
     val secret = Utils.baseHash(username + salt)
-    println(secret)
 
     withJedis { jedis =>
       jedis.set(username, salt)
@@ -19,7 +16,7 @@ class SessionManager(private val jedisPool: JedisPool) extends WithJedis(jedisPo
     secret
   }
 
-  def delete(username: String): Unit ={
+  def delete(username: String): Unit = {
     try {
       withJedis { jedis =>
         jedis.del(username)
@@ -32,7 +29,8 @@ class SessionManager(private val jedisPool: JedisPool) extends WithJedis(jedisPo
   def validate(username: String, secret: String): Boolean = {
     withJedis { jedis =>
       val salt = jedis.get(username)
-      Utils.baseHash(username + salt) == secret
+      if (salt == null) false
+      else Utils.baseHash(username + salt) == secret
     }
   }
 }

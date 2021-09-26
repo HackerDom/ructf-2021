@@ -9,9 +9,15 @@ message UserPair {
 }
 
 
+message Employees {
+  repeated Employee employees = 1;
+}
+
+
 message Employee {
   required string id = 1;
   required NewEmployee employee = 2;
+  required string owner = 3;
 }
 
 
