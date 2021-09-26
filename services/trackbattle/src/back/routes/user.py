@@ -48,7 +48,7 @@ def get(user=None):
     return get_success_user_response(user)
 
 
-@users_blueprint.route("/api/users/auth_token", methods=['GET'])
+@users_blueprint.route("/api/users/auth_token", methods=['PUT'])
 @expected_json_arguments('nickname', 'password_sha256')
 def auth(nickname=None, password_sha256=None):
     with make_session() as session:

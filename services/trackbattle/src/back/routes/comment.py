@@ -4,7 +4,8 @@ from flask import Blueprint, request, jsonify
 
 from models.comment import Comment
 from models.post import Post
-from routes.common import find_entity_by_id_in_session, get_entity_not_found_response, get_invalid_request_response
+from routes.common import find_entity_by_id_in_session, get_entity_not_found_response, get_invalid_request_response, \
+    MAX_TRACK_LENGTH, invalid_track_length_response
 from tools.routes.functools import need_authentication, expected_json_arguments
 
 comments_blueprint = Blueprint('comments', __name__)
@@ -19,6 +20,9 @@ def create_comment(track=None, description=None, post_id=None, user=None, sessio
 
         if post is None:
             return get_entity_not_found_response(Post, post_id)
+
+        if len(track) > MAX_TRACK_LENGTH:
+            return invalid_track_length_response()
 
         new_comment = Comment(
             id=str(uuid4()),
@@ -49,7 +53,7 @@ def get_or_update_comment(comment_id, session=None):
     if request.method == 'GET':
         return get_comment(session, comment)
 
-    return update_comment(session, comment)
+    return like_comment(session, comment)
 
 
 def get_comment(session, comment):
@@ -58,22 +62,19 @@ def get_comment(session, comment):
             status="success",
             track=comment.track,
             description=comment.description,
-            likes_cmount=comment.likes_amount,
+            likes_amount=comment.likes_amount,
             author_nickname=comment.author_nickname,
             post_id=comment.post_id,
             publishing_date=comment.publishing_date
         )
 
 
-@expected_json_arguments('likes_amount')
-def update_comment(session, comment, likes_amount=None):
+def like_comment(session, comment):
     with session:
-        new_likes_amount = int(likes_amount)
+        comment.likes_amount = comment.likes_amount + 1
 
-        if new_likes_amount < 0 or new_likes_amount > 10 ** 6:
-            return get_invalid_request_response('invalid amount of likes')
-
-        comment.likes_amount = new_likes_amount
+        if comment.likes_amount > 100500:
+            return jsonify(status='success')
 
         session.commit()
 

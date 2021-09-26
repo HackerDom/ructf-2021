@@ -6,6 +6,7 @@ from models.sessions import make_session
 AUTH_HEADER = 'XTBAuth'
 CONTENT_TYPE_FROM_URL = 'application/x-www-form-urlencoded'
 CONTENT_TYPE_JSON = 'application/json'
+MAX_TRACK_LENGTH = 124
 
 
 def get_authenticated_user():
@@ -55,6 +56,16 @@ def get_expected_json_argument_response(arg_name):
         jsonify(
             status='error',
             message=f'expected argument "{arg_name}", but not found'
+        ),
+        400
+    )
+
+
+def invalid_track_length_response():
+    return make_response(
+        jsonify(
+            status='error',
+            message=f'invalid track length (max is {MAX_TRACK_LENGTH})'
         ),
         400
     )

@@ -1,11 +1,12 @@
 from uuid import uuid4
 
-from flask import Blueprint, make_response, request, jsonify
+from flask import Blueprint, request, jsonify
 from sqlalchemy import desc
 
 from models.post import Post
+from routes.common import get_entity_not_found_response, find_entity_by_id_in_session, get_invalid_request_response, \
+    MAX_TRACK_LENGTH, invalid_track_length_response
 from tools.routes.functools import need_authentication, expected_json_arguments
-from routes.common import get_entity_not_found_response, find_entity_by_id_in_session, get_invalid_request_response
 
 posts_blueprint = Blueprint('posts', __name__)
 
@@ -15,6 +16,9 @@ posts_blueprint = Blueprint('posts', __name__)
 @expected_json_arguments('track', 'title', 'description')
 def create_post(track=None, title=None, description=None, user=None, session=None):
     with session:
+        if len(track) > MAX_TRACK_LENGTH:
+            return invalid_track_length_response()
+
         new_post = Post(
             id=str(uuid4()),
             author_nickname=user.nickname,
@@ -62,19 +66,16 @@ def get_post(session=None, post=None):
         )
 
 
-@expected_json_arguments('likes_amount')
-def update_post(likes_amount=None, session=None, post=None):
+def update_post(session=None, post=None):
     with session:
-        likes = int(likes_amount)
+        post.likes_amount = post.likes_amount + 1
 
-        if likes < 0 or likes > 10 ** 6:
-            return get_invalid_request_response('invalid likes amount')
-
-        post.likes_amount = likes
+        if post.likes_amount > 100500:
+            return jsonify(status='success')
 
         session.commit()
 
-        return make_response()
+        return jsonify(status='success')
 
 
 @posts_blueprint.route("/api/posts/latest", methods=['GET'])
