@@ -55,7 +55,17 @@ def get_expected_json_argument_response(arg_name):
     return make_response(
         jsonify(
             status='error',
-            message=f'expected argument "{arg_name}", but not found'
+            message=f'expected json-body argument "{arg_name}" but not found'
+        ),
+        400
+    )
+
+
+def get_expected_uri_argument_response(arg_name):
+    return make_response(
+        jsonify(
+            status='error',
+            message=f'expected url argument "{arg_name}" but not found'
         ),
         400
     )

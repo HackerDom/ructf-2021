@@ -6,7 +6,7 @@ from sqlalchemy import desc
 from models.post import Post
 from routes.common import get_entity_not_found_response, find_entity_by_id_in_session, get_invalid_request_response, \
     MAX_TRACK_LENGTH, invalid_track_length_response
-from tools.routes.functools import need_authentication, expected_json_arguments
+from tools.routes.functools import need_authentication, expected_json_arguments, expected_uri_arguments
 
 posts_blueprint = Blueprint('posts', __name__)
 
@@ -80,7 +80,7 @@ def update_post(session=None, post=None):
 
 @posts_blueprint.route("/api/posts/latest", methods=['GET'])
 @need_authentication(keep_session_arg='session')
-@expected_json_arguments('limit')
+@expected_uri_arguments('limit')
 def latest(limit=None, session=None):
     with session:
         limit = int(limit)

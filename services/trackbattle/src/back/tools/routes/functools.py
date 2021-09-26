@@ -63,3 +63,22 @@ def expected_json_arguments(*arg_names):
         return wrapper
 
     return real_decorator
+
+
+def expected_uri_arguments(*arg_names):
+    def real_decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            for arg_name in arg_names:
+                value = request.args.get(arg_name)
+
+                if value is None:
+                    return get_expected_json_argument_response(arg_name)
+
+                kwargs[arg_name] = value
+
+            return func(*args, **kwargs)
+
+        return wrapper
+
+    return real_decorator
