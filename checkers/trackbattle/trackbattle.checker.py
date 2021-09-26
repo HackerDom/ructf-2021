@@ -126,6 +126,15 @@ def get(get_request: GetRequest) -> Verdict:
 
 @checker.define_check
 def check(check_request: CheckRequest) -> Verdict:
+    # create
+    # check created user info and auth_token
+    # get random 5 posts of latest
+    # like this posts
+    # make some commentaries on this posts
+    # check this commentaries
+    # create post
+    # check post appears in user's post list
+
     return Verdict.OK()
 
 
