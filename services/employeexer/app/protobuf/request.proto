@@ -1,0 +1,44 @@
+syntax = "proto2";
+
+package org;
+
+
+message UserPair {
+  required string username = 1;
+  required string password = 2;
+}
+
+
+message Employee {
+  required string id = 1;
+  required NewEmployee employee = 2;
+}
+
+
+message NewEmployee {
+  required FullName name = 1;
+  required BankCard card = 2;
+  required Location location = 3;
+  required string description = 4;
+  repeated string tags = 5;
+}
+
+
+message FullName {
+  required string firstName = 1;
+  required string secondName = 2;
+  optional string middleName = 3;
+}
+
+
+message BankCard {
+  required string number = 1;
+  required string cardholder = 2;
+  required string cvv = 3;
+}
+
+
+message Location {
+  required string country = 1;
+  required string city = 2;
+}
