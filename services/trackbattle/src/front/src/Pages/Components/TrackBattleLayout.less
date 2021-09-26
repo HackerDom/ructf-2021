@@ -1,0 +1,31 @@
+@import "src/Colors.less";
+
+:local {
+  .container {
+    width: 1200px;
+    margin-right: auto;
+    margin-left: auto;
+    padding: 20px;
+  }
+
+  .header {
+    font-family: 'Press Start 2P', sans-serif;
+    color: @color-neon-green;
+    font-weight: bold;
+    font-size: 28px;
+    text-shadow: 0 0 7px;
+    text-align: center;
+    padding: 30px;
+    border: @color-neon-pink solid 2px;
+    box-shadow: 0 0 7px @color-neon-pink;
+  }
+
+  .main {
+    position: relative;
+    border: @color-neon-pink solid 2px;
+    border-top: 0;
+    box-shadow: 0 0 7px @color-neon-pink;
+    height: 520px;
+    overflow: scroll;
+  }
+}
