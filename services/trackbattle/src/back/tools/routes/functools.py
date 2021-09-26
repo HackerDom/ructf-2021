@@ -8,7 +8,7 @@ from routes.common import \
     get_not_authenticated_response, \
     get_authenticated_user_using_session, \
     get_expected_json_response, \
-    get_expected_json_argument_response
+    get_expected_json_argument_response, get_expected_uri_argument_response
 
 
 def need_authentication(keep_user_arg=None, keep_session_arg=None):
@@ -73,7 +73,7 @@ def expected_uri_arguments(*arg_names):
                 value = request.args.get(arg_name)
 
                 if value is None:
-                    return get_expected_json_argument_response(arg_name)
+                    return get_expected_uri_argument_response(arg_name)
 
                 kwargs[arg_name] = value
 
