@@ -38,5 +38,6 @@
   systemd: name={{ service_name }} enabled=yes
 
 - name: Build service for {{ service_name }}
-  command: /home/{{ service_name }}/build.sh
-  chdir: /home/{{ service_name }}/
+  shell:
+    cmd: /home/{{ service_name }}/build.sh
+    chdir: /home/{{ service_name }}/
