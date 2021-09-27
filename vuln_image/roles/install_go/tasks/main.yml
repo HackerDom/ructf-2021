@@ -1,13 +1,22 @@
-- name: Copy install go
-  copy:
-    src: "{{ item.src }}"
-    dest: "{{  item.dest }}"
-    mode: 0755
-    owner: root
-  with_items:
-    - {src: "install-go.sh", dest: "/tmp/install-go.sh"}
+- name: download golang tar 
+  get_url:
+    url: "https://storage.googleapis.com/golang/go1.17.1.linux-amd64.tar.gz"
+    dest: "/home/{{ service_name }}"
+    mode: 0440
 
-- name: Install go
-  shell:
-    cmd: /tmp/install-go.sh
-    chdir: /tmp/
+- name: Extract the Go tarball
+  unarchive:
+    src: "/home/{{ service_name }}/go1.17.1.linux-amd64.tar.gz"
+    dest: /usr/local
+    copy: no
+
+- name: modify .bashrc
+  blockinfile:
+    dest: "{{home_dir}}/.bashrc"
+    block: |
+      export GOPATH=$HOME/go
+      export GOBIN=$GOPATH/bin
+      export PATH=$GOBIN:$PATH:/usr/local/go/bin
+    marker: '# {mark} ANSIBLE MANAGED BLOCK - changes for golang'
+    insertafter: EOF
+    create: yes
