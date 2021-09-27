@@ -1,4 +1,12 @@
 ---
+- name: Install utils
+  apt:
+    name:
+      - golang
+    state: latest
+    install_recommends: false
+    update_cache: yes
+
 - name: Uploading service {{ service_name }}
   debug:
     msg: "Uploading {{ service_name }}"
