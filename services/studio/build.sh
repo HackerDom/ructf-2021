@@ -2,4 +2,4 @@
 
 set -e
 
-make build -C container-svc -j4
+PATH=$PATH:/usr/local/go/bin make build -C container-svc -j4

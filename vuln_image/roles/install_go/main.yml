@@ -10,13 +10,7 @@
     dest: /usr/local
     copy: no
 
-- name: modify .bashrc
-  blockinfile:
-    dest: "{{home_dir}}/.bashrc"
-    block: |
-      export GOPATH=$HOME/go
-      export GOBIN=$GOPATH/bin
-      export PATH=$GOBIN:$PATH:/usr/local/go/bin
-    marker: '# {mark} ANSIBLE MANAGED BLOCK - changes for golang'
-    insertafter: EOF
-    create: yes
+- name: Create go directory
+  file:
+    path: /etc/go
+    state: directory
