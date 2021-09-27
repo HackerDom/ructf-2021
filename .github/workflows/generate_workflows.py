@@ -1,13 +1,7 @@
 #!/usr/bin/env python3
 
 SERVICES = [
-  'sesame',
-  'scrolls',
-  'keeper',
-  'mudarabah',
-  'carpetradar24',
-  'mumbler',
-  'notary',
+  'demo',
 ]
 
 
