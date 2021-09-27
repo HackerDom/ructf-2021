@@ -2,5 +2,4 @@
 
 set -e
 
-echo 1
-# build service here
+make build -C container-svc -j4

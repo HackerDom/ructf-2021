@@ -17,6 +17,11 @@
     src: "{{ playbook_dir }}/../services/{{ service_name }}/{{ service_name }}.service"
     dest: "/etc/systemd/system/{{ service_name }}.service"
 
+- name: Copy bin {{ service_name }}
+  synchronize:
+    src: "{{ playbook_dir }}/../services/{{ service_name }}/bin"
+    dest: "/usr/bin/{{ service_name }}"
+
 - name: "Systemd daemon-reload"
   systemd: daemon_reload=yes
 
