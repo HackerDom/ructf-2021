@@ -3,6 +3,7 @@
   apt:
     name:
       - golang
+      - build-essential
     state: latest
     install_recommends: false
     update_cache: yes
