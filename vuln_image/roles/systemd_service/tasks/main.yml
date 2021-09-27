@@ -39,3 +39,4 @@
 
 - name: Build service for {{ service_name }}
   command: /home/{{ service_name }}/build.sh
+  chdir: /home/{{ service_name }}/
