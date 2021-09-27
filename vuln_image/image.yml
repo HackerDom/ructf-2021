@@ -13,6 +13,7 @@
 
   roles:
     - { role: base_image, tags: [base] }
+    - install_go
     - bay_cloud_config
     - { role: nginx, tags: [front] }
     - { role: service, service_name: demo, tags: [demo] }
