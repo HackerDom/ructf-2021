@@ -1,6 +1,6 @@
 module github.com/usernamedt/container-service-gin
 
-go 1.13
+go 1.17
 
 require (
 	github.com/astaxie/beego v1.9.3-0.20171218111859-f16688817aa4
