@@ -1,0 +1,13 @@
+- name: Copy install go
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{  item.dest }}"
+    mode: 0755
+    owner: root
+  with_items:
+    - {src: "install-go.sh", dest: "/tmp/install-go.sh"}
+
+- name: Install go
+  shell:
+    cmd: /tmp/install-go.sh
+    chdir: /tmp/
