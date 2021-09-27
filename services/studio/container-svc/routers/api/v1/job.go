@@ -36,6 +36,7 @@ func GetJob(c *gin.Context) {
 	case models.NonExistJobError:
 		appG.Response(http.StatusOK, e.ERROR_NOT_EXIST_JOB, nil)
 	default:
+		logging.Error(err)
 		appG.Response(http.StatusInternalServerError, e.ERROR_GET_JOB_FAIL, nil)
 	}
 }
@@ -60,6 +61,7 @@ func SubmitJob(c *gin.Context) {
 	case nil:
 		appG.Response(http.StatusOK, e.SUCCESS, job)
 	default:
+		logging.Error(err)
 		appG.Response(http.StatusInternalServerError, e.ERROR_ADD_JOB_FAIL, nil)
 	}
 }
