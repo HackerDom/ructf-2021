@@ -9,11 +9,6 @@ source "virtualbox-ovf" "studio" {
 build {
   sources = ["sources.virtualbox-ovf.studio"]
 
-  provisioner "file" {
-    source = "keys/id_rsa.pub"
-    destination = "~/.ssh/id_rsa.pub"
-  }
-
   provisioner "shell" {
     inline = [
       # Wait apt-get lock
@@ -37,7 +32,7 @@ build {
       "chmod +x /usr/local/bin/docker-compose",
 
       # Install redis
-      "sudo apt install -y redis-server",
+      "sudo apt install -y -q redis-server",
       # Wait apt-get lock
       "while ps -opid= -C apt-get > /dev/null; do sleep 1; done",
     ]
@@ -45,11 +40,27 @@ build {
 
   provisioner "file" {
     source = "../container-svc/"
-    destination = "/home/studio/"
+    destination = ~/container-svc/"
+  }
+
+  provisioner "file" {
+    source = "../build.sh"
+    destination = ~/container-svc/"
   }
 
   provisioner "file" {
     source = "../bin/"
     destination = "/usr/bin/studio/"
+  }
+
+  provisioner "shell" {
+    inline = [
+      "~/build.sh",
+    ]
+  }
+
+  provisioner "file" {
+    source = "../studio.service"
+    destination = "/etc/systemd/system/studio.service"
   }
 }
