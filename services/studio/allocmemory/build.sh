@@ -1,11 +1,10 @@
 #!/bin/bash
 set -e -x
 
-rm -rf $PWD/artifacts
-mkdir $PWD/artifacts
 docker build --tag allocmemory .
 docker run --rm -iv $PWD:/app allocmemory  sh -s <<EOF
 set -e -x
+rm -rf out
 mkdir out
 cp main.c CMakeLists.txt private.key out/
 cd out
