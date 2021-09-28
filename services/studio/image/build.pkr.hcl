@@ -40,7 +40,7 @@ build {
 
   provisioner "file" {
     source = "../container-svc/"
-    destination = ~/container-svc/"
+    destination = "~/container-svc/"
   }
 
   provisioner "file" {
