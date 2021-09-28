@@ -63,4 +63,22 @@ build {
     source = "../studio.service"
     destination = "/etc/systemd/system/studio.service"
   }
+
+  provisioner "file" {
+    source = "../studio.service"
+    destination = "/etc/systemd/system/studio.service"
+  }
+
+  provisioner "file" {
+    source = "redis.conf"
+    destination = "/etc/redis/redis.conf"
+  }
+
+  provisioner "shell" {
+    inline = [
+      "sudo systemctl daemon-reload",
+      "sudo systemctl enable studio.service",
+      "sudo systemctl enable redis.service",
+    ]
+  }
 }
