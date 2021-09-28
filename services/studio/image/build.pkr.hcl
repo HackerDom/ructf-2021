@@ -40,12 +40,12 @@ build {
 
   provisioner "file" {
     source = "../container-svc/"
-    destination = "~/container-svc/"
+    destination = "~/container-svc"
   }
 
   provisioner "file" {
     source = "../bin/"
-    destination = "/usr/bin/studio/"
+    destination = "/usr/bin/studio"
   }
 
   provisioner "shell" {
