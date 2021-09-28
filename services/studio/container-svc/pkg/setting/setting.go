@@ -19,6 +19,8 @@ type App struct {
 
 	JobLifetimeMinutes time.Duration
 	WorkersCount int
+	AllocatorPath string
+	ReaderPath string
 }
 
 var AppSetting = &App{}

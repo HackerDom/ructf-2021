@@ -14,17 +14,26 @@ type JobService struct {}
 
 
 func (js *JobService) Add(binary io.Reader, ctx context.Context) (*models.Job, error) {
-	id := workerpool.Pool.AddJob(workerpool.Job{
+	jobId := workerpool.Pool.GenerateJobId()
+
+	memId, err := executer.AllocMemory(jobId)
+	if err != nil {
+		return nil, err
+	}
+
+	workerpool.Pool.AddJob(workerpool.Job{
 		Descriptor: workerpool.JobDescriptor{
 			Metadata: binary,
+			MemID: memId,
+			ID: jobId,
 		},
-		ExecFn: func(ctx context.Context, payload io.Reader) ([]byte, error) {
+		ExecFn: func(ctx context.Context, payload workerpool.JobDescriptor) ([]byte, error) {
 			executer.Run(ctx, payload)
 			return nil, nil
 		},
 	})
 
-	job, err := models.NewJob(id)
+	job, err := models.NewJob(jobId, memId)
 	if err != nil {
 		logging.Info(err)
 		return nil, err

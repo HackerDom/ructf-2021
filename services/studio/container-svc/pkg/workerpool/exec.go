@@ -69,12 +69,13 @@ func (wp *WorkerPool) Results() <-chan Result {
 	return wp.results
 }
 
-func (wp *WorkerPool) AddJob(job Job) string {
+func (wp *WorkerPool) GenerateJobId() string {
 	jobsCount := atomic.AddUint64(&wp.jobsCount, 1)
-	job.Descriptor.ID = strconv.FormatUint(jobsCount, 10)
+	return strconv.FormatUint(jobsCount, 10)
+}
+
+func (wp *WorkerPool) AddJob(job Job) {
 	wp.jobs <- job
-	//close(wp.jobs)
-	return job.Descriptor.ID
 }
 
 func Setup() {

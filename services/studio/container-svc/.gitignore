@@ -2,3 +2,6 @@
 .DS_Store
 vendor/*
 runtime/*
+out
+out/**
+container-service-gin

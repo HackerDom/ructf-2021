@@ -1,33 +1,37 @@
 package executer
 
 import (
+	"bytes"
 	"context"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
 	"github.com/docker/docker/pkg/stdcopy"
-	"io"
+	"github.com/usernamedt/container-service-gin/pkg/setting"
+	"github.com/usernamedt/container-service-gin/pkg/workerpool"
 	"os"
+	"os/exec"
+	"strings"
 )
 
-func Run(ctx context.Context, payload io.Reader) {
+func Run(ctx context.Context, payload workerpool.JobDescriptor) {
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
 		panic(err)
 	}
 
-	reader, err := cli.ImagePull(ctx, "docker.io/library/ubuntu", types.ImagePullOptions{})
+	_, err = cli.ImagePull(ctx, "docker.io/library/ubuntu", types.ImagePullOptions{})
 	if err != nil {
 		panic(err)
 	}
-	io.Copy(os.Stdout, reader)
+	//io.Copy(os.Stdout, reader)
 
-	id := runShit(ctx, cli)
+	id := runContainer(ctx, cli, payload.MemID)
 
-	waitShit(ctx, cli, id)
+	waitContainer(ctx, cli, id)
 }
 
-func waitShit(ctx context.Context, cli *client.Client, id string) {
+func waitContainer(ctx context.Context, cli *client.Client, id string) {
 	statusCh, errCh := cli.ContainerWait(ctx, id, container.WaitConditionNotRunning)
 	select {
 	case err := <-errCh:
@@ -44,11 +48,10 @@ func waitShit(ctx context.Context, cli *client.Client, id string) {
 	stdcopy.StdCopy(os.Stdout, os.Stderr, out)
 }
 
-func runShit(ctx context.Context, cli *client.Client) string {
+func runContainer(ctx context.Context, cli *client.Client, memID string) string {
 	resp, err := cli.ContainerCreate(ctx, &container.Config{
 		Image: "ubuntu",
-		//Cmd:   []string{"sleep", "3600"},
-		Cmd: []string{"/bin/bash", "-c", "echo ZBS"},
+		Cmd: []string{"/bin/bash", "-c", "echo " + memID},
 		Tty: false,
 	}, &container.HostConfig{
 		Binds:           nil,
@@ -61,7 +64,7 @@ func runShit(ctx context.Context, cli *client.Client) string {
 		//AutoRemove:      true,
 		VolumeDriver:    "",
 		VolumesFrom:     nil,
-		CapAdd:          []string{"SYS_PTRACE"},
+		CapAdd:          nil,
 		CapDrop:         nil,
 		CgroupnsMode:    "",
 		DNS:             nil,
@@ -69,11 +72,11 @@ func runShit(ctx context.Context, cli *client.Client) string {
 		DNSSearch:       nil,
 		ExtraHosts:      nil,
 		GroupAdd:        nil,
-		IpcMode:         "",
+		IpcMode:         "host",
 		Cgroup:          "",
 		Links:           nil,
 		OomScoreAdj:     0,
-		PidMode:         "host",
+		PidMode:         "",
 		Privileged:      false,
 		PublishAllPorts: false,
 		ReadonlyRootfs:  false,
@@ -102,3 +105,31 @@ func runShit(ctx context.Context, cli *client.Client) string {
 	}
 	return resp.ID
 }
+
+func AllocMemory(jobId string) (string, error) {
+	args := []string{jobId}
+
+	cmd := exec.Command(setting.AppSetting.AllocatorPath, args...)
+	outputBuf := bytes.NewBuffer(nil)
+	cmd.Stdout = outputBuf
+	err := cmd.Start()
+	if err != nil {
+		return "", err
+	}
+
+	return outputBuf.String(), nil
+}
+
+func GetMemory(out string) (string, error) {
+	args := strings.Split(out, " ")
+	cmd := exec.Command(setting.AppSetting.ReaderPath, args...)
+	outputBuf := bytes.NewBuffer(nil)
+	cmd.Stdout = outputBuf
+	err := cmd.Start()
+	if err != nil {
+		return "", err
+	}
+
+	return outputBuf.String(), nil
+}
+

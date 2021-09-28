@@ -27,13 +27,15 @@ const(
 
 type Job struct {
 	ID     string    `json:"id"`
+	MemID  string    `json:"mem_id"`
 	Status JobStatus `json:"status"`
 	Result []byte	 `json:"result"`
 }
 
-func NewJob(id string) (*Job, error) {
+func NewJob(id string, memId string) (*Job, error) {
 	job := &Job{
 		ID: id,
+		MemID: memId,
 		Status: Created,
 	}
 	err := gredis.Set(e.PREFIX_JOB + id, job, getJobLifetime())
