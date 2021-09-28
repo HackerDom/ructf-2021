@@ -85,7 +85,7 @@ build {
     inline = [
       "sudo systemctl daemon-reload",
       "sudo systemctl enable studio.service",
-      "sudo systemctl enable redis.service",
+      "sudo systemctl enable redis-server.service",
     ]
   }
 }
