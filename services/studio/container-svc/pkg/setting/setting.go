@@ -21,6 +21,7 @@ type App struct {
 	WorkersCount int
 	AllocatorPath string
 	ReaderPath string
+	KeyPath	string
 }
 
 var AppSetting = &App{}
