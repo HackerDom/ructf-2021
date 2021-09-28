@@ -1,6 +1,6 @@
 source "virtualbox-iso" "sandbox" {
   guest_os_type = "Ubuntu_64"
-  iso_url = "http://releases.ubuntu.com/20.04/ubuntu-20.04.3-server-amd64.iso"
+  iso_url = "http://releases.ubuntu.com/20.04/ubuntu-20.04.3-live-server-amd64.iso"
   ssh_username = "packer"
   ssh_password = "packer"
 

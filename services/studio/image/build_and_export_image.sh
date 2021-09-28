@@ -2,7 +2,7 @@
 
 set -ex
 
-wget -N http://releases.ubuntu.com/20.04/ubuntu-20.04.3-server-amd64.iso
+wget -N http://releases.ubuntu.com/20.04/ubuntu-20.04.3-live-server-amd64.iso
 
 packer build --force build.pkr.hcl
 
