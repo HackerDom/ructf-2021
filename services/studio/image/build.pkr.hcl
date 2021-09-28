@@ -20,9 +20,6 @@ source "virtualbox-iso" "studio" {
 }
 
 build {
-  ssh_username = "packer"
-  ssh_password = "packer"
-  
   sources = ["sources.virtualbox-iso.studio"]
 
   provisioner "file" {
