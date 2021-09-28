@@ -49,22 +49,22 @@ build {
   }
 
   provisioner "file" {
-    source = "../container-svc/"
-    destination = "~/"
+    source = "../container-svc"
+    destination = "~/container-svc"
   }
 
   provisioner "file" {
-    source = "../bin/"
+    source = "../bin"
     destination = "/usr/bin/studio"
   }
 
-  #provisioner "shell" {
-  #  inline = [
-  #    "cd ~/container-svc",
-  #    "./build.sh",
-  #    "mv container-service-gin /usr/bin/container-svc",
-  #  ]
-  #}
+  provisioner "shell" {
+    inline = [
+      "cd ~/container-svc",
+      "./build.sh",
+      "mv container-service-gin /usr/bin/container-svc",
+    ]
+  }
 
   provisioner "file" {
     source = "../studio.service"
