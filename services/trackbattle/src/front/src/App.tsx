@@ -9,6 +9,9 @@ import {BattlePage} from "./Pages/BattlePage/BattlePage";
 import {LatestPage} from "./Pages/LatestPage/LatestPage";
 import {LoginPage} from "./Pages/LoginPage";
 import {MyPosts} from "./Pages/MyPosts/MyPosts";
+import {AudioPlayer} from "./Utilities/AudioPlayer";
+
+export const player: AudioPlayer = new AudioPlayer();
 
 export const App: React.FC = () => {
     return (

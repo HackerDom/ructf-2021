@@ -14,9 +14,8 @@ export class Track {
     notes: string = "";
 
     @JsonProperty("play", FunctionConverter, true)
-    play = async () => {
-        await this.player.playString(this.notes)
+    play = async (player: AudioPlayer) => {
+        player.stopPlaying();
+        await player.playString(this.notes)
     }
-
-    player: AudioPlayer = new AudioPlayer();
 }

@@ -4,10 +4,13 @@ import {Line} from "./Line";
 import {Button} from "./Button";
 import {useHistory} from "react-router-dom";
 import {LocalStorage} from "../../Utilities/LocalStorage";
+import {player} from "../../App";
 
 export const TrackBattleLayout: React.FC = (props) => {
     const history = useHistory();
     const isAuthorized = !!LocalStorage.getAuth();
+
+    player.stopPlaying();
 
     const handleLatest = () => {
         history.push("/");

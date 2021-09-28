@@ -9,6 +9,7 @@ import styles from "./TrackPage.less";
 import {Cell} from "../Components/Cell";
 import {Line} from "../Components/Line";
 import {fromBase64} from "../../Utilities/HashConverter";
+import {player} from "../../App";
 
 export const TrackPage: React.FC = () => {
     const history = useHistory();
@@ -33,7 +34,7 @@ export const TrackPage: React.FC = () => {
     }
 
     const handlePlay = () => {
-        track.play();
+        track.play(player);
     }
 
     return (

@@ -11,9 +11,9 @@ import {createObject} from "../../Utilities/ObjectCreator";
 import {Track} from "../../api/types/Track";
 import { Input } from "../Components/Input";
 import {CommentResponse} from "../../api/types/Comment";
+import {player} from "../../App";
 
 const maxTrackLength = 124;
-const player: AudioPlayer = new AudioPlayer();
 
 export const CreateTrackPage: React.FC = () => {
     const history = useHistory();
@@ -37,6 +37,7 @@ export const CreateTrackPage: React.FC = () => {
     }
 
     const handlePlay = async () => {
+        player.stopPlaying();
         await player.play(track);
     }
 
@@ -58,9 +59,11 @@ export const CreateTrackPage: React.FC = () => {
         }
     }
 
-    const handleClick = (note: Note) => {
+    const handleClick = async (note: Note) => {
+        player.stopPlaying();
         if (track.length < maxTrackLength) {
             setTrack([...track, note])
+            await player.playNote(note);
         }
     }
 
