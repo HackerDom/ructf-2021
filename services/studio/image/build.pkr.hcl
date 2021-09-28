@@ -52,15 +52,15 @@ build {
       # Wait apt-get lock
       "while ps -opid= -C apt-get > /dev/null; do sleep 1; done",
     ]
-    
-    provisioner "file" {
-      source = "../container-svc/"
-      destination = "/home/studio/"
-    }
+  }
+  
+  provisioner "file" {
+    source = "../container-svc/"
+    destination = "/home/studio/"
+  }
 
-    provisioner "file" {
-      source = "../bin/"
-      destination = "/usr/bin/studio/"
-    }
+  provisioner "file" {
+    source = "../bin/"
+    destination = "/usr/bin/studio/"
   }
 }
