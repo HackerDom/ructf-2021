@@ -2,7 +2,7 @@ import React from "react";
 import {useHistory} from "react-router-dom";
 import querystring from "querystring";
 import {JsonSerializer} from "../../Utilities/JsonSerializer";
-import {Track} from "../../api/types/Track";
+import {Notes, Track} from "../../api/types/Track";
 import {TrackBattleLayout} from "../Components/TrackBattleLayout";
 import {Button} from "../Components/Button";
 import styles from "./TrackPage.less";
@@ -34,7 +34,8 @@ export const TrackPage: React.FC = () => {
     }
 
     const handlePlay = () => {
-        track.play(player);
+        const notes = JsonSerializer.deserialize(JSON.parse(fromBase64(track.track)), Notes)
+        notes?.play(player);
     }
 
     return (

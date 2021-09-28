@@ -1,4 +1,6 @@
 export type Note = "C" | "C#" | "D" | "D#" | "E" | "F" | "F#" | "G" | "G#" | "A" | "A#" | "B";
+export type Waveform = "sine" | "square" | "sawtooth" | "triangle";
+export const Waveforms = ["sine", "square", "sawtooth", "triangle"];
 
 export class AudioPlayer {
     public static readonly Notes: Note[] = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
@@ -36,7 +38,7 @@ export class AudioPlayer {
         this.Stop = true;
     }
 
-    public async playString(music: string): Promise<void> {
+    public async playString(music: string, type: Waveform): Promise<void> {
         const notes: Note[] = [];
         for (let i = 0; i < music.length; i++){
             if (i < music.length - 1){
@@ -50,16 +52,16 @@ export class AudioPlayer {
                 notes.push(music[i] as Note);
             }
         }
-        await this.play(notes);
+        await this.play(notes, type);
     }
 
-    public async play(music: Note[]): Promise<void> {
+    public async play(music: Note[], type: Waveform): Promise<void> {
         this.Stop = false;
         for (let i of music) {
             if (this.Stop){
                 break;
             }
-            const a = this.playTone(AudioPlayer.NoteTable[i]);
+            const a = this.playTone(AudioPlayer.NoteTable[i], type);
             const delay = (millis: number) => new Promise<void>((resolve, reject) => {
                 setTimeout(() => resolve(), millis)
             });
@@ -68,8 +70,8 @@ export class AudioPlayer {
         }
     }
 
-    public async playNote(note: Note): Promise<void> {
-        const a = this.playTone(AudioPlayer.NoteTable[note]);
+    public async playNote(note: Note, type: Waveform): Promise<void> {
+        const a = this.playTone(AudioPlayer.NoteTable[note], type);
         const delay = (millis: number) => new Promise<void>((resolve, reject) => {
             setTimeout(() => resolve(), millis)
         });
@@ -77,10 +79,10 @@ export class AudioPlayer {
         a.stop();
     }
 
-    private playTone (freq: number) {
+    private playTone (freq: number, type: Waveform) {
         let osc = this.AudioContext.createOscillator();
         osc.connect(this.MainGainNode);
-        osc.type = "triangle";
+        osc.type = Waveforms.some(x => x === type) ? type : "triangle";
 
         osc.frequency.value = freq;
         osc.start();
