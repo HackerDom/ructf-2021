@@ -107,7 +107,7 @@ func runContainer(ctx context.Context, cli *client.Client, memID string) string 
 }
 
 func AllocMemory(jobId string) (string, error) {
-	args := []string{jobId}
+	args := []string{jobId, setting.AppSetting.KeyPath}
 
 	cmd := exec.Command(setting.AppSetting.AllocatorPath, args...)
 	outputBuf := bytes.NewBuffer(nil)
@@ -126,6 +126,7 @@ func AllocMemory(jobId string) (string, error) {
 
 func GetMemory(out string) (string, error) {
 	args := strings.Split(out, " ")
+	args = append(args, setting.AppSetting.KeyPath)
 	cmd := exec.Command(setting.AppSetting.ReaderPath, args...)
 	outputBuf := bytes.NewBuffer(nil)
 	cmd.Stdout = outputBuf
