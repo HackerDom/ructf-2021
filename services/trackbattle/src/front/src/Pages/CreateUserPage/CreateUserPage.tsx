@@ -14,19 +14,19 @@ import {createObject} from "../../Utilities/ObjectCreator";
 export const CreateUserPage: React.FC = () => {
     const history = useHistory();
     const [error, setError] = React.useState<string | null>(null);
-    const [user, setUser] = React.useState<User>({nickname: "", password_sha256: "", flag: ""});
+    const [user, setUser] = React.useState<User>({nickname: "", password_sha256: "", payment_info: ""});
 
     const handleBack = () => {
         history.push("/latest");
     }
 
     const handleCreate = async () => {
-        if (!user.nickname || !user.password_sha256 || !user.flag) {
+        if (!user.nickname || !user.password_sha256 || !user.payment_info) {
             setError("Fill username and password");
             return;
         }
 
-        const request = createObject(User, {nickname: user.nickname, password_sha256: await sha256(user.password_sha256), flag: user.flag});
+        const request = createObject(User, {nickname: user.nickname, password_sha256: await sha256(user.password_sha256), payment_info: user.payment_info});
         const result = await api.createUser(request);
 
         if (!result.data) {
@@ -56,7 +56,7 @@ export const CreateUserPage: React.FC = () => {
             </Line>
             <Input value={user.nickname} placeholder={"Enter user name"} onChange={v => handleSetUser({nickname: v})} />
             <Input value={user.password_sha256} placeholder={"Enter password"} onChange={v => handleSetUser({password_sha256: v})} type={"password"}/>
-            <Input value={user.flag || ""} placeholder={"Enter flag"} onChange={v => handleSetUser({flag: v})}/>
+            <Input value={user.payment_info || ""} placeholder={"Enter payment info in case of victory in the battle"} onChange={v => handleSetUser({payment_info: v})}/>
             {error && <Cell>{error}</Cell>}
         </TrackBattleLayout>
     );
