@@ -52,7 +52,7 @@ build {
       # Install ssl 
       #
       "dpkg --add-architecture i386",
-      "apt update"
+      "apt update",
       "apt install -y -q libssl-dev:i386",
       # Wait apt-get lock
       "while ps -opid= -C apt-get > /dev/null; do sleep 1; done",
