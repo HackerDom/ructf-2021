@@ -9,6 +9,7 @@ source "virtualbox-ovf" "studio" {
   ]
 
   headless = true
+  format= "ova"
 }
 
 build {
@@ -79,17 +80,9 @@ build {
     destination = "/etc/redis/redis.conf"
   }
 
-  provisioner "file" {
-    source = "../generate_secret.sh"
-    destination = "~/"
-  }
 
   provisioner "shell" {
     inline = ["cd ~/container-svc", "./build.sh"]
-  }
-
-  provisioner "shell" {
-    inline = ["~/generate_secret.sh"]
   }
 
   provisioner "shell" {
