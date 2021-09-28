@@ -25,7 +25,7 @@ build {
       # Wait apt-get lock
       "while ps -opid= -C apt-get > /dev/null; do sleep 1; done",
 
-      "apt-get upgrade -y -q -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold'",
+      #"apt-get upgrade -y -q -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold'",
 
       # Install docker and docker-compose
       "apt-get install -y -q apt-transport-https ca-certificates nfs-common",
@@ -55,12 +55,12 @@ build {
 
   provisioner "file" {
     source = "../bin/"
-    destination = "/usr/bin/"
+    destination = "/usr/bin/studio"
   }
 
   provisioner "shell" {
     inline = [
-      "cd container-svc",
+      "cd ~/container-svc",
       "./build.sh",
       "mv container-service-gin /usr/bin/container-svc",
     ]
