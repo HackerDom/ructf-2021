@@ -3,7 +3,7 @@ source "virtualbox-ovf" "studio" {
   ssh_username = "root"
   ssh_private_key_file = "keys/id_rsa"
 
-  vboxmanage: [
+  vboxmanage = [
     ["modifyvm", "{{.Name}}", "--memory", "8096"],
     ["modifyvm", "{{.Name}}", "--cpus", "4"]
   ]
