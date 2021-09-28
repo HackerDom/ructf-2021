@@ -20,7 +20,7 @@ services:
     ports:
       - 8080:8080
     volumes:
-      - ./src/front/:/var/www
+      - ./src/front/build/:/var/www
       - ./nginx/conf.d/:/etc/nginx/conf.d/
     networks:
       - app-network

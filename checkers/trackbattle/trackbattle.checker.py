@@ -38,9 +38,24 @@ checker = Checker()
 TB_API_PORT = 8080
 TB_AUTH_HEADER = 'XTBAuth'
 
+mumble = Verdict.MUMBLE('wrong server response')
+
 
 def get_sha256(s):
     return hashlib.sha256(s.encode('utf-8')).hexdigest()
+
+
+flag_alphabet = string.digits + string.ascii_uppercase
+
+
+def generate_some_flag():
+    # [0-9A-Z]{31}=
+    flag = []
+    for i in range(31):
+        flag.append(random.choice(flag_alphabet))
+    flag.append('=')
+
+    return ''.join(flag)
 
 
 def get_session_with_retry(
@@ -86,14 +101,14 @@ def put(put_request: PutRequest) -> Verdict:
 
         if response.status_code != 200:
             log.error(f'unexpected code - {response.status_code}')
-            return Verdict.MUMBLE('unexpected http code from service')
+            return mumble
 
         response_json = response.json()
         auth_token = response_json['auth_token']
         log.debug(f'user created with auth_token {response.json()}')
 
         if response.headers[TB_AUTH_HEADER] != auth_token:
-            return Verdict.MUMBLE('wrong headers from server')
+            return mumble
 
         return Verdict.OK(auth_token)
     except Exception as e:
@@ -126,16 +141,180 @@ def get(get_request: GetRequest) -> Verdict:
 
 @checker.define_check
 def check(check_request: CheckRequest) -> Verdict:
-    # create
-    # check created user info and auth_token
-    # get random 5 posts of latest
-    # like this posts
-    # make some commentaries on this posts
-    # check this commentaries
-    # create post
-    # check post appears in user's post list
+    try:
+        nickname = 'user-' + str(uuid.uuid4())
+        password = str(uuid.uuid4())
+        password_sha256 = get_sha256(password)
+        flag = generate_some_flag()
+        user_agent = get_random_user_agent()
 
-    return Verdict.OK()
+        log.info(f">>>>> {nickname} with password {password} and flag {flag}")
+
+        session = get_session_with_retry()
+
+        auth_token, verdict = check_creation(check_request, flag, nickname, password_sha256, session, user_agent)
+        if verdict is not None:
+            return verdict
+
+        verdict = check_get_user(auth_token, check_request, session, user_agent, flag, nickname)
+        if verdict is not None:
+            return verdict
+
+        verdict = check_auth(check_request, nickname, password_sha256, session, user_agent, auth_token)
+        if verdict is not None:
+            return verdict
+
+        latest_posts_ids, verdict = check_latest(check_request, session, user_agent, auth_token)
+        if verdict is not None:
+            return verdict
+
+        verdict = check_likes_on_posts(check_request, session, user_agent, auth_token, latest_posts_ids)
+        if verdict is not None:
+            return verdict
+
+        verdict = check_commentaries(check_request, session, user_agent, auth_token, latest_posts_ids)
+        if verdict is not None:
+            return verdict
+
+        # make some commentaries on this posts
+        # check this commentaries
+        # create post
+        # check post appears in user's post list
+
+        log.info(f"<<<<< {nickname}")
+
+        return Verdict.OK()
+    except Timeout as e:
+        log.error(f'{e}, {print_exc()}')
+        return Verdict.DOWN("service not responding")
+    except Exception as e:
+        log.error(f'{e}, {print_exc()}')
+        return Verdict.CORRUPT("service can't give a flag")
+
+
+def check_auth(check_request, nickname, password_sha256, session, user_agent, auth_token):
+    r = session.put(
+        f"http://{check_request.hostname}:{TB_API_PORT}/api/users/auth_token",
+        headers={"User-Agent": user_agent},
+        json={
+            "nickname": nickname,
+            "password_sha256": password_sha256,
+        }
+    )
+    log.info(r.text)
+
+    if r.status_code != 200 or r.headers.get(TB_AUTH_HEADER) != auth_token or r.json().get('auth_token') != auth_token:
+        return mumble
+
+    return None
+
+
+def check_get_user(auth_token, check_request, session, user_agent, flag, nickname):
+    r = session.get(
+        f"http://{check_request.hostname}:{TB_API_PORT}/api/users",
+        headers={"User-Agent": user_agent, TB_AUTH_HEADER: auth_token}
+    )
+    log.info(r.text)
+    j = r.json()
+
+    if r.status_code != 200 or j.get('flag') != flag or j.get('nickname') != nickname or j.get('posts') != []:
+        return mumble
+
+    return None
+
+
+def check_creation(check_request, flag, nickname, password_sha256, session, user_agent):
+    r = session.post(
+        f"http://{check_request.hostname}:{TB_API_PORT}/api/users",
+        headers={"User-Agent": user_agent},
+        json={
+            "nickname": nickname,
+            "password_sha256": password_sha256,
+            "flag": flag
+        },
+    )
+    log.info(r.text)
+    auth_token = r.headers.get(TB_AUTH_HEADER)
+
+    if r.status_code != 200 or auth_token is None:
+        return None, mumble
+
+    return auth_token, None
+
+
+def check_latest(check_request, session, user_agent, auth_token):
+    r = session.get(
+        f"http://{check_request.hostname}:{TB_API_PORT}/api/posts/latest?limit=100",
+        headers={'User-Agent': user_agent, TB_AUTH_HEADER: auth_token}
+    )
+    log.info(r.text)
+
+    posts = r.json().get('posts')
+    if r.status_code != 200 or posts is None or len(posts) > 100:
+        return None, mumble
+
+    return [random.choice(posts) for _ in range(5)], None
+
+
+def check_likes_on_posts(check_request, session, user_agent, auth_token, latest_posts_ids):
+    for post in latest_posts_ids:
+        r = session.get(
+            f"http://{check_request.hostname}:{TB_API_PORT}/api/posts/{post}",
+            headers={'User-Agent': user_agent, TB_AUTH_HEADER: auth_token}
+        )
+        log.info(r.text)
+
+        j = r.json()
+
+        if r.status_code != 200:
+            return mumble
+
+        for k in ['author', 'comments', 'description', 'likes_amount', 'publishing_date', 'title', 'track']:
+            if j.get(k) is None:
+                return mumble
+
+        current_likes = int(j.get('likes_amount'))
+
+        r = session.put(
+            f"http://{check_request.hostname}:{TB_API_PORT}/api/posts/{post}",
+            headers={'User-Agent': user_agent, TB_AUTH_HEADER: auth_token}
+        )
+        log.info(r.text)
+
+        if r.status_code != 200:
+            return mumble
+
+        r = session.get(
+            f"http://{check_request.hostname}:{TB_API_PORT}/api/posts/{post}",
+            headers={'User-Agent': user_agent, TB_AUTH_HEADER: auth_token}
+        )
+        log.info(r.text)
+
+        j = r.json()
+
+        if r.status_code != 200:
+            return mumble
+
+        for k in ['author', 'comments', 'description', 'likes_amount', 'publishing_date', 'title', 'track']:
+            if j.get(k) is None:
+                return mumble
+
+        new_likes = int(j.get('likes_amount'))
+
+        if new_likes != 100500 and new_likes != current_likes + 1 and new_likes != current_likes + 2 and new_likes != current_likes + 3:
+            return mumble
+
+    return None
+
+
+def check_commentaries(check_request, session, user_agent, auth_token, latest_posts_ids):
+    for post in latest_posts_ids:
+        r = session.post(
+            f"http://{check_request.hostname}:{TB_API_PORT}/api/comment",
+            headers={'User-Agent': user_agent, TB_AUTH_HEADER: auth_token}
+        )
+
+    return None
 
 
 if __name__ == "__main__":
