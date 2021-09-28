@@ -1,4 +1,4 @@
-source "virtualbox-iso" "sandbox" {
+source "virtualbox-iso" "studio" {
   guest_os_type = "Ubuntu_64"
   iso_url = "http://releases.ubuntu.com/20.04/ubuntu-20.04.3-live-server-amd64.iso"
   ssh_username = "packer"
@@ -7,7 +7,7 @@ source "virtualbox-iso" "sandbox" {
 
   memory = 4096
 
-  shutdown_command = "echo 'packer@docker.sandbox.2021.ctf.hitb.org' | sudo -S shutdown -P now"
+  shutdown_command = "echo 'packer@packer' | sudo -S shutdown -P now"
 
   export_opts = [
     "--manifest",
@@ -15,10 +15,15 @@ source "virtualbox-iso" "sandbox" {
     "--description", "Studio",
     "--version", "1.0.0"
   ]
+
+  headless = true
 }
 
 build {
-  sources = ["sources.virtualbox-iso.sandbox"]
+  ssh_username = "packer"
+  ssh_password = "packer"
+  
+  sources = ["sources.virtualbox-iso.studio"]
 
   provisioner "file" {
     source = "keys/id_rsa.pub"
@@ -53,7 +58,7 @@ build {
       "while ps -opid= -C apt-get > /dev/null; do sleep 1; done",
     ]
   }
-  
+
   provisioner "file" {
     source = "../container-svc/"
     destination = "/home/studio/"
