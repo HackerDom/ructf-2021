@@ -42,7 +42,7 @@ build {
       "while ps -opid= -C apt-get > /dev/null; do sleep 1; done",
 
       # Install ssl
-      "sudo apt install libssl-dev:i386",
+      "sudo apt install -y -q libssl-dev:i386",
       # Wait apt-get lock
       "while ps -opid= -C apt-get > /dev/null; do sleep 1; done",
     ]
