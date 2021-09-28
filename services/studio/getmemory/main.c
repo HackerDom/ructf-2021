@@ -72,7 +72,7 @@ hex2str(const unsigned char * hex, int hex_len)
     return str;
 }
 
-int create_key(long long job_id, char ** key) {
+int create_key(long long job_id, char * key_path, char ** key) {
     struct stat secret_st;
     int secret_fd;
     void *secret_addr;
@@ -83,7 +83,7 @@ int create_key(long long job_id, char ** key) {
     unsigned char *key_bytes = NULL;
     unsigned int key_bytes_len = 0;
 
-    if ((secret_fd = open("private.key", O_RDONLY, S_IRUSR)) < 0)
+    if ((secret_fd = open(key_path, O_RDONLY, S_IRUSR)) < 0)
     {
         perror("Error in private key file opening");
         return EXIT_FAILURE;
@@ -115,14 +115,14 @@ int create_key(long long job_id, char ** key) {
 }
 
 
-int main_internal(uint64_t res_size, long long file_id)
+int main_internal(uint64_t res_size, long long file_id, char * key_path)
 {
     int fd, rc;
     char *key;
 
     void *addr;
 
-    rc = create_key(file_id, &key);
+    rc = create_key(file_id, key_path, &key);
     if (rc != 0) {
         perror("create_key_fail");
         return rc;
@@ -144,22 +144,17 @@ int main_internal(uint64_t res_size, long long file_id)
 
     //sleep(9999999);
    
-    printf("writing to file...\n");
-    fflush(stdout);
     print_buffer(addr, res_size);
-    puts("Wrote to file!");
 
     return 0;
 }
 
 int main(int argc, char *argv[]) {
-    if(argc<=1) {         printf("You did not feed me arguments, I will die now :( ...\n");         exit(1);      }
+    if(argc<=3) {         printf("usage: [bin] job_id res_size /path/to/key\n");         exit(1);      }
     int job_id = atoi(argv[1]);
     char* endPtr;
     uint64_t storage_size = strtoull(argv[2], &endPtr, 10);
-    printf("%lld", storage_size);
-    fflush(stdout);
-    main_internal(storage_size, job_id);
+    main_internal(storage_size, job_id, argv[3]);
 
     return 0;
 }

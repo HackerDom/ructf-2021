@@ -44,7 +44,7 @@ hex2str(const unsigned char * hex, int hex_len)
     return str;
 }
 
-int create_key(long long job_id, char ** key) {
+int create_key(long long job_id, char * key_path, char ** key) {
     struct stat secret_st;
     int secret_fd;
     void *secret_addr;
@@ -55,7 +55,7 @@ int create_key(long long job_id, char ** key) {
     unsigned char *key_bytes = NULL;
     unsigned int key_bytes_len = 0;
 
-    if ((secret_fd = open("private.key", O_RDONLY, S_IRUSR)) < 0)
+    if ((secret_fd = open(key_path, O_RDONLY, S_IRUSR)) < 0)
     {
         perror("Error in private key file opening");
         return EXIT_FAILURE;
@@ -90,11 +90,12 @@ int main(int argc, char *argv[]) {
     int fd, rc;
     long long job_id;
     char *key;
+    char *key_path;
 
-    if(argc<=1) {         printf("You did not feed me arguments, I will die now :( ...\n");         exit(1);      }
+    if(argc<=2) {         printf("usage: [bin] job_id /path/to/key\n");         exit(1);      }
     job_id = atoll(argv[1]);
 
-    rc = create_key(job_id, &key);
+    rc = create_key(job_id, argv[2], &key);
     if (rc != 0) {
         perror("create_key");
         return rc;
