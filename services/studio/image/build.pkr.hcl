@@ -1,9 +1,10 @@
 source "virtualbox-iso" "studio" {
-  guest_os_type = "Ubuntu_64"
-  iso_url = "http://releases.ubuntu.com/20.04/ubuntu-20.04.3-live-server-amd64.iso"
+  guest_os_type = "Debian_64"
+  iso_url = "debian-10.10.0-amd64-netinst.iso"
+  iso_checksum = "md5:c7d0e562e589e853b5d00563b4311720"
+  
   ssh_username = "packer"
   ssh_password = "packer"
-  iso_checksum = "sha1:a6077cb573271ec3c85f9d8abb60c60471dcb73b"
 
   memory = 4096
 
