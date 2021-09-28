@@ -21,8 +21,8 @@ build {
   sources = ["sources.virtualbox-iso.sandbox"]
 
   provisioner "file" {
-    source = "../keys/id_rsa.pub"
-    destination = "~/id_rsa.pub"
+    source = "keys/id_rsa.pub"
+    destination = "~/.ssh/id_rsa.pub"
   }
 
   provisioner "shell" {
