@@ -116,6 +116,10 @@ func AllocMemory(jobId string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	err = cmd.Wait()
+	if err != nil {
+		return "", err
+	}
 
 	return outputBuf.String(), nil
 }
@@ -126,6 +130,11 @@ func GetMemory(out string) (string, error) {
 	outputBuf := bytes.NewBuffer(nil)
 	cmd.Stdout = outputBuf
 	err := cmd.Start()
+	if err != nil {
+		return "", err
+	}
+
+	err = cmd.Wait()
 	if err != nil {
 		return "", err
 	}
