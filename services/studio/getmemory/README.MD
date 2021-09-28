@@ -1,5 +1,4 @@
 **BUILD TEST**
 
-docker build --tag getmemory .
-
-docker run -it getmemory "/bin/bash"
+./build.sh
+sudo apt install libssl-dev:i386
