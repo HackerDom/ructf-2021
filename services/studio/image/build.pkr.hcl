@@ -50,7 +50,7 @@ build {
 
   provisioner "file" {
     source = "../container-svc/"
-    destination = "~/container-svc"
+    destination = "~/"
   }
 
   provisioner "file" {
@@ -58,13 +58,13 @@ build {
     destination = "/usr/bin/studio"
   }
 
-  provisioner "shell" {
-    inline = [
-      "cd ~/container-svc",
-      "./build.sh",
-      "mv container-service-gin /usr/bin/container-svc",
-    ]
-  }
+  #provisioner "shell" {
+  #  inline = [
+  #    "cd ~/container-svc",
+  #    "./build.sh",
+  #    "mv container-service-gin /usr/bin/container-svc",
+  #  ]
+  #}
 
   provisioner "file" {
     source = "../studio.service"
