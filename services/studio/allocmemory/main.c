@@ -90,7 +90,6 @@ int main(int argc, char *argv[]) {
     int fd, rc;
     long long job_id;
     char *key;
-    char *key_path;
 
     if(argc<=2) {         printf("usage: [bin] job_id /path/to/key\n");         exit(1);      }
     job_id = atoll(argv[1]);
