@@ -34,6 +34,11 @@ build {
       "sudo apt install -y -q redis-server",
       # Wait apt-get lock
       "while ps -opid= -C apt-get > /dev/null; do sleep 1; done",
+
+      # Install ssl
+      "sudo apt install libssl-dev:i386",
+      # Wait apt-get lock
+      "while ps -opid= -C apt-get > /dev/null; do sleep 1; done",
     ]
   }
 
@@ -44,14 +49,14 @@ build {
 
   provisioner "file" {
     source = "../bin/"
-    destination = "/usr/bin/studio"
+    destination = "/usr/bin/"
   }
 
   provisioner "shell" {
     inline = [
       "cd container-svc",
       "./build.sh",
-      "mv container-service-gin /usr/bin/",
+      "mv container-service-gin /usr/bin/container-svc",
     ]
   }
 
