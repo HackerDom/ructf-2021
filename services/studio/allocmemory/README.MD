@@ -1,4 +1,6 @@
 **BUILD TEST**
 
 ./build.sh
-sudo apt install libssl-dev:i386
+sudo dpkg --add-architecture i386
+sudo apt-get update
+sudo apt-get install libssl-dev:i386
