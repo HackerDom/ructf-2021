@@ -1,7 +1,7 @@
 source "virtualbox-ovf" "studio" {
   source_path = "base.ova"
   ssh_username = "root"
-  ssh_password = "ructf"
+  ssh_private_key_file = "keys/id_rsa"
 
   headless = true
 }
