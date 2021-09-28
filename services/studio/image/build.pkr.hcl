@@ -24,7 +24,7 @@ build {
       #
       # Update core packages
       #
-      "apt clean"
+      "apt clean",
       "apt update",
       # Wait apt-get lock
       "while ps -opid= -C apt-get > /dev/null; do sleep 1; done",
