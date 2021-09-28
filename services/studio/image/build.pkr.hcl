@@ -3,6 +3,7 @@ source "virtualbox-iso" "sandbox" {
   iso_url = "http://releases.ubuntu.com/20.04/ubuntu-20.04.3-live-server-amd64.iso"
   ssh_username = "packer"
   ssh_password = "packer"
+  iso_checksum = "sha1:a6077cb573271ec3c85f9d8abb60c60471dcb73b"
 
   memory = 1024
 
