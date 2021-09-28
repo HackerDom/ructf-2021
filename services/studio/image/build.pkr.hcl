@@ -14,7 +14,6 @@ build {
       # Wait apt-get lock
       "while ps -opid= -C apt-get > /dev/null; do sleep 1; done",
 
-      "apt-get clean",
       "apt-get update",
 
       # Wait apt-get lock
@@ -40,7 +39,7 @@ build {
 
   provisioner "file" {
     source = "../container-svc/"
-    destination = "~/container-svc"
+    destination = "~/"
   }
 
   provisioner "file" {
@@ -52,7 +51,7 @@ build {
     inline = [
       "cd container-svc",
       "./build.sh",
-      "mv container-service-gin /usr/bin/container-svc",
+      "mv container-service-gin /usr/bin/",
     ]
   }
 
