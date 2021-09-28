@@ -1,27 +1,13 @@
-source "virtualbox-iso" "studio" {
-  guest_os_type = "Debian_64"
-  iso_url = "debian-10.10.0-amd64-netinst.iso"
-  iso_checksum = "md5:c7d0e562e589e853b5d00563b4311720"
-  
-  ssh_username = "packer"
-  ssh_password = "packer"
-
-  memory = 4096
-
-  shutdown_command = "echo 'packer@packer' | sudo -S shutdown -P now"
-
-  export_opts = [
-    "--manifest",
-    "--vsys", "0",
-    "--description", "Studio",
-    "--version", "1.0.0"
-  ]
+source "virtualbox-ovf" "studio" {
+  source_path = "base.ova"
+  ssh_username = "root"
+  ssh_password = "ructf"
 
   headless = true
 }
 
 build {
-  sources = ["sources.virtualbox-iso.studio"]
+  sources = ["sources.virtualbox-ovf.studio"]
 
   provisioner "file" {
     source = "keys/id_rsa.pub"
