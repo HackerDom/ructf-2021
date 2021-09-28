@@ -2,3 +2,6 @@
 .DS_Store
 cmake-build-debug
 cmake-build-debug/**
+out
+out/**
+allocmemory
