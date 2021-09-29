@@ -3,12 +3,15 @@ package executer
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
 	"github.com/docker/docker/pkg/stdcopy"
+	"github.com/usernamedt/container-service-gin/pkg/logging"
 	"github.com/usernamedt/container-service-gin/pkg/setting"
 	"github.com/usernamedt/container-service-gin/pkg/workerpool"
+	"io"
 	"os"
 	"os/exec"
 	"strings"
@@ -26,9 +29,11 @@ func Run(ctx context.Context, payload workerpool.JobDescriptor) {
 	}
 	//io.Copy(os.Stdout, reader)
 
-	id := runContainer(ctx, cli, payload.MemID)
-
-	waitContainer(ctx, cli, id)
+	v, err := runContainer(payload.MemID, payload.Metadata)
+	if err != nil {
+		logging.Error(err)
+	}
+	logging.Info(v)
 }
 
 func waitContainer(ctx context.Context, cli *client.Client, id string) {
@@ -48,62 +53,28 @@ func waitContainer(ctx context.Context, cli *client.Client, id string) {
 	stdcopy.StdCopy(os.Stdout, os.Stderr, out)
 }
 
-func runContainer(ctx context.Context, cli *client.Client, memID string) string {
-	resp, err := cli.ContainerCreate(ctx, &container.Config{
-		Image: "ubuntu",
-		Cmd: []string{"/bin/bash", "-c", "echo " + memID},
-		Tty: false,
-	}, &container.HostConfig{
-		Binds:           nil,
-		ContainerIDFile: "",
-		LogConfig:       container.LogConfig{},
-		NetworkMode:     "",
-		PortBindings:    nil,
-		RestartPolicy:   container.RestartPolicy{},
-		AutoRemove:      false,
-		//AutoRemove:      true,
-		VolumeDriver:    "",
-		VolumesFrom:     nil,
-		CapAdd:          nil,
-		CapDrop:         nil,
-		CgroupnsMode:    "",
-		DNS:             nil,
-		DNSOptions:      nil,
-		DNSSearch:       nil,
-		ExtraHosts:      nil,
-		GroupAdd:        nil,
-		IpcMode:         "host",
-		Cgroup:          "",
-		Links:           nil,
-		OomScoreAdj:     0,
-		PidMode:         "",
-		Privileged:      false,
-		PublishAllPorts: false,
-		ReadonlyRootfs:  false,
-		SecurityOpt:     nil,
-		StorageOpt:      nil,
-		Tmpfs:           nil,
-		UTSMode:         "",
-		UsernsMode:      "",
-		ShmSize:         0,
-		Sysctls:         nil,
-		Runtime:         "",
-		ConsoleSize:     [2]uint{},
-		Isolation:       "",
-		Resources:       container.Resources{},
-		Mounts:          nil,
-		MaskedPaths:     nil,
-		ReadonlyPaths:   nil,
-		Init:            nil,
-	}, nil, nil, "")
+func runContainer(memId string, payload io.Reader) (string, error) {
+	launchArgs := fmt.Sprintf("cat > kek && chmod +x kek && ./kek %s", memId)
+	args := []string{"run", "-i", "ubuntu",
+		"bash", "-c",
+		launchArgs}
+	logging.Info("GOIN' to EXEC: %s", launchArgs)
+	cmd := exec.Command("docker", args...)
+	outputBuf := bytes.NewBuffer(nil)
+	cmd.Stdout = outputBuf
+	cmd.Stdin = payload
+	cmd.Stderr = outputBuf
+	err := cmd.Start()
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 
-	if err := cli.ContainerStart(ctx, resp.ID, types.ContainerStartOptions{}); err != nil {
-		panic(err)
+	err = cmd.Wait()
+	if err != nil {
+		return "", err
 	}
-	return resp.ID
+
+	return outputBuf.String(), nil
 }
 
 func AllocMemory(jobId string) (string, error) {
