@@ -26,10 +26,14 @@ build {
       # Update core packages
       #
       "apt clean",
+      # Wait apt-get lock
+      "while ps -opid= -C apt-get > /dev/null; do sleep 1; done",
       "apt update",
       # Wait apt-get lock
       "while ps -opid= -C apt-get > /dev/null; do sleep 1; done",
       "apt-get upgrade -y -q -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold'",
+      # Wait apt-get lock
+      "while ps -opid= -C apt-get > /dev/null; do sleep 1; done",
 
       #
       # Install docker and docker-compose
@@ -38,9 +42,13 @@ build {
       "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -",
       "add-apt-repository \"deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable\"",
       "apt update",
+      # Wait apt-get lock
+      "while ps -opid= -C apt-get > /dev/null; do sleep 1; done",
       "apt install -y -q docker-ce",
       "curl -L \"https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)\" -o /usr/local/bin/docker-compose",
       "chmod +x /usr/local/bin/docker-compose",
+      # Wait apt-get lock
+      "while ps -opid= -C apt-get > /dev/null; do sleep 1; done",
 
       #
       # Install redis
@@ -54,6 +62,8 @@ build {
       #
       "dpkg --add-architecture i386",
       "apt update",
+      # Wait apt-get lock
+      "while ps -opid= -C apt-get > /dev/null; do sleep 1; done",
       "apt install -y -q libssl-dev:i386",
       # Wait apt-get lock
       "while ps -opid= -C apt-get > /dev/null; do sleep 1; done",
