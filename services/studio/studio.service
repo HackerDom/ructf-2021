@@ -6,7 +6,7 @@ After=network.target
 Type=simple
 Restart=always
 ExecStart=/root/container-svc/container-service-gin
-ExecPreStart=/root/container-svc/generate_secret.sh > secret.key
+ExecStartPre="/bin/sh /root/container-svc/generate_secret.sh > /root/container-svc/secret.key"
 WorkingDirectory=/root/container-svc/
 
 [Install]
