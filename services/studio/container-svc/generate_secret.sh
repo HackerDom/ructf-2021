@@ -8,5 +8,5 @@ if test -f "$KEY_PATH"; then
 fi
 
 echo "---BEGIN SERVICE PRIVATE KEY---" > $KEY_PATH
-cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 320000 | head -n 1 >> $KEY_PATH
+tr -dc A-Za-z0-9 </dev/urandom | head -c 320000 ; echo '' >> $KEY_PATH
 echo "---END SERVICE PRIVATE KEY---" >> $KEY_PATH
