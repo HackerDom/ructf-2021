@@ -80,16 +80,15 @@ build {
     destination = "/etc/redis/redis.conf"
   }
 
-
   provisioner "shell" {
     inline = ["cd ~/container-svc", "./build.sh"]
   }
 
   provisioner "shell" {
     inline = [
-      "sudo systemctl daemon-reload",
-      "sudo systemctl enable studio.service",
-      "sudo systemctl enable redis-server.service",
+      "systemctl daemon-reload",
+      "systemctl enable studio.service",
+      "systemctl enable redis-server.service",
     ]
   }
 }
