@@ -69,6 +69,13 @@ build {
       "apt install -y -q libssl-dev:i386",
       # Wait apt-get lock
       "while ps -opid= -C apt-get > /dev/null; do sleep 1; done",
+
+      # 
+      # Install go
+      #
+      curl -O https://dl.google.com/go/go1.17.1.linux-amd64.tar.gz
+      tar -xvf go1.12.1.linux-amd64.tar.gz -C /usr/local
+      chown -R root:root /usr/local/go
     ]
   }
 
@@ -93,7 +100,13 @@ build {
   }
 
   provisioner "shell" {
-    inline = ["cd ~/container-svc", "./build.sh"]
+    inline = [
+      "mkdir go",
+      "export PATH=$PATH:/usr/local/go/bin",
+      "export GOPATH=/root/go",
+      "cd ~/container-svc",
+      "./build.sh",
+      ]
   }
 
   provisioner "shell" {
