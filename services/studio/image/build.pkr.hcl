@@ -112,7 +112,7 @@ build {
   provisioner "shell" {
     inline = [
       "systemctl daemon-reload",
-      "systemctl start studio.service",
+      #"systemctl start studio.service",
       "systemctl enable studio.service",
       "systemctl enable redis-server.service",
     ]
