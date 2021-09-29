@@ -59,10 +59,3 @@
   with_items:
     - {src: "00-header", dest: "/etc/update-motd.d/00-header"}
     - {src: "10-help-text", dest: "/etc/update-motd.d/10-help-text"}
-
-- name: Copy ructf systemd unit template
-  copy:
-    src: ructf@.service
-    dest: /etc/systemd/system/ructf@.service
-    mode: 0644
-    owner: root
