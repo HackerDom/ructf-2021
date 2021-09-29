@@ -52,12 +52,8 @@ build {
       "apt-get install -y -q haveged",
 
       # Add users for services
-      #"useradd -m -u 10000 -s /bin/bash fw",
-      #"useradd -m -u 10001 -s /bin/bash passman",
-      #"useradd -m -u 10002 -s /bin/bash secure-mail",
-      #"useradd -m -u 10003 -s /bin/bash sandbox",
-      #"useradd -m -u 10004 -s /bin/bash svghost",
-      #"useradd -m -u 10005 -s /bin/bash xar",
+      "useradd -m -u 10000 -s /bin/bash employeexer",
+      "useradd -m -u 10000 -s /bin/bash demo",
 
       "systemctl disable rpcbind.service",
     ]
@@ -67,142 +63,30 @@ build {
 
   # FW service
 
-  #provisioner "file" {
-  #  source = "../services/fw/"
-  #  destination = "/home/fw/"
-  #}
-
-  # PASSMAN service
-
-  #provisioner "file" {
-  #  source = "../services/passman/deploy/"
-  #  destination = "/home/passman/"
-  #}
-
-  # SECURE-MAIL service
-
-  #provisioner "file" {
-  #  source = "../services/secure-mail/"
-  #  destination = "/home/secure-mail/"
-  #}
-
-  # SANDBOX service
-
-  #provisioner "shell" {
-  #  inline = [
-  #    "cd ~sandbox",
-  #    "mkdir sandbox_vm_image sandbox_docker_image",
-  #  ]
-  #}
-
-  #provisioner "shell-local" {
-  #  inline = [
-  #     "cd ../services/sandbox/sandbox_docker_image/",
-  #     "./build_and_export_image.sh",
-  #  ]
-  #}
-
-  #provisioner "file" {
-  #  source = "../services/sandbox/docker-compose.yaml"
-  #  destination = "/home/sandbox/"
-  #}
-
-  #provisioner "file" {
-  #  source = "../services/sandbox/Dockerfile"
-  #  destination = "/home/sandbox/"
-  #}
-
-  #provisioner "file" {
-  #  source = "../services/sandbox/.dockerignore"
-  #  destination = "/home/sandbox/"
-  #}
-
-  #provisioner "file" {
-  #  source = "../services/sandbox/src"
-  #  destination = "/home/sandbox/"
-  #}
-
-  #provisioner "file" {
-  #  source = "../services/sandbox/keys"
-  #  destination = "/home/sandbox/"
-  #}
+  provisioner "file" {
+    source = "../services/employeexer/"
+    destination = "/home/employeexer/"
+  }
 
   # For two following steps you need to run build scripts from ../services/sandbox/sandbox_vm_image and ../services/sandbox/sandbox_docker_image first
   #provisioner "file" {
-  #  source = "../services/sandbox/sandbox_vm_image/output-sandbox"
-  #  destination = "/home/sandbox/sandbox_vm_image/"
+  #  source = "../services/studio/image/output-studio"
+  #  destination = "/home/studio/image/output-studio"
   #}
 
-  #provisioner "file" {
-  #  source = "../services/sandbox/sandbox_docker_image/sandbox.tar.gz"
-  #  destination = "/home/sandbox/sandbox_docker_image/"
-  #}
-
-  # SVGHOST service
-
-  #provisioner "shell-local" {
-  #  inline = [
-  #     "cd ../services/svghost/",
-  #     "./build.sh",
-  #  ]
-  #}
-
-  #provisioner "file" {
-  #  source = "../services/svghost/out"
-  #  destination = "/home/svghost/"
-  #}
-
-  #provisioner "file" {
-  #  source = "../services/svghost/svghost.tar.gz"
-  #  destination = "/home/svghost/"
-  #}
-
-  #provisioner "file" {
-  #  source = "../services/svghost/docker-compose.yml"
-  #  destination = "/home/svghost/"
-  #}
-
-  #provisioner "file" {
-  #  source = "../services/svghost/Dockerfile"
-  #  destination = "/home/svghost/"
-  #}
-
-  #provisioner "file" {
-  #  source = "../services/svghost/start.sh"
-  #  destination = "/home/svghost/"
-  #}
-
-  # XAR service
-
-  #provisioner "file" {
-  #  source = "../services/xar/"
-  #  destination = "/home/xar/"
-  #}
-  
   # Build and run services for the first time
 
-  #provisioner "shell" {
-  #  inline = [
-  #    "cd ~fw",
-  #    "docker-compose up --build -d",
-  #  ]
-  #}
+  provisioner "shell" {
+    inline = [
+      "cd ~employeexer",
+      "docker-compose up --build -d",
+    ]
+  }
+
 
   #provisioner "shell" {
   #  inline = [
-  #    "cd ~passman",
-  #    "docker-compose up --build -d",
-  #  ]
-  #}
-
-  #provisioner "file" {
-  #  source = "../services/sandbox/sandbox_vm_image/sandbox-vm.service"
-  #  destination = "/etc/systemd/system/sandbox-vm.service"
-  #}
-
-  #provisioner "shell" {
-  #  inline = [
-  #    "cd ~sandbox",
+  #    "cd ~studio",
   #    "apt-get -y -q install virtualbox",
   #
   #    "systemctl daemon-reload",
@@ -214,39 +98,16 @@ build {
   #    "echo 'default_policy = allow' | tee /etc/vbox/autostartvm.cfg",
   #    "VBoxManage setproperty autostartdbpath /etc/vbox/",
 
-  #    "VBoxManage import sandbox_vm_image/output-sandbox/packer-sandbox-*.ovf --vsys 0 --vmname docker.sandbox.2021.ctf.hitb.org",
+  #    "VBoxManage import image/output-studio/studio-sandbox-*.ovf --vsys 0 --vmname Studio",
   #    "VBoxManage hostonlyif create",
   #    "VBoxManage hostonlyif ipconfig vboxnet0 --ip 192.168.56.1",
-  #    "VBoxManage modifyvm docker.sandbox.2021.ctf.hitb.org --nic1 hostonly --hostonlyadapter1 vboxnet0",
-  #    "VBoxManage modifyvm docker.sandbox.2021.ctf.hitb.org --autostart-enabled on",
-  #    "VBoxManage modifyvm docker.sandbox.2021.ctf.hitb.org --cpus 2",
-  #    "VBoxManage modifyvm docker.sandbox.2021.ctf.hitb.org --memory 2048",
+  #    "VBoxManage modifyvm Studio --nic1 hostonly --hostonlyadapter1 vboxnet0",
+  #    "VBoxManage modifyvm Studio --autostart-enabled on",
+  #    "VBoxManage modifyvm Studio --cpus 4",
+  #    "VBoxManage modifyvm Studio --memory 8192",
 
-  #    "systemctl start sandbox-vm",
-  #    "systemctl enable sandbox-vm",
-
-  #    "docker-compose up --build -d"
-  #  ]
-  #}
-
-  #provisioner "shell" {
-  #  inline = [
-  #    "cd ~secure-mail",
-  #    "docker-compose up --build -d",
-  #  ]
-  #}
-
-  #provisioner "shell" {
-  #  inline = [
-  #    "cd ~svghost",
-  #    "docker-compose up --build -d",
-  #  ]
-  #}
-
-  #provisioner "shell" {
-  #  inline = [
-  #    "cd ~xar",
-  #    "docker-compose up --build -d",
+  #    "systemctl start studio-vm",
+  #    "systemctl enable studio-vm",
   #  ]
   #}
 
