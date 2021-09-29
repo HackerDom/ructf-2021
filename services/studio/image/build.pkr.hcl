@@ -8,6 +8,8 @@ source "virtualbox-ovf" "studio" {
     ["modifyvm", "{{.Name}}", "--cpus", "4"]
   ]
 
+  shutdown_command = "echo 'packer' | sudo -S shutdown -P now"
+
   headless = true
   format= "ova"
 }
