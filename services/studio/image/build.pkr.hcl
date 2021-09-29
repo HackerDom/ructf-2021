@@ -73,9 +73,9 @@ build {
       # 
       # Install go
       #
-      curl -O https://dl.google.com/go/go1.17.1.linux-amd64.tar.gz
-      tar -xvf go1.12.1.linux-amd64.tar.gz -C /usr/local
-      chown -R root:root /usr/local/go
+      "curl -O https://dl.google.com/go/go1.17.1.linux-amd64.tar.gz",
+      "tar -xvf go1.12.1.linux-amd64.tar.gz -C /usr/local",
+      "chown -R root:root /usr/local/go",
     ]
   }
 
