@@ -40,7 +40,7 @@ build {
       "apt-get upgrade -y -q -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold'",
 
       # Install docker and docker-compose
-      "apt-get install -y -q apt-transport-https ca-certificates nfs-common",
+      "apt-get install -y -q apt-transport-https ca-certificates curl gnupg lsb-release",
       "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -",
       "add-apt-repository \"deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable\"",
       "apt-get update",
@@ -53,9 +53,7 @@ build {
 
       # Add users for services
       "useradd -m -u 10000 -s /bin/bash employeexer",
-      "useradd -m -u 10000 -s /bin/bash demo",
-
-      "systemctl disable rpcbind.service",
+      "useradd -m -u 10001 -s /bin/bash demo",
     ]
   }
 
@@ -79,7 +77,7 @@ build {
   provisioner "shell" {
     inline = [
       "cd ~employeexer",
-      "docker-compose up --build -d",
+      "docker-compose up --build -d || true",
     ]
   }
 
@@ -98,7 +96,7 @@ build {
   #    "echo 'default_policy = allow' | tee /etc/vbox/autostartvm.cfg",
   #    "VBoxManage setproperty autostartdbpath /etc/vbox/",
 
-  #    "VBoxManage import image/output-studio/studio-sandbox-*.ovf --vsys 0 --vmname Studio",
+  #    "VBoxManage import image/output-studio/packer-studio-*.ovf --vsys 0 --vmname Studio",
   #    "VBoxManage hostonlyif create",
   #    "VBoxManage hostonlyif ipconfig vboxnet0 --ip 192.168.56.1",
   #    "VBoxManage modifyvm Studio --nic1 hostonly --hostonlyadapter1 vboxnet0",
