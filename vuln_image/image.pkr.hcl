@@ -57,6 +57,26 @@ build {
     ]
   }
 
+  ### Ructf motd
+  provisioner "shell" {
+    inline = [
+      # Wait apt-get lock
+      "rm -rf /etc/update-motd/*",
+    ]
+  }
+  provisioner "file" {
+    source = "roles/base_image/files/ructf-banner.txt"
+    destination = "/ructf-banner.txt"
+  }
+  provisioner "file" {
+    source = "roles/base_image/files/00-header"
+    destination = "/etc/update-motd/00-header"
+  }
+  provisioner "file" {
+    source = "roles/base_image/files/10-help-text"
+    destination = "/etc/update-motd/10-help-text"
+  }
+
   ### Copy services
 
   # FW service
@@ -80,7 +100,6 @@ build {
       "docker-compose up --build -d || true",
     ]
   }
-
 
   #provisioner "shell" {
   #  inline = [
