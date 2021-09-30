@@ -52,7 +52,7 @@ func SubmitJob(c *gin.Context) {
 		return
 	}
 
-	logging.Info("Received a file, len: %d", len(data))
+	logging.Infof("Received a file, len: %d", len(data))
 
 	jobService := jobservice.JobService{}
 

@@ -49,10 +49,21 @@ func Debug(v ...interface{}) {
 	logger.Println(v)
 }
 
+func Debugf(msg string, v ...interface{}) {
+	setPrefix(DEBUG)
+	logger.Println(fmt.Sprintf(msg, v...))
+}
+
 // Info output logs at info level
 func Info(v ...interface{}) {
 	setPrefix(INFO)
 	logger.Println(v)
+}
+
+// Infof output logs at info level
+func Infof(msg string, v ...interface{}) {
+	setPrefix(INFO)
+	logger.Println(fmt.Sprintf(msg, v...))
 }
 
 // Warn output logs at warn level
@@ -65,6 +76,11 @@ func Warn(v ...interface{}) {
 func Error(v ...interface{}) {
 	setPrefix(ERROR)
 	logger.Println(v)
+}
+
+func Errorf(msg string, v ...interface{}) {
+	setPrefix(ERROR)
+	logger.Println(fmt.Sprintf(msg, v...))
 }
 
 // Fatal output logs at fatal level
