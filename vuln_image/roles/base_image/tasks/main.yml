@@ -37,7 +37,7 @@
 - name: Fix base image
   file: path='{{ item }}' state=absent
   with_items:
-    - /ructf-banner.txt
+    - /ructfe-banner.txt
     - /etc/systemd/system/ructf@.service
 
 - name: Remove Ubuntu MOTD
