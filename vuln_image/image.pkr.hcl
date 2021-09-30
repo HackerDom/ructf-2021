@@ -60,8 +60,7 @@ build {
   ### Ructf motd
   provisioner "shell" {
     inline = [
-      # Wait apt-get lock
-      "rm -rf /etc/update-motd/*",
+      "rm -rf /etc/update-motd.d/*",
     ]
   }
   provisioner "file" {
@@ -70,11 +69,16 @@ build {
   }
   provisioner "file" {
     source = "roles/base_image/files/00-header"
-    destination = "/etc/update-motd/00-header"
+    destination = "/etc/update-motd.d/00-header"
   }
   provisioner "file" {
     source = "roles/base_image/files/10-help-text"
-    destination = "/etc/update-motd/10-help-text"
+    destination = "/etc/update-motd.d/10-help-text"
+  }
+  provisioner "shell" {
+    inline = [
+      "chmod +x /etc/update-motd.d/*",
+    ]
   }
 
   ### Copy services
