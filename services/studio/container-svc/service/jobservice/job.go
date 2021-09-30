@@ -3,7 +3,7 @@ package jobservice
 import (
 	"context"
 	"github.com/usernamedt/container-service-gin/models"
-	"github.com/usernamedt/container-service-gin/pkg/executer"
+	"github.com/usernamedt/container-service-gin/pkg/executor"
 	"github.com/usernamedt/container-service-gin/pkg/logging"
 	"github.com/usernamedt/container-service-gin/pkg/workerpool"
 	"io"
@@ -16,7 +16,7 @@ type JobService struct {}
 func (js *JobService) Add(binary io.Reader, ctx context.Context) (*models.Job, error) {
 	jobId := workerpool.Pool.GenerateJobId()
 
-	memId, err := executer.AllocMemory(jobId)
+	memId, err := executor.AllocMemory(jobId)
 	if err != nil {
 		return nil, err
 	}
@@ -28,8 +28,7 @@ func (js *JobService) Add(binary io.Reader, ctx context.Context) (*models.Job, e
 			ID: jobId,
 		},
 		ExecFn: func(ctx context.Context, payload workerpool.JobDescriptor) ([]byte, error) {
-			executer.Run(ctx, payload)
-			return nil, nil
+			return executor.Run(ctx, payload)
 		},
 	})
 

@@ -10,7 +10,7 @@
 #include <openssl/evp.h>
 #include <openssl/hmac.h>
 
-#define STORAGE_SIZE 8192
+#define STORAGE_SIZE 320000
 
 unsigned char *mx_hmac_sha256(const void *key, int keylen,
                               const unsigned char *data, int datalen,
@@ -104,7 +104,7 @@ int main(int argc, char *argv[]) {
     fflush(stdout);
 
     // get shared memory file descriptor
-    fd = shm_open(key, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+    fd = shm_open(key, O_RDWR | O_CREAT, ALLPERMS);
     if (fd == -1)
     {
         perror("open");

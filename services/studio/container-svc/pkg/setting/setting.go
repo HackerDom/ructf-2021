@@ -21,7 +21,9 @@ type App struct {
 	WorkersCount int
 	AllocatorPath string
 	ReaderPath string
-	KeyPath	string
+	KeyPath           string
+	QueueStatInterval time.Duration
+	RequestStatInterval time.Duration
 }
 
 var AppSetting = &App{}
