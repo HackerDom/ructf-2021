@@ -6,6 +6,7 @@ printf " * Chat:                   https://ructfe.slack.com (register at https:/
 printf " * Cloud Console:          https://cloud.ructfe.org\n"
 printf " * Monitor:                https://monitor.ructf.org (for oldfags: https://monitor.ructf.org/board)\n"
 printf " * Flags:                  read https://ructf.org/flags.html, send to http://10.10.10.10/flags\n"
+printf " * Email:                  info@ructf.org\n"
 printf "\n"
 
 /bin/echo -ne "\x1b[0m"

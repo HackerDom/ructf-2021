@@ -34,20 +34,34 @@
     install_recommends: false
     update_cache: yes
 
+- name: Fix base image
+  file: path='{{ item }}' state=absent
+  with_items:
+    - /ructf-banner.txt
+    - /etc/systemd/system/ructf@.service
+
 - name: Remove Ubuntu MOTD
   file: path='/etc/update-motd.d/{{ item }}' state=absent
   with_items:
+    - 50-landscape-sysinfo
     - 50-motd-news
     - 80-esm
     - 80-livepatch
+    - 85-fwupd
+    - 88-esm-announce
     - 90-updates-available
+    - 91-contract-ua-esm-status
     - 91-release-upgrade
+    - 92-unattended-upgrades
     - 95-hwe-eol
+    - 97-overlayroot
+    - 98-fsck-at-reboot
+    - 98-reboot-required
 
 - name: Copy banner
   copy:
-    src: ructfe-banner.txt
-    dest: /ructfe-banner.txt
+    src: ructf-banner.txt
+    dest: /ructf-banner.txt
     mode: 0644
 
 - name: Copy MOTD
