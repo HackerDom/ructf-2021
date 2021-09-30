@@ -4,8 +4,6 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/client"
 	"github.com/usernamedt/container-service-gin/pkg/logging"
 	"github.com/usernamedt/container-service-gin/pkg/setting"
 	"github.com/usernamedt/container-service-gin/pkg/workerpool"
@@ -15,16 +13,6 @@ import (
 )
 
 func Run(ctx context.Context, payload workerpool.JobDescriptor) ([]byte, error) {
-	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
-	if err != nil {
-		panic(err)
-	}
-
-	_, err = cli.ImagePull(ctx, "docker.io/library/ubuntu", types.ImagePullOptions{})
-	if err != nil {
-		panic(err)
-	}
-
 	v, err := runContainer(payload.MemID, payload.Metadata)
 	if err != nil {
 		errMsg := fmt.Sprintf("Executor: failed to run the container: %s, %v", v, err)
@@ -80,6 +68,24 @@ func AllocMemory(jobId string) (string, error) {
 
 	return outputBuf.String(), nil
 }
+
+
+func DeallocMemory(jobId string) {
+	args := []string{jobId, setting.AppSetting.KeyPath}
+
+	cmd := exec.Command(setting.AppSetting.DeallocatorPath, args...)
+	outputBuf := bytes.NewBuffer(nil)
+	cmd.Stdout = outputBuf
+	err := cmd.Start()
+	if err != nil {
+		logging.Errorf("Error during dealloc: %v", err)
+	}
+	err = cmd.Wait()
+	if err != nil {
+		logging.Errorf("Error during dealloc: %v", err)
+	}
+}
+
 
 func readResult(out string) (string, error) {
 	args := strings.Split(out, " ")

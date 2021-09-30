@@ -20,6 +20,7 @@ type App struct {
 	JobLifetimeMinutes time.Duration
 	WorkersCount int
 	AllocatorPath string
+	DeallocatorPath string
 	ReaderPath string
 	KeyPath           string
 	QueueStatInterval time.Duration

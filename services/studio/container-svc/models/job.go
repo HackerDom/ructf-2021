@@ -29,7 +29,7 @@ type Job struct {
 	ID     string    `json:"id"`
 	MemID  string    `json:"mem_id"`
 	Status JobStatus `json:"status"`
-	Result []byte	 `json:"result"`
+	Result string	 `json:"result"`
 }
 
 func NewJob(id string, memId string) (*Job, error) {

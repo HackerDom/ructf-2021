@@ -7,8 +7,10 @@
 #define STORAGE_SIZE 320000
 
 int main(int argc, char *argv[]) {
-    int fd, len;
+    int fd;
+    size_t len;
     void * addr;
+    void * p;
 
     if(argc<=1) {         printf("usage: [bin] mem_id\n");         exit(1);      }
 
@@ -21,7 +23,7 @@ int main(int argc, char *argv[]) {
         return 10;
     }
 
-    char * to_write = "abc";
+    char * to_write = "abc2";
 
     // map shared memory to process address space
     addr = mmap(NULL, STORAGE_SIZE, PROT_WRITE, MAP_SHARED, fd, 0);
@@ -31,9 +33,14 @@ int main(int argc, char *argv[]) {
         return 30;
     }
 
-    // place data into memory
+    p = addr;
     len = strlen(to_write);
-    memcpy(addr, to_write, len);
+
+    //write the length of the message to the header
+    memcpy(p, &len, sizeof(size_t));
+    p += sizeof(size_t);
+    //write the data to the memory
+    memcpy(p, to_write, len);
 
     return 0;
 }

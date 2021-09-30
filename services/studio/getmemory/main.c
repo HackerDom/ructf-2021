@@ -115,11 +115,11 @@ int create_key(long long job_id, char * key_path, char ** key) {
 }
 
 
-int main_internal(uint64_t res_size, long long file_id, char * key_path)
+int main_internal(long long file_id, char * key_path)
 {
     int fd, rc;
     char *key;
-
+    uint64_t res_size;
     void *addr;
 
     rc = create_key(file_id, key_path, &key);
@@ -135,7 +135,24 @@ int main_internal(uint64_t res_size, long long file_id, char * key_path)
         return 10;
     }
 
-    addr = mmap(NULL, res_size, PROT_READ, MAP_SHARED, fd, 0);
+    //read header at first
+    addr = mmap(NULL, sizeof(uint64_t), PROT_READ, MAP_SHARED, fd, 0);
+    if (addr == MAP_FAILED)
+    {
+        perror("mmap");
+        return 30;
+    }
+
+    memcpy(&res_size, addr, sizeof(uint64_t));
+
+    rc = munmap(addr, sizeof(uint64_t));
+    if (rc == -1)
+    {
+        perror("munmap");
+        return 40;
+    }
+
+    addr = mmap(NULL, res_size + sizeof(uint64_t), PROT_READ, MAP_SHARED, fd, 0);
     if (addr == MAP_FAILED)
     {
         perror("mmap");
@@ -144,17 +161,22 @@ int main_internal(uint64_t res_size, long long file_id, char * key_path)
 
     //sleep(9999999);
    
-    print_buffer(addr, res_size);
+    print_buffer(addr + sizeof(uint64_t), res_size);
+
+    rc = munmap(addr, res_size + sizeof(uint64_t));
+    if (rc == -1)
+    {
+        perror("munmap");
+        return 40;
+    }
 
     return 0;
 }
 
 int main(int argc, char *argv[]) {
-    if(argc<=3) {         printf("usage: [bin] job_id res_size /path/to/key\n");         exit(1);      }
+    if(argc<=2) {         printf("usage: [bin] job_id /path/to/key\n");         exit(1);      }
     int job_id = atoi(argv[1]);
-    char* endPtr;
-    uint64_t storage_size = strtoull(argv[2], &endPtr, 10);
-    main_internal(storage_size, job_id, argv[3]);
+    main_internal(job_id, argv[2]);
 
     return 0;
 }
