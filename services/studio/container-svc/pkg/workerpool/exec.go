@@ -176,7 +176,7 @@ func Setup() {
 			job := models.Job{
 				ID:     r.Descriptor.ID,
 				Status: status,
-				Result: r.Value,
+				Result: string(r.Value),
 			}
 
 			err := job.Update()

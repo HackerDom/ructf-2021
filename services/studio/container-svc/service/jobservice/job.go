@@ -28,6 +28,7 @@ func (js *JobService) Add(binary io.Reader, ctx context.Context) (*models.Job, e
 			ID: jobId,
 		},
 		ExecFn: func(ctx context.Context, payload workerpool.JobDescriptor) ([]byte, error) {
+			defer executor.DeallocMemory(payload.ID)
 			return executor.Run(ctx, payload)
 		},
 	})
