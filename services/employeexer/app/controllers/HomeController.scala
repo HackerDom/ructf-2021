@@ -1,9 +1,9 @@
 package controllers
 
 import com.google.protobuf.InvalidProtocolBufferException
-import common.{SessionManager, Store, UserManager, UserManagerException}
+import common.{SessionManager, Store, UserManager, UserManagerException, Utils}
 import index.RuntimeIndex
-import org.request.{Employee, Employees, NewEmployee, UserPair}
+import org.request.{Employee, NewEmployee, StringList, StrippedEmployees, UserPair}
 import play.api.libs.json.Json
 import play.api.mvc.{Cookie, _}
 import redis.clients.jedis.JedisPool
@@ -61,29 +61,23 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
     }
   }
 
-  def fetchEmployeeAsOwner(): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
-    withAuth(request, { username =>
+  def fetchEmployees(): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
+    withAuth(request, { _ =>
       withRequiredParam("employee_ids", request, { rawEmployee_ids =>
         val employeeIds = rawEmployee_ids.split(',')
-
-        val employees = employeeIds.flatMap { employee_id =>
-          Context.store.get(employee_id) match {
+        println(employeeIds.mkString(", "))
+        val employees = employeeIds.flatMap { employeeId =>
+          println(employeeId)
+          Context.store.get(employeeId) match {
             case Some(rawEmployee) =>
               Context.parse(Employee.parseFrom, new ByteArrayInputStream(rawEmployee)) match {
-                case Some(employee) => if (employee.owner == username) Some(employee) else None
+                case Some(employee) => Some(Utils.stripEmployee(employee))
                 case None => None
               }
             case None => None
           }
         }
-
-        if (employees.length == employeeIds.length)
-          Ok(new Employees(employees).toByteArray)
-        else {
-          val existingIds = employees.map { employee => employee.id}.toSet
-          val nonExistingIds = employeeIds.filter { employee => !existingIds.contains(employee)}
-          BadRequest(s"Incorrect employee ids: ${nonExistingIds.mkString(", ")}")
-        }
+        Ok(new StrippedEmployees(employees).toByteArray)
       })
     })
   }
@@ -91,6 +85,26 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
   def addEmployeePage(): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
     withAuth(request, { username =>
       Ok(views.html.new_employee("Add new employee", username))
+    })
+  }
+
+  def ownerViewPage(): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
+    withAuth(request, { username =>
+      withRequiredParam("employee_id", request, { employeeId =>
+        val employee = Context.store.get(employeeId) match {
+          case Some(rawEmployee) =>
+            Context.parse(Employee.parseFrom, new ByteArrayInputStream(rawEmployee)) match {
+              case Some(employee) => if (employee.owner == username) Some(employee) else None
+              case None => None
+            }
+          case None => None
+        }
+
+        employee match {
+          case Some(value) => Ok(views.html.owner_view("Watch full employee info", username, value))
+          case None => BadRequest(s"Incorrect employee id: $employeeId")
+        }
+      })
     })
   }
 
@@ -163,7 +177,7 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
       request.getQueryString("q") match {
         case Some(q) =>
           val ids = Context.index.search(q)
-          Ok(Json.toJson(if (ids.isEmpty) "[]" else "[\"" + ids.mkString("\", \"") + "\"]"))
+          Ok(new StringList(ids).toByteArray)
         case None => BadRequest("Missing required parameter 'q'")
       }
     })

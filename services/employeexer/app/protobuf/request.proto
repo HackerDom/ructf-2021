@@ -9,8 +9,22 @@ message UserPair {
 }
 
 
-message Employees {
-  repeated Employee employees = 1;
+message StrippedEmployee {
+  required string id = 1;
+  required string owner = 2;
+  required FullName name = 3;
+  required string description = 4;
+  repeated string tags = 5;
+}
+
+
+message StringList {
+  repeated string strings = 1;
+}
+
+
+message StrippedEmployees {
+  repeated StrippedEmployee strippedEmployees = 1;
 }
 
 

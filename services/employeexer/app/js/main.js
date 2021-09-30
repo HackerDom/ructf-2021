@@ -114,6 +114,37 @@ function login(data) {
 }
 
 
+function searchEmployees(query, callback) {
+    $.ajax({
+        url: "/search_employees?q=" + query,
+        method: 'GET',
+        xhr: function () {
+            return xhrOverride;
+            },
+    }).then(function (responseData) {
+        callback(messages.StringList.deserializeBinary(responseData).toObject().stringsList);
+    });
+}
+
+
+function fetchEmployees(employeeIds, callback) {
+    $.ajax({
+        url: "/fetch_employees?employee_ids=" + employeeIds.join(","),
+        method: 'GET',
+        xhr: function () {
+            return xhrOverride;
+        },
+    }).then(function (responseData) {
+        callback(messages.StrippedEmployees.deserializeBinary(responseData).toObject().strippedemployeesList);
+    });
+}
+
+
+function renderFullName(employee) {
+    return `${employee.name.firstname} ${employee.name.middlename} ${employee.name.secondname}`;
+}
+
+
 function setHandlers() {
     $("#reg-btn").on('click', function (e) {
         let username = $("#login").val()
@@ -135,6 +166,27 @@ function setHandlers() {
 
     $("#ane-btn").on('click', function (e) {
         createEmployee();
+    });
+
+    $("#search-btn").on('click', function (e) {
+        let query = $("#q").val();
+        searchEmployees(query, function (ids) {
+            let qRes = $("#q-res");
+            qRes.find('tbody').empty();
+            qRes.append("<tr><td>id</td><td>name</td><td>description</td><td>tags</td></tr>");
+            fetchEmployees(ids, function (employees) {
+                employees.forEach(function (employee) {
+                    let href = employee.owner === username ? ` href="/owner_view?employee_id=${employee.id}"` : "";
+                    let newRow = `<tr>
+                                      <td><a${href}>${employee.id}</a></td>
+                                      <td>${renderFullName(employee)}</td>
+                                      <td>${employee.description}</td>
+                                      <td>${employee.tagsList.join(', ')}</td>
+                                  </tr>`
+                    qRes.append(newRow);
+                });
+            })
+        });
     });
 }
 
