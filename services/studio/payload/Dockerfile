@@ -1,4 +1,4 @@
-FROM ubuntu:latest
-ENV DEBIAN_FRONTEND noninteractive
+ARG ALPINE_TAG=3.8
+FROM spritsail/alpine:${ALPINE_TAG}
 WORKDIR /app
-RUN apt update && apt install --yes --no-install-recommends --no-install-suggests build-essential gcc libc-dev libc6-dev cmake
+RUN apk --no-cache add cmake clang clang-dev make gcc g++ libc-dev linux-headers

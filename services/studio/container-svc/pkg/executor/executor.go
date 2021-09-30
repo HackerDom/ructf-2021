@@ -31,7 +31,7 @@ func Run(ctx context.Context, payload workerpool.JobDescriptor) ([]byte, error) 
 
 func runContainer(memId string, payload io.Reader) (string, error) {
 	launchArgs := fmt.Sprintf("cat > payload && chmod +x payload && ./payload %s", memId)
-	args := []string{"run", "--ipc", "host", "-i", "ubuntu", "bash", "-c", launchArgs}
+	args := []string{"run", "--ipc", "host", "-i", "alpine", "ash", "-c", launchArgs}
 
 	cmd := exec.Command("docker", args...)
 	outputBuf := bytes.NewBuffer(nil)
