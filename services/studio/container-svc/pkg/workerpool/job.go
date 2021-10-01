@@ -3,18 +3,35 @@ package workerpool
 import (
 "context"
 	"io"
+	"time"
 )
 
-type ExecutionFn func(ctx context.Context, payload JobDescriptor) ([]byte, error)
+type ExecutionFn func(ctx context.Context, payload JobDescriptor) (ExecResult, error)
+
+type ExecResult struct {
+	TimeInfo JobTimeInfo
+	Res []byte
+}
+
+type JobTimeInfo struct {
+	AllocMemStart time.Time
+	AllocMemFinish time.Time
+	StartContainer time.Time
+	StopContainer time.Time
+	ReadMem time.Time
+	DeallocMem time.Time
+}
 
 type JobDescriptor struct {
 	ID       string
 	MemID 	 string
 	Metadata io.Reader
+	TimeInfo JobTimeInfo
+	RunCredential string
 }
 
 type Result struct {
-	Value      []byte
+	ExecResult      ExecResult
 	Err        error
 	Descriptor JobDescriptor
 }
@@ -34,7 +51,7 @@ func (j Job) execute(ctx context.Context) Result {
 	}
 
 	return Result{
-		Value:      value,
+		ExecResult:      value,
 		Descriptor: j.Descriptor,
 	}
 }

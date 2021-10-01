@@ -176,7 +176,15 @@ func Setup() {
 			job := models.Job{
 				ID:     r.Descriptor.ID,
 				Status: status,
-				Result: string(r.Value),
+				Result: string(r.ExecResult.Res),
+				TimeInfo: models.JobExecStat{
+					AllocMemStart:   r.ExecResult.TimeInfo.AllocMemStart,
+					AllocMemFinish: r.ExecResult.TimeInfo.AllocMemFinish,
+					StartContainer: r.ExecResult.TimeInfo.StartContainer,
+					StopContainer:  r.ExecResult.TimeInfo.StopContainer,
+					ReadMem:        r.ExecResult.TimeInfo.ReadMem,
+					DeallocMem:     r.ExecResult.TimeInfo.DeallocMem,
+				},
 			}
 
 			err := job.Update()

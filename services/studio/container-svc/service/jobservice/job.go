@@ -3,10 +3,12 @@ package jobservice
 import (
 	"context"
 	"github.com/usernamedt/container-service-gin/models"
+	"github.com/usernamedt/container-service-gin/pkg/credprovider"
 	"github.com/usernamedt/container-service-gin/pkg/executor"
 	"github.com/usernamedt/container-service-gin/pkg/logging"
 	"github.com/usernamedt/container-service-gin/pkg/workerpool"
 	"io"
+	"time"
 )
 
 
@@ -14,10 +16,18 @@ type JobService struct {}
 
 
 func (js *JobService) Add(binary io.Reader, ctx context.Context) (*models.Job, error) {
+	timeInfo := workerpool.JobTimeInfo{}
+	timeInfo.AllocMemStart = time.Now()
 	jobId := workerpool.Pool.GenerateJobId()
 
-	memId, err := executor.AllocMemory(jobId)
+
+	cred := credprovider.CredentialProvider.Next()
+
+	memId, err := executor.AllocMemory(jobId, cred)
+	timeInfo.AllocMemFinish = time.Now()
+
 	if err != nil {
+		logging.Error(err)
 		return nil, err
 	}
 
@@ -26,9 +36,10 @@ func (js *JobService) Add(binary io.Reader, ctx context.Context) (*models.Job, e
 			Metadata: binary,
 			MemID: memId,
 			ID: jobId,
+			TimeInfo: timeInfo,
+			RunCredential: cred,
 		},
-		ExecFn: func(ctx context.Context, payload workerpool.JobDescriptor) ([]byte, error) {
-			defer executor.DeallocMemory(payload.ID)
+		ExecFn: func(ctx context.Context, payload workerpool.JobDescriptor) (workerpool.ExecResult, error) {
 			return executor.Run(ctx, payload)
 		},
 	})

@@ -104,7 +104,7 @@ int main(int argc, char *argv[]) {
     fflush(stdout);
 
     // get shared memory file descriptor
-    fd = shm_open(key, O_RDWR | O_CREAT, ALLPERMS);
+    fd = shm_open(key, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
     if (fd == -1)
     {
         perror("open");

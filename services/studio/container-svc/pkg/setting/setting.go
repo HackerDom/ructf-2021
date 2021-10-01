@@ -25,6 +25,8 @@ type App struct {
 	KeyPath           string
 	QueueStatInterval time.Duration
 	RequestStatInterval time.Duration
+	DockerfilePath string
+	CredPoolList []string
 }
 
 var AppSetting = &App{}
@@ -66,6 +68,7 @@ func Setup() {
 	ServerSetting.ReadTimeout = ServerSetting.ReadTimeout * time.Second
 	ServerSetting.WriteTimeout = ServerSetting.WriteTimeout * time.Second
 	RedisSetting.IdleTimeout = RedisSetting.IdleTimeout * time.Second
+
 }
 
 // mapTo map section

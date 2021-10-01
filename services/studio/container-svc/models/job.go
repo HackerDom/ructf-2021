@@ -7,6 +7,7 @@ import (
 	"github.com/usernamedt/container-service-gin/pkg/gredis"
 	"github.com/usernamedt/container-service-gin/pkg/logging"
 	"github.com/usernamedt/container-service-gin/pkg/setting"
+	"time"
 )
 
 type NonExistJobError struct {
@@ -25,11 +26,21 @@ const(
 	Error JobStatus = "error"
 )
 
+type JobExecStat struct {
+	AllocMemStart time.Time
+	AllocMemFinish time.Time
+	StartContainer time.Time
+	StopContainer time.Time
+	ReadMem time.Time
+	DeallocMem time.Time
+}
+
 type Job struct {
 	ID     string    `json:"id"`
 	MemID  string    `json:"mem_id"`
 	Status JobStatus `json:"status"`
 	Result string	 `json:"result"`
+	TimeInfo JobExecStat `json:"time_info"`
 }
 
 func NewJob(id string, memId string) (*Job, error) {

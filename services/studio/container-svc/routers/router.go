@@ -10,6 +10,8 @@ import (
 // InitRouter initialize routing information
 func InitRouter() *gin.Engine {
 	r := gin.New()
+	//pprof.Register(r)
+
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 	r.Use(limits.RequestSizeLimiter(2000000))

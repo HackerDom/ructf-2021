@@ -2,6 +2,13 @@
 
 KEY_PATH=/root/container-svc/secret.key
 
+# prepare the container image
+docker build --tag=basealpine /root/container-svc/docker/
+
+# generate the container users
+for i in {1000..1200}; do adduser -u $i user$i --disabled-password; done
+
+# create service key
 if test -f "$KEY_PATH"; then
     echo "$KEY_PATH exists, skip creating..."
     exit 0
