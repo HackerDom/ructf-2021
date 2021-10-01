@@ -1,4 +1,5 @@
 ﻿using Vostok.Clusterclient.Core.Model;
+using WhiteAlbum.Helpers;
 
 namespace DoNotIncludeThisPlease.Helpers
 {

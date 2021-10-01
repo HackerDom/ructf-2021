@@ -4,13 +4,13 @@ using Vostok.Clusterclient.Core.Model;
 
 namespace DoNotIncludeThisPlease.Client
 {
-    public class HoustonContentResult : HoustonResult, IDisposable
+    public class ContentResult : ClientResult, IDisposable
     {
         private readonly ClusterResult result;
         private Stream? stream;
         private long? length;
 
-        public HoustonContentResult(ClusterResult result, bool isSuccessful, ResponseCode responseCode, string? error)
+        public ContentResult(ClusterResult result, bool isSuccessful, ResponseCode responseCode, string? error)
             : base(isSuccessful, responseCode, error)
         {
             this.result = result;

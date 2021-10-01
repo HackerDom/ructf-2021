@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using DoNotIncludeThisPlease.Helpers;
 using Vostok.Clusterclient.Core;
 using Vostok.Clusterclient.Core.Model;
+using WhiteAlbum.Helpers;
 
 namespace DoNotIncludeThisPlease.Client
 {
@@ -65,17 +66,17 @@ namespace DoNotIncludeThisPlease.Client
             return result.Response.IsSuccessful;
         }
 
-        private Task<HoustonContentResult> Download(string methodPath, object? request, TimeSpan timeout, CancellationToken cancellationToken)
+        private Task<ContentResult> Download(string methodPath, object? request, TimeSpan timeout, CancellationToken cancellationToken)
         {
             return Download(CreateRequest(methodPath, request), IsSuccessful, timeout, cancellationToken);
         }
 
-        private Task<HoustonResult<T>> SendRequest<T>(string methodPath, object? request, TimeSpan timeout, CancellationToken cancellationToken)
+        private Task<ClientResult<T>> SendRequest<T>(string methodPath, object? request, TimeSpan timeout, CancellationToken cancellationToken)
         {
             return SendRequest(CreateRequest(methodPath, request), CreateResult<T>, IsSuccessful, timeout, cancellationToken);
         }
 
-        private Task<HoustonResult> SendRequest(string methodPath, object? request, TimeSpan? timeout, CancellationToken cancellationToken)
+        private Task<ClientResult> SendRequest(string methodPath, object? request, TimeSpan? timeout, CancellationToken cancellationToken)
         {
             return SendRequest(CreateRequest(methodPath, request), IsSuccessful, timeout, cancellationToken);
         }
@@ -91,17 +92,17 @@ namespace DoNotIncludeThisPlease.Client
                 this.client = client;
             }
 
-            public Task<HoustonResult> CallAsync<TRequest>(TRequest request, TimeSpan timeout, CancellationToken cancellationToken = default)
+            public Task<ClientResult> CallAsync<TRequest>(TRequest request, TimeSpan timeout, CancellationToken cancellationToken = default)
             {
                 return client.SendRequest(path, request, timeout, cancellationToken);
             }
 
-            public Task<HoustonResult> CallAsync(TimeSpan timeout, CancellationToken cancellationToken = default)
+            public Task<ClientResult> CallAsync(TimeSpan timeout, CancellationToken cancellationToken = default)
             {
                 return client.SendRequest(path, null, timeout, cancellationToken);
             }
 
-            public Task<HoustonContentResult> DownloadAsync<TRequest>(TRequest request, TimeSpan timeout, CancellationToken cancellationToken = default)
+            public Task<ContentResult> DownloadAsync<TRequest>(TRequest request, TimeSpan timeout, CancellationToken cancellationToken = default)
             {
                 return client.Download(path, request, timeout, cancellationToken);
             }
@@ -118,12 +119,12 @@ namespace DoNotIncludeThisPlease.Client
                 this.client = client;
             }
 
-            public Task<HoustonResult<TResult>> CallAsync<TRequest>(TRequest request, TimeSpan timeout, CancellationToken cancellationToken = default)
+            public Task<ClientResult<TResult>> CallAsync<TRequest>(TRequest request, TimeSpan timeout, CancellationToken cancellationToken = default)
             {
                 return client.SendRequest<TResult>(path, request, timeout, cancellationToken);
             }
 
-            public Task<HoustonResult<TResult>> CallAsync(TimeSpan timeout, CancellationToken cancellationToken = default)
+            public Task<ClientResult<TResult>> CallAsync(TimeSpan timeout, CancellationToken cancellationToken = default)
             {
                 return client.SendRequest<TResult>(path, null, timeout, cancellationToken);
             }

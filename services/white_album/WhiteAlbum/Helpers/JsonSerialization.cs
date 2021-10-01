@@ -9,13 +9,11 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 
-namespace DoNotIncludeThisPlease.Helpers
+namespace WhiteAlbum.Helpers
 {
     public static class JsonSerialization
     {
         public static readonly JsonSerializerSettings Settings;
-        public static readonly JsonSerializerSettings UISettings;
-        public static readonly JsonSerializerSettings ApiSettings;
         public static readonly JsonSerializer PrimitiveSerializer;
         private static readonly IReadOnlyList<JsonConverter> Converters;
         private static readonly JsonSerializerSettings ErrorToleranceSettings;
@@ -37,7 +35,7 @@ namespace DoNotIncludeThisPlease.Helpers
                 // new ComparableDictionaryJsonConverter(),
                 // new ComparableArrayJsonConverter(),
                 // new DeploymentLogEventScopeJsonConverter(),
-                // new StringSerializationJsonConverter(),
+                new StringSerializationJsonConverter(),
                 // new ReadOnlySetJsonConverter(),
                 // new DeploymentSettingsBackwardCompatibilityJsonConverter(),
                 // new GroupDeploymentSettingsBackwardCompatibilityJsonConverter(),

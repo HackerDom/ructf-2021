@@ -5,7 +5,7 @@ using Vostok.Throttling.Config;
 
 namespace WhiteAlbum
 {
-    internal class WhiteAlbumApplication : VostokAspNetCoreApplication<Startup>
+    public class WhiteAlbumApplication : VostokAspNetCoreApplication<Startup>
     {
         public override void Setup(IVostokAspNetCoreApplicationBuilder builder, IVostokHostingEnvironment environment)
         {

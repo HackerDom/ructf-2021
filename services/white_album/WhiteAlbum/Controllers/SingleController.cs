@@ -26,7 +26,7 @@ namespace WhiteAlbum.Controllers
             await singleRepository.Create(request);
         }
 
-        [HttpGet("single/get")]
+        [HttpPost("single/get")]
         public async Task<Single> Get([FromBody] GetSingleRequest request)
         {
             var single = await singleRepository.Get(request.Id);
@@ -36,7 +36,7 @@ namespace WhiteAlbum.Controllers
             return single;
         }
 
-        [HttpGet("single/mix")]
+        [HttpPost("single/mix")]
         public async Task<Stream> Mix([FromBody] MixSingleRequest request)
         {
             var single = await singleRepository.Get(request.Id);
