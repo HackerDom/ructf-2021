@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Vostok.Clusterclient.Core;
 using WhiteAlbum.Entities;
 using WhiteAlbum.Requests;
+using Single = WhiteAlbum.Entities.Single;
 
 namespace DoNotIncludeThisPlease.Client
 {
@@ -23,5 +24,8 @@ namespace DoNotIncludeThisPlease.Client
             
         public Task<ClientResult> Attach(AttachSingleToAlbumRequest request, TimeSpan timeout) =>
             Method("attach").CallAsync(request, timeout);
+
+        public Task<ClientResult<Single[]>> GetAllSingles(GetAllSinglesRequest request, TimeSpan timeout) =>
+            Method<Single[]>("get_all_singles").CallAsync(request, timeout);
     }
 }
