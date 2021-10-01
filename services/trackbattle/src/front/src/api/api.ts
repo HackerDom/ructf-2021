@@ -45,12 +45,12 @@ export class api {
         return await this.fetch<{ auth_token: string }>("/users", request);
     }
 
-    public static async getUser(): Promise<Result<{nickname: string, flag: string, posts: string[]}>> {
+    public static async getUser(): Promise<Result<{nickname: string, payment_info: string, posts: string[]}>> {
         const request: RequestInit = {
             method: "GET",
             headers: {[this.authHeader]: LocalStorage.getAuth() || ""}
         };
-        return await this.fetch<{nickname: string, flag: string, posts: string[]}>("/users", request);
+        return await this.fetch<{nickname: string, payment_info: string, posts: string[]}>("/users", request);
     }
 
     public static async loginUser(user: User): Promise<Result<{ auth_token: string }>> {
@@ -67,7 +67,7 @@ export class api {
             method: "GET",
             headers: {[this.authHeader]: LocalStorage.getAuth() || ""}
         };
-        return this.fetch<{ posts: string[] }>("/posts/latest/50", request)
+        return this.fetch<{ posts: string[] }>("/posts/latest?limit=50", request)
     }
 
     public static async getMyPosts(): Promise<Result<{ post_ids: string[] }>> {
@@ -122,20 +122,20 @@ export class api {
         return this.fetch("/comments", request)
     }
 
-    public static async likePost(postId: string): Promise<Result<{ likes_amount: number }>> {
+    public static async likePost(postId: string): Promise<Result<void>> {
         const request: RequestInit = {
             method: "PUT",
             headers: {[this.authHeader]: LocalStorage.getAuth() || ""}
         };
-        return this.fetch<{likes_amount: number}>(`/posts/${postId}`, request)
+        return this.fetch(`/posts/${postId}`, request)
     }
 
-    public static async likeComment(commentId: string): Promise<Result<{ likes_amount: number }>> {
+    public static async likeComment(commentId: string): Promise<Result<void>> {
         const request: RequestInit = {
             method: "PUT",
             headers: {[this.authHeader]: LocalStorage.getAuth() || ""}
         };
-        return this.fetch<{ likes_amount: number }>(`/comments/${commentId}`, request)
+        return this.fetch(`/comments/${commentId}`, request)
     }
 
 }

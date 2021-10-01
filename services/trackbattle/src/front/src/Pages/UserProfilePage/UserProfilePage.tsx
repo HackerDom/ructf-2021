@@ -15,7 +15,7 @@ export const UserProfilePage: React.FC = () => {
         const loadUser = async () => {
             const response = await api.getUser();
 
-            setUser(createObject(UserData, {nickname: response.data?.nickname, flag: response.data?.flag, posts: response.data?.posts}));
+            setUser(createObject(UserData, {nickname: response.data?.nickname, payment_info: response.data?.payment_info, posts: response.data?.posts}));
         }
 
         void loadUser();
@@ -30,7 +30,7 @@ export const UserProfilePage: React.FC = () => {
             {user &&
                 <>
                     <Cell center>User name: {user?.nickname}</Cell>
-                    <Cell center>User flag: {user?.flag}</Cell>
+                    <Cell center>User payment info: {user?.payment_info}</Cell>
                     {user.posts.length ? (
                         <Button text={`Published ${user.posts.length} posts`} color={"green"} onClick={handlePosts}/>
                     ) : (

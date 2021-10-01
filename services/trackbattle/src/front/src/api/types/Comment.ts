@@ -17,7 +17,7 @@ export class Comment {
     @JsonProperty("description", String, true)
     description: string = "";
 
-    @JsonProperty("likes_cmount", Number, false)
+    @JsonProperty("likes_amount", Number, false)
     likes_amount: number = 0;
 
     @JsonProperty("track", String, false)

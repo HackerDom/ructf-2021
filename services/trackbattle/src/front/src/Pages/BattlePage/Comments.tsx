@@ -46,7 +46,15 @@ export const Comments: React.FC<Props> = (props) => {
         const response = await api.likeComment(commentId);
         if (response.data) {
             const commentIndex = comments.findIndex(x => x.id === commentId);
-            const newComment = createObject(Comment, {...comments[commentIndex], likes_amount:response.data.likes_amount} );
+            const newComment = createObject(Comment, {
+                id: comments[commentIndex].id,
+                postId: comments[commentIndex].postId,
+                author: comments[commentIndex].author,
+                publishingDate: comments[commentIndex].publishingDate,
+                description: comments[commentIndex].description,
+                track: comments[commentIndex].track,
+                likes_amount: comments[commentIndex].likes_amount + 1
+            } );
             const newComments = [...comments.slice(0, commentIndex), newComment, ...comments.slice(commentIndex + 1)]
             setComments(newComments);
         }

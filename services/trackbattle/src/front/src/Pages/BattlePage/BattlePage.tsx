@@ -46,7 +46,7 @@ export const BattlePage: React.FC = () => {
     const handleLike = async () => {
         const response = await api.likePost(routeMatch.params.battleId);
         if (response.data) {
-            setPost({...post, likes_amount: response.data.likes_amount})
+            setPost({...post, likes_amount: post.likes_amount + 1})
         }
     }
 
