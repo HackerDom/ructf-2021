@@ -9,8 +9,7 @@ using WhiteAlbum.Tracks;
 
 namespace WhiteAlbum
 {
-    class 
-        Program
+    class Program
     {
         static void Main(string[] args)
         {
