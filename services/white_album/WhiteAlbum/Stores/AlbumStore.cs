@@ -17,7 +17,9 @@ namespace WhiteAlbum.Stores
         
         public async Task<Album> Create(CreateAlbumRequest request)
         {
-            var album = new Album(request.Id, request.Name, request.Meta) { Owner = Context.User!.Id };
+            var album = new Album(request.Id, request.Name, request.Meta) {
+                Owner = Context.User?.Id ?? throw new UnauthorizedAccessException("User is empty.")
+            };
             var result = albums.GetOrAdd(request.Id, album);
 
             try
@@ -48,7 +50,11 @@ namespace WhiteAlbum.Stores
             {
                 var album = albums[albumId];
 
-                if (albums.TryUpdate(albumId, album with { Singles = album.Singles.Add(singleId) }, album))
+                if (albums.TryUpdate(albumId, new Album(album.Id, album.Name, album.Meta)
+                {
+                    Owner = album.Owner,
+                    Singles = album.Singles.Add(singleId)
+                }, album))
                     break;
             }
         }
@@ -85,15 +91,27 @@ namespace WhiteAlbum.Stores
         private static Album Patch(Album album, UpdateAlbumRequest request)
         {
             var result = album;
-            
+
             if (request.Name != null)
-                result = result with { Name = request.Name.Value ?? throw new BadHttpRequestException($"{nameof(request.Name)} cannot be null.") };
+                result = new Album(album.Id, request.Name.Value ?? throw new Exception("Name cannot be null"), album.Meta)
+                {
+                    Owner = album.Owner,
+                    Singles = album.Singles
+                };
             
             if (request.Description != null)
-                result = result with { Meta = result.Meta with {Description = request.Description.Value} };
+                result = new Album(album.Id, album.Name, new AlbumMeta(album.Meta.Author, request.Description.Value))
+                {
+                    Owner = album.Owner,
+                    Singles = album.Singles
+                };
 
             if (request.Author != null)
-                result = result with { Meta = result.Meta with {Author = request.Author.Value} };
+                result = new Album(album.Id, album.Name, new AlbumMeta(request.Author.Value, album.Meta.Description))
+                {
+                    Owner = album.Owner,
+                    Singles = album.Singles
+                };
 
             return result;
         }

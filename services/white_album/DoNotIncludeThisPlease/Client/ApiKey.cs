@@ -13,7 +13,7 @@ namespace DoNotIncludeThisPlease.Client
 
         public static void Set(string? apikey)
         {
-            FlowingContext.Globals.Set(new ApiKey(apikey));
+            FlowingContext.Globals.Set<ApiKey>(new ApiKey(apikey));
         }
 
         public static string? Get()

@@ -41,6 +41,13 @@ namespace WhiteAlbum.Middleware
         }
 
         private static string? FindInAuthorizationHeader(HttpRequest request)
-            => Extract(request);
+        {
+            if (!request.Headers.TryGetValue("Authorization", out var authorizationHeader))
+                return null;
+
+            var parts = authorizationHeader.ToString().Split(' ');
+
+            return parts.Length <= 1 ? null : parts[1];
+        }
     }
 }
