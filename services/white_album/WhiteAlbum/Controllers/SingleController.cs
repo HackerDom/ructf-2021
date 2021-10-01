@@ -32,7 +32,7 @@ namespace WhiteAlbum.Controllers
             var single = await singleRepository.Get(request.Id);
 
             await Authorize().For(single).By(Permission.Read);
-
+            
             return single;
         }
 
