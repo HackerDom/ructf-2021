@@ -2,7 +2,7 @@
 
 namespace DoNotIncludeThisPlease.Client
 {
-    public class AuthProvider
+    public class AuthProvider : IAuthProvider
     {
         private readonly Func<string?> apiKeyProvider;
 

@@ -3,11 +3,11 @@ using Vostok.Clusterclient.Core.Model;
 
 namespace DoNotIncludeThisPlease.Client
 {
-    public class HoustonResult<T> : HoustonResult
+    public class ClientResult<T> : ClientResult
     {
         private readonly T result;
 
-        public HoustonResult(T result, bool isSuccessful, ResponseCode responseCode, string? error = null)
+        public ClientResult(T result, bool isSuccessful, ResponseCode responseCode, string? error = null)
             : base(isSuccessful, responseCode, error)
         {
             this.result = result;
@@ -23,9 +23,9 @@ namespace DoNotIncludeThisPlease.Client
         }
     }
 
-    public class HoustonResult
+    public class ClientResult
     {
-        public HoustonResult(bool isSuccessful, ResponseCode responseCode, string? error = null)
+        public ClientResult(bool isSuccessful, ResponseCode responseCode, string? error = null)
         {
             IsSuccessful = isSuccessful;
             ResponseCode = responseCode;

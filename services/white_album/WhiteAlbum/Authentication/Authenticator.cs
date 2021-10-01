@@ -16,8 +16,11 @@ namespace WhiteAlbum.Authentication
             this.userRepository = userRepository;
         }
 
-        public async Task<User> Authenticate(string? apiTokenString)
+        public async Task<User?> Authenticate(string? apiTokenString)
         {
+            if (apiTokenString == null)
+                return null;
+            
             if (!Guid.TryParse(apiTokenString, out var apiTokenId))
                 throw new AuthenticationException("A valid API token was not specified with the request.");
 
