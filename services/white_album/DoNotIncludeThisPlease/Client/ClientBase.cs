@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using DoNotIncludeThisPlease.Helpers;
 using Vostok.Clusterclient.Core;
 using Vostok.Clusterclient.Core.Model;
+using WhiteAlbum.Helpers;
 
 namespace DoNotIncludeThisPlease.Client
 {
@@ -18,7 +19,7 @@ namespace DoNotIncludeThisPlease.Client
             this.authProvider = authProvider;
         }
 
-        protected async Task<HoustonResult<T>> SendRequest<T>(Request request, Func<Response, T> createResult, Func<ClusterResult, bool> isSuccessful, TimeSpan? timeout, CancellationToken cancellationToken = default)
+        protected async Task<ClientResult<T>> SendRequest<T>(Request request, Func<Response, T> createResult, Func<ClusterResult, bool> isSuccessful, TimeSpan? timeout, CancellationToken cancellationToken = default)
         {
             request = AddAuthHeader(request);
 
@@ -27,11 +28,11 @@ namespace DoNotIncludeThisPlease.Client
                 .ConfigureAwait(false);
 
             return isSuccessful(result)
-                ? new HoustonResult<T>(createResult(result.Response), true, result.Response.Code)
-                : new HoustonResult<T>(default, false, result.Response.Code, GetErrorMessage(result.Response));
+                ? new ClientResult<T>(createResult(result.Response), true, result.Response.Code)
+                : new ClientResult<T>(default, false, result.Response.Code, GetErrorMessage(result.Response));
         }
 
-        protected async Task<HoustonResult> SendRequest(Request request, Func<ClusterResult, bool> isSuccessful, TimeSpan? timeout, CancellationToken cancellationToken)
+        protected async Task<ClientResult> SendRequest(Request request, Func<ClusterResult, bool> isSuccessful, TimeSpan? timeout, CancellationToken cancellationToken)
         {
             request = AddAuthHeader(request);
 
@@ -40,11 +41,11 @@ namespace DoNotIncludeThisPlease.Client
                 .ConfigureAwait(false);
 
             return isSuccessful(result)
-                ? new HoustonResult(true, result.Response.Code)
-                : new HoustonResult(false, result.Response.Code, GetErrorMessage(result.Response));
+                ? new ClientResult(true, result.Response.Code)
+                : new ClientResult(false, result.Response.Code, GetErrorMessage(result.Response));
         }
 
-        protected async Task<HoustonContentResult> Download(Request request, Func<ClusterResult, bool> isSuccessful, TimeSpan? timeout, CancellationToken cancellationToken)
+        protected async Task<ContentResult> Download(Request request, Func<ClusterResult, bool> isSuccessful, TimeSpan? timeout, CancellationToken cancellationToken)
         {
             request = AddAuthHeader(request);
 
@@ -53,8 +54,8 @@ namespace DoNotIncludeThisPlease.Client
                 .ConfigureAwait(false);
 
             return isSuccessful(result)
-                ? new HoustonContentResult(result, true, result.Response.Code, null)
-                : new HoustonContentResult(result, false, result.Response.Code, GetErrorMessage(result.Response));
+                ? new ContentResult(result, true, result.Response.Code, null)
+                : new ContentResult(result, false, result.Response.Code, GetErrorMessage(result.Response));
         }
 
         private Request AddAuthHeader(Request request)

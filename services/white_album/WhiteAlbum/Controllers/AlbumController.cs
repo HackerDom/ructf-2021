@@ -28,7 +28,7 @@ namespace WhiteAlbum.Controllers
             await albumRepository.Create(request);
         }
         
-        [HttpGet("album/get")]
+        [HttpPost("album/get")]
         public async Task<Album> GetAlbum([FromBody] GetAlbumRequest request)
         {
             var album = await albumRepository.Get(request.Id);
@@ -38,7 +38,7 @@ namespace WhiteAlbum.Controllers
             return album;
         }
 
-        [HttpGet("album/get_recent")]
+        [HttpPost("album/get_recent")]
         public async Task<AlbumEntry[]> GetRecent([FromBody] GetRecentlyCreatedRequest request)
         {
             if (request.Count > 50)

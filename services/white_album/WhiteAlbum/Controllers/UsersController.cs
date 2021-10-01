@@ -17,7 +17,7 @@ namespace WhiteAlbum.Controllers
             this.userRepository = userRepository;
         }
 
-        [HttpPost]
+        [HttpPost("user/create")]
         public async Task<UserToken> Create([FromBody] CreateUserRequest request)
         {
             var user = await userRepository.Create(request);

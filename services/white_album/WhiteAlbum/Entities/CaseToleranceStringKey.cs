@@ -1,5 +1,7 @@
 ﻿using System;
+using WhiteAlbum.Helpers;
 
+[StringSerialization]
 public class CaseToleranceStringKey : IEquatable<CaseToleranceStringKey>, IComparable<CaseToleranceStringKey>
 {
     private static readonly StringComparer Comparer = StringComparer.OrdinalIgnoreCase;
