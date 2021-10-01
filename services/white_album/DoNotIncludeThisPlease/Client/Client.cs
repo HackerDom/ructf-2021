@@ -7,8 +7,6 @@ namespace DoNotIncludeThisPlease.Client
 {
     public class Client
     {
-      
-
         public Client(string url, IAuthProvider authProvider, ILog log)
         {
             var client = new ClusterClient(

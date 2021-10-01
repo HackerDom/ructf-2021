@@ -13,7 +13,7 @@ namespace WhiteAlbum.Entities.Users
 
         public static UserToken New() => new(Guid.NewGuid());
 
-        protected bool Equals(UserId other)
+        protected bool Equals(UserToken other)
         {
             return Id.Equals(other.Id);
         }
@@ -23,7 +23,7 @@ namespace WhiteAlbum.Entities.Users
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((UserId)obj);
+            return Equals((UserToken)obj);
         }
 
         public override int GetHashCode()

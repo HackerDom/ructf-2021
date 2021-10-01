@@ -1,18 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.DependencyInjection;
 using WhiteAlbum.Authorization;
 using WhiteAlbum.Repository;
 using WhiteAlbum.Stores;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations;
+using WhiteAlbum.Authentication;
 using WhiteAlbum.Helpers;
+using AuthenticationMiddleware = WhiteAlbum.Middleware.AuthenticationMiddleware;
 
 namespace WhiteAlbum
 {
@@ -53,6 +49,7 @@ namespace WhiteAlbum
             services.AddSingleton<SingleStore>();
             services.AddSingleton<UserStore>();
             
+            services.AddSingleton<Authenticator>();
             services.AddSingleton<IAuthorizationProvider, AuthorizationProvider>();
         }
 
@@ -61,6 +58,8 @@ namespace WhiteAlbum
             application.UsePathBase("/white_album");
 
             application.UseRouting();
+            
+            
             
             application.UseMiddleware<AuthenticationMiddleware>();
 
