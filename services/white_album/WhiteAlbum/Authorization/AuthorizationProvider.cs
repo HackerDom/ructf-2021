@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using WhiteAlbum.Entities;
 using WhiteAlbum.Entities.Users;
 using WhiteAlbum.Stores;
+using Single = WhiteAlbum.Entities.Single;
 
 namespace WhiteAlbum.Authorization
 {
@@ -21,7 +23,7 @@ namespace WhiteAlbum.Authorization
         {
             return false;
         }
-
+        
         public async Task<bool> HasAccessTo(UserId user, IEnumerable<Album> albums, IEnumerable<Single> singles, Permission permission)
         {
             var ownedAlbums = await albumStore.Get(user);

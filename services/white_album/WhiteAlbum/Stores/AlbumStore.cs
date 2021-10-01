@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -12,7 +13,7 @@ namespace WhiteAlbum.Stores
     public class AlbumStore
     {
         private readonly ConcurrentDictionary<AlbumId, Album> albums = new();
-        private readonly ConcurrentDictionary<UserId, ImmutableArray<Album>> albumsByUser = new();
+        private readonly ConcurrentDictionary<UserId, ImmutableArray<AlbumId>> albumsByUser = new();
         // private readonly SortedDictionary<DateTimeOffset, Album> albumsByCreatedAt = new();
         
         public async Task<Album> Create(CreateAlbumRequest request)
@@ -33,12 +34,12 @@ namespace WhiteAlbum.Stores
             {
                 while (true)
                 {
-                    var usersAlbum= albumsByUser.GetOrAdd(result.Owner, _ => ImmutableArray<Album>.Empty);
+                    var usersAlbum= albumsByUser.GetOrAdd(result.Owner, _ => ImmutableArray<AlbumId>.Empty);
 
-                    if (usersAlbum.Contains(album))
+                    if (usersAlbum.Contains(album.Id))
                         break;
                     
-                    if (albumsByUser.TryUpdate(result.Owner, usersAlbum.Add(album), usersAlbum))
+                    if (albumsByUser.TryUpdate(result.Owner, usersAlbum.Add(album.Id), usersAlbum))
                         break;
                 }
             }
@@ -82,8 +83,16 @@ namespace WhiteAlbum.Stores
 
         public async Task<ImmutableArray<Album>> Get(UserId userId)
         {
-            if (albumsByUser.TryGetValue(userId, out var result))
-                return result;
+            if (albumsByUser.TryGetValue(userId, out var ids))
+            { 
+                var result = new List<Album>(ids.Length);
+                foreach (var albumId in ids)
+                {
+                    result.Add(albums[albumId]);
+                }
+
+                return result.ToImmutableArray();
+            };
             
             return ImmutableArray<Album>.Empty;
         }

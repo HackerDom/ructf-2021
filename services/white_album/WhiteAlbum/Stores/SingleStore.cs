@@ -17,7 +17,7 @@ namespace WhiteAlbum.Stores
 
         public async Task<Single> Create(CreateSingleRequest request)
         {
-            var single = new Single(request.Id, request.Name, request.Meta, request.Track, Context.User!.Id) ;
+            var single = new Single(request.Id, request.Name, request.Meta, request.Track, Context.User?.Id ?? throw new Exception("User is empty")) ;
             var result = singles.GetOrAdd(request.Id, single);
 
             try
