@@ -3,21 +3,32 @@
 
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>@title</title>
-    <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
-    <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
-  </head>
-  <body>
-    <h1>Watch full employee info</h1>
-    <p>Hello, @username!</p>
-    <script src="@routes.Assets.versioned("../../static/js/bundle.js")" type="text/javascript"></script>
-    <button id="logout-btn">Logout</button><br>
-    <label>Id: @employee.id</label><br>
-    <label>First Name: @employee.employee.name.firstName</label><br>
-    <label>Middle Name: @employee.employee.name.middleName</label><br>
-    <label>Second Name: @employee.employee.name.secondName</label><br>
-    <label>Second Name: @employee.employee.name.secondName</label><br>
-    <label>Bank card: @employee.employee.card.number @employee.employee.card.cardholder @employee.employee.card.cvv</label><br>
-  </body>
+    <head>
+        <title>@title</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="@routes.Assets.versioned("../../static/stylesheets/mini.css")">
+        <link rel="stylesheet" href="@routes.Assets.versioned("../../static/stylesheets/main.css")">
+        <script src="@routes.Assets.versioned("../../static/js/bundle.js")" type="text/javascript"></script>
+    </head>
+    <body>
+        <div class="owner-page-block">
+            <div class="left">
+                <button class="left-to-btn" id="to-home-btn">Home</button>
+                <button class="left-to-btn" id="to-new-empl-btn">New employee</button>
+            </div>
+            <div class="right">
+                <p>Hello, @username!</p>
+                <button id="logout-btn">Logout</button>
+            </div>
+            <div class="full-info-block">
+                <h1>Watch full employee info</h1>
+                <label><b>Id: </b>@employee.id</label>
+                <label><b>First Name:</b> @employee.employee.name.firstName</label>
+                <label><b>Middle Name:</b> @employee.employee.name.middleName</label>
+                <label><b>Second Name:</b> @employee.employee.name.secondName</label>
+                <label><b>Second Name:</b> @employee.employee.name.secondName</label>
+                <label><b>Bank card:</b> @employee.employee.card.number @employee.employee.card.cardholder @employee.employee.card.cvv</label>
+            </div>
+        </div>
+    </body>
 </html>

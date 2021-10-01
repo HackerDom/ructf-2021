@@ -2,14 +2,25 @@
 
 <!DOCTYPE HTML>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <script src="@routes.Assets.versioned("../../static/js/bundle.js")" type="text/javascript"></script>
-  </head>
-  <body>
-    <input id="login" type="text">
-    <input id="password" type="password">
-    <button id="log-btn">Login</button>
-    <a href="/register_page">To register page</a>
-  </body>
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="@routes.Assets.versioned("../../static/stylesheets/mini.css")">
+        <link rel="stylesheet" href="@routes.Assets.versioned("../../static/stylesheets/main.css")">
+        <script src="@routes.Assets.versioned("../../static/js/bundle.js")" type="text/javascript"></script>
+    </head>
+    <body>
+        <div class="screen-block">
+            <div class="center-screen">
+                <div class="lbls">
+                    <h1>Sign In</h1>
+                    <label for="login">Username</label><input id="login" type="text">
+                    <label for="password">Password</label><input id="password" type="password">
+                </div>
+                <div class="btns">
+                    <button id="log-btn">Login</button>
+                    <button id="to-reg-btn" class="to-btn">To register page</button>
+                </div>
+            </div>
+        </div>
+    </body>
 </html>

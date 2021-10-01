@@ -70,7 +70,7 @@ function createEmployee() {
     });
 
     makePostRequest("/add_employee", newEmployee.serializeBinary(), function (e) {
-       console.log(e);
+        location.href = "/owner_view?employee_id=" + e;
     });
 }
 
@@ -82,7 +82,10 @@ function makePostRequest(url, data, callback) {
         data: data,
         contentType: "application/protobuf",
         processData: false,
-    }).then(callback);
+    }).then(callback)
+        .catch(function (e) {
+            alert(e.responseText);
+        });
 }
 
 
@@ -96,6 +99,8 @@ function register(data) {
     }).then(function (responseData) {
         console.log(responseData);
         location.href = "/"
+    }).catch(function (e) {
+        alert(e.responseText);
     });
 }
 
@@ -110,7 +115,10 @@ function login(data) {
     }).then(function (responseData) {
         console.log(responseData);
         location.href = "/"
-    });
+    })
+        .catch(function (e) {
+            alert(e.responseText);
+        });
 }
 
 
@@ -120,10 +128,13 @@ function searchEmployees(query, callback) {
         method: 'GET',
         xhr: function () {
             return xhrOverride;
-            },
+        },
     }).then(function (responseData) {
         callback(messages.StringList.deserializeBinary(responseData).toObject().stringsList);
-    });
+    })
+        .catch(function (e) {
+            alert(e.responseText);
+        });
 }
 
 
@@ -136,12 +147,22 @@ function fetchEmployees(employeeIds, callback) {
         },
     }).then(function (responseData) {
         callback(messages.StrippedEmployees.deserializeBinary(responseData).toObject().strippedemployeesList);
-    });
+    })
+        .catch(function (e) {
+            alert(e.responseText);
+        });
 }
 
 
 function renderFullName(employee) {
     return `${employee.name.firstname} ${employee.name.middlename} ${employee.name.secondname}`;
+}
+
+
+function attackLink(selector, url) {
+    $(selector).on('click', function () {
+        location.href = url;
+    });
 }
 
 
@@ -188,6 +209,11 @@ function setHandlers() {
             })
         });
     });
+
+    attackLink("#to-log-btn", "/login_page");
+    attackLink("#to-reg-btn", "/register_page");
+    attackLink("#to-home-btn", "/");
+    attackLink("#to-new-empl-btn", "/add_employee_page");
 }
 
 
@@ -195,6 +221,6 @@ function main() {
     setHandlers();
 }
 
-$(document).ready(function() {
+$(document).ready(function () {
     main();
 });
