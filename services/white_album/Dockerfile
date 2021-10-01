@@ -8,4 +8,4 @@ ENV DOTNET_CLI_TELEMETRY_OPTOUT=1 COMPlus_JitTelemetry=0 COMPlus_legacyCorrupted
 
 RUN adduser --system --home /app --shell /usr/sbin/nologin --no-create-home --disabled-password deployer
 
-CMD ["dotnet", "white_album.api.dll"]
+CMD ["dotnet", "WhiteAlbum.dll"]
