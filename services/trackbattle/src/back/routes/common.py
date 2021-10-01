@@ -99,7 +99,7 @@ def get_success_user_response(user):
         jsonify(
             nickname=user.nickname,
             posts=user.posts,
-            flag=user.flag
+            payment_info=user.payment_info
         ),
         200
     )

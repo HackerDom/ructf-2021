@@ -1,0 +1,33 @@
+version: "3"
+
+services:
+  postgres:
+    image: postgres:13.2-alpine
+    restart: always
+    env_file:
+      - variables.env
+    ports:
+      - "5000:5432"
+    volumes:
+      - trackbattle-postgres-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  trackbattle:
+    build: .
+    restart: on-failure
+    env_file:
+      - variables.env
+    depends_on:
+      - postgres
+    networks:
+      - app-network
+    ports:
+      - "31337:31337"
+
+volumes:
+  trackbattle-postgres-data:
+
+networks:
+  app-network:
+    driver: bridge

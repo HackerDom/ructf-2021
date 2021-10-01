@@ -12,8 +12,8 @@ users_blueprint = Blueprint('users', __name__)
 
 
 @users_blueprint.route("/api/users", methods=['POST'])
-@expected_json_arguments('nickname', 'password_sha256', 'flag')
-def create(nickname=None, password_sha256=None, flag=None):
+@expected_json_arguments('nickname', 'password_sha256', 'payment_info')
+def create(nickname=None, password_sha256=None, payment_info=None):
     with make_session() as session:
         existing = session.query(User).filter(User.nickname == nickname).first()
 
@@ -32,7 +32,7 @@ def create(nickname=None, password_sha256=None, flag=None):
             nickname=nickname,
             password_sha256=password_sha256,
             posts=[],
-            flag=flag
+            payment_info=payment_info
         )
 
         session.add(new_user)
