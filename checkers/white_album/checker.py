@@ -63,8 +63,11 @@ async def check_service(request: CheckRequest) -> Verdict:
 
         now = datetime.utcnow()
         single_by_date = client.GetSinglesByDate(now)
-        Check(sorted([s["id"]["id"] for s in single_by_date]), sorted([single_first["id"]["id"], single_second["id"]["id"]]), "singles by date")
-        Check(sorted([s["name"] for s in single_by_date]), sorted([single_first["name"], single_second["name"]]), "singles by date")
+
+        expected1 = [single_first["id"]["id"], single_second["id"]["id"]]
+        expected2 = [single_first["name"], single_second["name"]]
+        Check(sorted(set([s["id"]["id"] for s in single_by_date]).intersection(set(expected1))), sorted(expected1), "singles by date")
+        Check(sorted(set([s["name"] for s in single_by_date]).intersection(set(expected2))), sorted(expected2), "singles by date")
 
         Check(single_response2, single_second, "single")
 
@@ -75,8 +78,12 @@ async def check_service(request: CheckRequest) -> Verdict:
 
         now = datetime.utcnow()
         album_by_date = client.GetAlbumByDate(now)
-        Check(sorted([s["id"]["id"] for s in album_by_date]), [album["id"]["id"]], "albums by date")
-        Check(sorted([s["name"] for s in album_by_date]), [album["name"]], "albums by date")
+        a = list([s["id"]["id"] for s in album_by_date])
+
+        if not album["id"]["id"] in [s["id"]["id"] for s in album_by_date]:
+            return Verdict.MUMBLE(f'{album["id"]["id"]} not present in album/get_by_date response')
+        if not album["name"] in [s["name"] for s in album_by_date]:
+            return Verdict.MUMBLE(f'{album["name"]} not present in album/get_by_date response')
 
         album_response.pop("owner")
         album_response.pop("singles")  # TODO: check

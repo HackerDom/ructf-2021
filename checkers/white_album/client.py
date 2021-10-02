@@ -46,7 +46,7 @@ class Client:
 
     def __api_call__(self, function, path):
         url = f'http://{self.address}:{self.port}/{path}'
-        headers = {'User-Agent': utils.get_user_agent(), "Content-Type": "application/json"}
+        headers = {"Content-Type": "application/json"}
         cookies = dict({'Api-Token': self.apikey})
         return function(url, headers, cookies)
 
