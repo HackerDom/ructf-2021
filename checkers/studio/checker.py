@@ -78,6 +78,8 @@ def put(put_request: PutRequest) -> Verdict:
             headers={"User-Agent": get_user_agent()},
             data=request_data
         )
+        if resp is None:
+            return Verdict.CORRUPT("corrupt response")
 
         resp_json = resp.json()
         if "data" not in resp_json or "id" not in resp_json["data"]:
