@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/usernamedt/container-service-gin/models"
+	"github.com/usernamedt/container-service-gin/pkg/containerkiller"
 	"github.com/usernamedt/container-service-gin/pkg/logging"
 	"github.com/usernamedt/container-service-gin/pkg/setting"
 	"strconv"
@@ -42,6 +43,7 @@ type WorkerPool struct {
 	workerDone         chan struct{}
 	queueStatDone      chan struct{}
 	rpmStatDone        chan struct{}
+	killerDone         chan struct{}
 }
 
 func New(wcount int) *WorkerPool {
@@ -51,6 +53,8 @@ func New(wcount int) *WorkerPool {
 		results:       make(chan Result, wcount),
 		workerDone:    make(chan struct{}),
 		queueStatDone: make(chan struct{}),
+		rpmStatDone: make(chan struct{}),
+		killerDone: make(chan struct{}),
 	}
 }
 
@@ -59,6 +63,7 @@ func (wp *WorkerPool) Run(ctx context.Context) {
 
 	wp.initQueueStatWriter()
 	wp.initRpmStatWriter()
+	wp.initContainerKiller()
 	for i := 0; i < wp.workersCount; i++ {
 		wg.Add(1)
 		// fan out worker goroutines
@@ -71,6 +76,7 @@ func (wp *WorkerPool) Run(ctx context.Context) {
 	close(wp.workerDone)
 	close(wp.queueStatDone)
 	close(wp.rpmStatDone)
+	close(wp.killerDone)
 	close(wp.results)
 }
 
@@ -143,8 +149,31 @@ func (wp *WorkerPool) initRpmStatWriter() {
 					currProcessed-prevProcessed, currReceived-prevReceived, statInterval)
 				prevProcessed = currProcessed
 				prevReceived = currReceived
-			case <-wp.queueStatDone:
+			case <-wp.rpmStatDone:
 				logging.Info("WorkerPool: stopping request statistics writer")
+				timer.Stop()
+				return
+			}
+		}
+	}()
+}
+
+func (wp *WorkerPool) initContainerKiller() {
+	period := setting.AppSetting.ContainerKillPeriod
+	if period == 0 {
+		logging.Infof("WorkerPool: container killer period should be > 0")
+		return
+	}
+
+	logging.Infof("WorkerPool: init container killer (each %d seconds)", period)
+	timer := time.NewTicker(period)
+	go func() {
+		for {
+			select {
+			case <-timer.C:
+				containerkiller.KillStuckContainers()
+			case <-wp.killerDone:
+				logging.Info("WorkerPool: stopping container killer")
 				timer.Stop()
 				return
 			}
