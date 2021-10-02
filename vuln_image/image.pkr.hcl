@@ -156,7 +156,7 @@ build {
       "VBoxManage modifyvm Studio --autostart-enabled on",
       "VBoxManage modifyvm Studio --cpus 4",
       "VBoxManage modifyvm Studio --memory 8192",
-      "VBoxManage modifyvm Studio --natpf1 "serviceport,tcp,0.0.0.0,8000,,8000",
+      "VBoxManage modifyvm Studio --natpf1 'serviceport,tcp,0.0.0.0,8000,,8000'",
 
       "systemctl start studio-vm",
       "systemctl enable studio-vm",
