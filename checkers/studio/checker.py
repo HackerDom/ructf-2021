@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
+import sys
+
 import requests
 import socket
 import random
 import time
 import uuid
 import string
-from traceback import print_exc
+from traceback import print_exc, print_tb
 from user_agent_randomizer import get as get_user_agent
 from payload_generator import get as get_payload
 from requests.exceptions import Timeout
@@ -60,7 +62,7 @@ class NetworkChecker:
         if exc_type:
             print(exc_type)
             print(exc_value.__dict__)
-            traceback.print_tb(exc_traceback, file=sys.stdout)
+            print_tb(exc_traceback, file=sys.stdout)
         return True
 
 

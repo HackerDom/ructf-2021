@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
 
-def get():
+def get(flag):
     error = ""
     for i in range(2):
         try:
-            return __get()
+            return __get(flag)
         except Exception as e:
             error = e
     raise OSError(str(error))
