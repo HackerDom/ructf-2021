@@ -11,6 +11,7 @@ jobs:
         service:
           - employeexer
           - metrics
+          - white_album
       fail-fast: false
 
     steps:

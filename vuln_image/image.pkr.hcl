@@ -55,6 +55,7 @@ build {
       "useradd -m -u 10000 -s /bin/bash employeexer",
       "useradd -m -u 10001 -s /bin/bash studio",
       "useradd -m -u 10002 -s /bin/bash metrics",
+      "useradd -m -u 10003 -s /bin/bash white_album",
     ]
   }
 
@@ -98,6 +99,13 @@ build {
     destination = "/home/metrics/"
   }
 
+  # white_album service
+
+  provisioner "file" {
+    source = "../services/white_album/"
+    destination = "/home/white_album/"
+  }
+
   # Studio service
   provisioner "shell" {
     inline = [
@@ -131,6 +139,13 @@ build {
   provisioner "shell" {
     inline = [
       "cd ~metrics",
+      "docker-compose up --build -d || true",
+    ]
+  }
+
+  provisioner "shell" {
+    inline = [
+      "cd ~white_album",
       "docker-compose up --build -d || true",
     ]
   }
