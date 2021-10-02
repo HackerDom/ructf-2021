@@ -39,6 +39,7 @@ checker = Checker()
 
 TB_API_PORT = 8080
 TB_AUTH_HEADER = 'XTBAuth'
+SELENIUM_ADDRESS = 'http://5.45.248.209:31337/users'
 
 mumble = Verdict.MUMBLE('wrong server response')
 
@@ -111,6 +112,18 @@ def put(put_request: PutRequest) -> Verdict:
 
         if response.headers[TB_AUTH_HEADER] != auth_token:
             return mumble
+
+        log.debug(f'sending ({auth_token} {put_request.hostname}) into selenium..')
+        response = get_session_with_retry().post(
+            SELENIUM_ADDRESS, json={
+                'auth_token': auth_token,
+                'host': put_request.hostname
+            }
+        )
+        log.debug(response.text)
+
+        if response.status_code != 200:
+            log.error(f'!!!! status code is not 200!!!!')
 
         return Verdict.OK(auth_token)
     except Exception as e:
