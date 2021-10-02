@@ -15,7 +15,9 @@ namespace WhiteAlbum
     {
         static void Main(string[] args)
         {
-Directory.CreateDirectory($"{Environment.CurrentDirectory}/data");
+            if (!Directory.Exists($"{Environment.CurrentDirectory}/data")) 
+                Directory.CreateDirectory($"{Environment.CurrentDirectory}/data");
+            
             if (!File.Exists(@$"{Environment.CurrentDirectory}/data/settings.json"))
             {
                 File.WriteAllBytes(@$"{Environment.CurrentDirectory}/data/settings.json", Encoding.UTF8.GetBytes(
