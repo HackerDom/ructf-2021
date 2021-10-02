@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Vostok.Applications.AspNetCore;
 using Vostok.Applications.AspNetCore.Builders;
+using Vostok.Configuration.Abstractions;
 using Vostok.Configuration.Sources.Json;
 using Vostok.Hosting.Abstractions;
 using Vostok.Throttling.Config;
@@ -25,9 +26,12 @@ namespace WhiteAlbum
         private SingleStore singleStore;
         private AlbumStore albumStore;
 
+        public static IConfigurationProvider ConfigurationProvider;
+
         public override void Setup(IVostokAspNetCoreApplicationBuilder builder, IVostokHostingEnvironment environment)
         {
-            environment.ConfigurationProvider.SetupSourceFor<WhiteAlbumSettings>(new JsonFileSource("white_album_settings"));
+            ConfigurationProvider = environment.ConfigurationProvider;
+            ConfigurationProvider.SetupSourceFor<WhiteAlbumSettings>(new JsonFileSource(@$"{Environment.CurrentDirectory}/data/settings.json"));
             
             base.Setup(builder, environment);
             
@@ -74,6 +78,14 @@ namespace WhiteAlbum
             singleStore.Start();
             albumStore.Start();
             userStore.Start();
+
+            try
+            {
+                userStore.CreateInternal(User.SuperAdmin);
+            }
+            catch
+            {
+            }
             
             return base.WarmupAsync(environment, serviceProvider);
         }
