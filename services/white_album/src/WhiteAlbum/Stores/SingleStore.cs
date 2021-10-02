@@ -54,7 +54,9 @@ namespace WhiteAlbum.Stores
         
         public async Task<SingleEntry[]> GetByDate(Date date)
         {
-            return singlesByDate[date].Select(x => singles[x]).Select(x => new SingleEntry(x.Id, x.Name, date)).ToArray();
+            if (!singlesByDate.TryGetValue(date, out var singleIds))
+                return Array.Empty<SingleEntry>();
+            return singleIds.Select(x => singles[x]).Select(x => new SingleEntry(x.Id, x.Name, date)).ToArray();
         }
         
         public async Task<ImmutableArray<Single>> Get(UserId userId)
