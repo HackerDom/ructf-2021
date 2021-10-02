@@ -3,12 +3,12 @@ import styles from "./TrackBattleLayout.less";
 import {Line} from "./Line";
 import {Button} from "./Button";
 import {useHistory} from "react-router-dom";
-import {LocalStorage} from "../../Utilities/LocalStorage";
+import {CookiesStorage} from "../../Utilities/CookiesStorage";
 import {player} from "../../App";
 
 export const TrackBattleLayout: React.FC = (props) => {
     const history = useHistory();
-    const isAuthorized = !!LocalStorage.getAuth();
+    const isAuthorized = !!CookiesStorage.getAuth();
 
     player.stopPlaying();
 
@@ -29,7 +29,7 @@ export const TrackBattleLayout: React.FC = (props) => {
     }
 
     const handleLogout = () => {
-        LocalStorage.removeAuth();
+        CookiesStorage.removeAuth();
         history.push("/logout")
     }
 

@@ -7,7 +7,7 @@ import {Button} from "./Components/Button";
 import {Input} from "./Components/Input";
 import {Cell} from "./Components/Cell";
 import {api} from "../api/api";
-import {LocalStorage} from "../Utilities/LocalStorage";
+import {CookiesStorage} from "../Utilities/CookiesStorage";
 import {createObject} from "../Utilities/ObjectCreator";
 import {sha256} from "../Utilities/HashConverter";
 
@@ -34,7 +34,7 @@ export const LoginPage: React.FC = () => {
             return;
         }
 
-        LocalStorage.setAuth(result.data.auth_token);
+        CookiesStorage.setAuth(result.data.auth_token);
         history.push("/");
     }
 

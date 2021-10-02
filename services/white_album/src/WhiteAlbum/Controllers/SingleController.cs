@@ -42,15 +42,5 @@ namespace WhiteAlbum.Controllers
         {
             return await singleRepository.GetByDate(request);
         }
-
-        [HttpPost("single/mix")]
-        public async Task<Stream> Mix([FromBody] MixSingleRequest request)
-        {
-            var single = await singleRepository.Get(request.Id);
-
-            single.ShouldBeOwned();
-            
-            throw new NotImplementedException(); // todo mix here
-        }
     }
 }
