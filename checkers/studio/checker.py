@@ -1,12 +1,8 @@
 #!/usr/bin/env python3
 import sys
-
 import requests
-import socket
-import random
 import time
-import uuid
-import string
+
 from traceback import print_exc, print_tb
 from user_agent_randomizer import get as get_user_agent
 from payload_generator import get as get_payload
@@ -46,6 +42,7 @@ checker = Checker()
 TCP_PORT = 8000
 GET_RETRIES_COUNT = 15
 GET_RETRY_DELAY = 2
+
 
 class NetworkChecker:
     def __init__(self):
@@ -104,8 +101,12 @@ def get(get_request: GetRequest) -> Verdict:
                 headers={"User-Agent": get_user_agent()},
                 timeout=3
             )
+
+            if resp is None:
+                return Verdict.CORRUPT("corrupt response")
+
             resp_json = resp.json()
-            if "data" not in resp_json or "status" not in resp_json["data"]:
+            if resp and "data" not in resp_json or "status" not in resp_json["data"]:
                 return Verdict.CORRUPT("corrupt response")
 
             if resp_json["data"]["status"] == "created":
