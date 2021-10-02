@@ -57,13 +57,10 @@ namespace WhiteAlbum.Controllers
             return result.ToArray();
         }
         
-        [HttpPost("album/get_recent")]
-        public async Task<AlbumEntry[]> GetRecent([FromBody] GetRecentlyCreatedRequest request)
+        [HttpPost("album/get_by_date")]
+        public async Task<AlbumEntry[]> GetRecent([FromBody] GetByDateRequest request)
         {
-            if (request.Count > 50)
-                throw new NotImplementedException();
-
-            return await albumRepository.GetRecentlyCreated(request);
+            return await albumRepository.GetByDate(request);
         }
         
         [HttpPost("album/attach")]

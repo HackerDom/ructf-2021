@@ -35,9 +35,9 @@ namespace WhiteAlbum.Repository
             await albumStore.Update(request);
         }
 
-        public async Task<AlbumEntry[]> GetRecentlyCreated(GetRecentlyCreatedRequest request)
+        public async Task<AlbumEntry[]> GetByDate(GetByDateRequest request)
         {
-            return await albumStore.GetRecent(request.StartDate, request.Count);
+            return await albumStore.GetByDate(request.Date);
         }
     }
 }

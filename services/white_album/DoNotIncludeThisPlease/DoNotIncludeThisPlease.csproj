@@ -20,6 +20,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\src\WhiteAlbum\WhiteAlbum.csproj" />
       <ProjectReference Include="..\WhiteAlbum\WhiteAlbum.csproj" />
     </ItemGroup>
 

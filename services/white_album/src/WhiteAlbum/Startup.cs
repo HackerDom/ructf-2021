@@ -8,6 +8,7 @@ using WhiteAlbum.Stores;
 using Newtonsoft.Json;
 using WhiteAlbum.Authentication;
 using WhiteAlbum.Helpers;
+using WhiteAlbum.Middleware;
 using AuthenticationMiddleware = WhiteAlbum.Middleware.AuthenticationMiddleware;
 
 namespace WhiteAlbum
@@ -59,9 +60,8 @@ namespace WhiteAlbum
 
             application.UseRouting();
             
-            
-            
             application.UseMiddleware<AuthenticationMiddleware>();
+            application.UseMiddleware<ExceptionHandleMiddleware>();
 
             application.UseEndpoints(endpoints => endpoints.MapControllers());
         }

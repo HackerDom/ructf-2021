@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using WhiteAlbum.Authorization;
+using WhiteAlbum.Entities;
 using WhiteAlbum.Repository;
 using WhiteAlbum.Requests;
 using Single = WhiteAlbum.Entities.Single;
@@ -31,9 +32,15 @@ namespace WhiteAlbum.Controllers
         {
             var single = await singleRepository.Get(request.Id);
 
-            await Authorize().For(single).By(Permission.Read);
-            
+            single.ShouldBeOwned();
+
             return single;
+        }
+        
+        [HttpPost("single/get_by_date")]
+        public async Task<SingleEntry[]> GetRecent([FromBody] GetByDateRequest request)
+        {
+            return await singleRepository.GetByDate(request);
         }
 
         [HttpPost("single/mix")]
@@ -41,7 +48,7 @@ namespace WhiteAlbum.Controllers
         {
             var single = await singleRepository.Get(request.Id);
 
-            await Authorize().For(single).By(Permission.Read);
+            single.ShouldBeOwned();
             
             throw new NotImplementedException(); // todo mix here
         }

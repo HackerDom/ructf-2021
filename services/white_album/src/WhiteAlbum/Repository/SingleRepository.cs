@@ -25,5 +25,10 @@ namespace WhiteAlbum.Repository
         {
             await singleStore.Create(request);
         }
+        
+        public async Task<SingleEntry[]> GetByDate(GetByDateRequest request)
+        {
+            return await singleStore.GetByDate(request.Date);
+        }
     }
 }
