@@ -91,10 +91,15 @@ build {
   }
 
   # For two following steps you need to run build scripts from ../services/sandbox/sandbox_vm_image and ../services/sandbox/sandbox_docker_image first
-  #provisioner "file" {
-  #  source = "../services/studio/image/output-studio"
-  #  destination = "/home/studio/image/output-studio"
-  #}
+  # And move image in /home/images/studio/packer-studio.ova
+  provisioner "file" {
+    source = "/home/images/studio/packer-studio.ova"
+    destination = "/home/studio/image/packer-studio.ova"
+  }
+  provisioner "file" {
+    source = "/home/images/studio/studio-vm.service"
+    destination = "/home/studio/image/studio-vm.service"
+  }
 
   # Build and run services for the first time
 
@@ -105,32 +110,32 @@ build {
     ]
   }
 
-  #provisioner "shell" {
-  #  inline = [
-  #    "cd ~studio",
-  #    "apt-get -y -q install virtualbox",
-  #
-  #    "systemctl daemon-reload",
-  #
-  #    # Enable auto-start for VirtualBox VM. See https://kifarunix.com/autostart-virtualbox-vms-on-system-boot-on-linux/
-  #    "mkdir -p /etc/vbox",
-  #    "echo 'VBOXAUTOSTART_DB=/etc/vbox' | tee -a /etc/default/virtualbox",
-  #    "echo 'VBOXAUTOSTART_CONFIG=/etc/vbox/autostartvm.cfg' | tee -a /etc/default/virtualbox",
-  #    "echo 'default_policy = allow' | tee /etc/vbox/autostartvm.cfg",
-  #    "VBoxManage setproperty autostartdbpath /etc/vbox/",
+  provisioner "shell" {
+    inline = [
+      "cd ~studio",
+      "apt-get -y -q install virtualbox",
+  
+      "systemctl daemon-reload",
+  
+      # Enable auto-start for VirtualBox VM. See https://kifarunix.com/autostart-virtualbox-vms-on-system-boot-on-linux/
+      "mkdir -p /etc/vbox",
+      "echo 'VBOXAUTOSTART_DB=/etc/vbox' | tee -a /etc/default/virtualbox",
+      "echo 'VBOXAUTOSTART_CONFIG=/etc/vbox/autostartvm.cfg' | tee -a /etc/default/virtualbox",
+      "echo 'default_policy = allow' | tee /etc/vbox/autostartvm.cfg",
+      "VBoxManage setproperty autostartdbpath /etc/vbox/",
 
-  #    "VBoxManage import image/output-studio/packer-studio-*.ovf --vsys 0 --vmname Studio",
-  #    "VBoxManage hostonlyif create",
-  #    "VBoxManage hostonlyif ipconfig vboxnet0 --ip 192.168.56.1",
-  #    "VBoxManage modifyvm Studio --nic1 hostonly --hostonlyadapter1 vboxnet0",
-  #    "VBoxManage modifyvm Studio --autostart-enabled on",
-  #    "VBoxManage modifyvm Studio --cpus 4",
-  #    "VBoxManage modifyvm Studio --memory 8192",
+      "VBoxManage import image/packer-studio.ova --vsys 0 --vmname Studio",
+      "VBoxManage hostonlyif create",
+      "VBoxManage hostonlyif ipconfig vboxnet0 --ip 192.168.56.1",
+      "VBoxManage modifyvm Studio --nic1 hostonly --hostonlyadapter1 vboxnet0",
+      "VBoxManage modifyvm Studio --autostart-enabled on",
+      "VBoxManage modifyvm Studio --cpus 4",
+      "VBoxManage modifyvm Studio --memory 8192",
 
-  #    "systemctl start studio-vm",
-  #    "systemctl enable studio-vm",
-  #  ]
-  #}
+      "systemctl start studio-vm",
+      "systemctl enable studio-vm",
+    ]
+  }
 
   # Fix some internal digitalocean+cloud-init scripts to be compatible with our cloud infrastructure
   provisioner "shell" {
