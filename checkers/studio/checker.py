@@ -101,17 +101,22 @@ def get(get_request: GetRequest) -> Verdict:
                 timeout=3
             )
             resp_json = resp.json()
-            if resp_json["status"] == "created":
+            if "data" not in resp_json or "status" not in resp_json["data"]:
+                return Verdict.CORRUPT("corrupt response")
+
+            if resp_json["data"]["status"] == "created":
                 time.sleep(2)
+                retry_count += 1
                 continue
 
-            if resp_json["status"] != "success":
+            if resp_json["data"]["status"] != "success":
                 return Verdict.CORRUPT("u re sending corrupt data")
 
-            if resp_json["result"] == get_request.flag:
+            if resp_json["data"]["result"] == get_request.flag:
                 return Verdict.OK()
-            else:
-                return Verdict.CORRUPT("u re sending corrupt data")
+
+            return Verdict.CORRUPT("u re sending corrupt data")
+
     except Timeout as e:
         print(e, print_exc())
         return Verdict.DOWN("service seems not responding")
