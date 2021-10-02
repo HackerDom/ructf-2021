@@ -1,19 +1,14 @@
 #!/usr/bin/env python3
-import base64
 import functools
-import hashlib
-import io
 import re
 import sys
 
 import requests
 import traceback
-import random
-import string
 
 from gornilo import CheckRequest, Verdict, Checker, PutRequest, GetRequest
 
-from generators import gen_string, gen_employee
+from generators import gen_string, gen_employee, gen_user_agent
 from request_pb2 import UserPair, StringList
 
 checker = Checker()
@@ -33,7 +28,7 @@ def get_creds(url_template, hostname, username, password):
     session = requests.Session()
     url = url_template.format(hostname=hostname, port=PORT)
     user = UserPair(username=username, password=password)
-    r = session.post(url, headers={'Content-Type': 'application/protobuf'}, data=user.SerializeToString())
+    r = session.post(url, headers={'User-Agent': gen_user_agent(), 'Content-Type': 'application/protobuf'}, data=user.SerializeToString())
     r.raise_for_status()
     return session
 
@@ -44,14 +39,14 @@ register = functools.partial(get_creds, REGISTER_URL)
 
 def add_new_employee(session, hostname, new_employee):
     url = NEW_EMPLOYEE_URL.format(hostname=hostname, port=PORT)
-    r = session.post(url, headers={'Content-Type': 'application/protobuf'}, data=new_employee.SerializeToString())
+    r = session.post(url, headers={'User-Agent': gen_user_agent(), 'Content-Type': 'application/protobuf'}, data=new_employee.SerializeToString())
     r.raise_for_status()
     return r.content.decode()
 
 
 def list_employee(session, hostname):
     url = SEARCH_EMPLOYEES_URL.format(hostname=hostname, port=PORT, query='new_employee')
-    r = session.get(url)
+    r = session.get(url, headers={'User-Agent': gen_user_agent()})
     r.raise_for_status()
     employee_ids = StringList()
     employee_ids.ParseFromString(r.content)
@@ -68,7 +63,7 @@ def get_flag_from_full_info(content):
 
 def get_flag_from_employee_id_as_owner(session, hostname, employee_id):
     url = OWNER_VIEW_URL.format(hostname=hostname, port=PORT, employee_id=employee_id)
-    r = session.get(url)
+    r = session.get(url, headers={'User-Agent': gen_user_agent()})
     r.raise_for_status()
     return get_flag_from_full_info(r.content.decode())
 
