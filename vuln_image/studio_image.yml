@@ -12,4 +12,7 @@
       changed_when: False
 
   roles:
-    - { role: base_image, tags: [base] }
+    - { role: systemd_base_image, tags: [base] }
+    - bay_cloud_config
+    - { role: systemd_service, service_name: studio, tags: [studio] }
+    

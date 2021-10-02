@@ -1,0 +1,13 @@
+[Unit]
+Description=Studio service
+After=network.target
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=/root/container-svc/container-service-gin
+ExecStartPre=/root/container-svc/prepare.sh
+WorkingDirectory=/root/container-svc/
+
+[Install]
+WantedBy=multi-user.target
