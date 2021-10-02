@@ -9,8 +9,7 @@ jobs:
     strategy:
       matrix:
         service:
-          - sesame
-          - office
+          - employeexer
       fail-fast: false
 
     steps:
