@@ -44,7 +44,8 @@ def requests_with_retry(
 checker = Checker()
 
 TCP_PORT = 8000
-
+GET_RETRIES_COUNT = 15
+GET_RETRY_DELAY = 2
 
 class NetworkChecker:
     def __init__(self):
@@ -94,7 +95,10 @@ def put(put_request: PutRequest) -> Verdict:
 def get(get_request: GetRequest) -> Verdict:
     try:
         retry_count = 0
-        while retry_count < 15:
+        while retry_count <= GET_RETRIES_COUNT:
+            # result is not immediate, wait a little bit
+            time.sleep(GET_RETRY_DELAY)
+
             resp = requests_with_retry().get(
                 f"http://{get_request.hostname}:{TCP_PORT}/api/v1/jobs/{get_request.flag_id.strip()}",
                 headers={"User-Agent": get_user_agent()},
@@ -105,7 +109,6 @@ def get(get_request: GetRequest) -> Verdict:
                 return Verdict.CORRUPT("corrupt response")
 
             if resp_json["data"]["status"] == "created":
-                time.sleep(2)
                 retry_count += 1
                 continue
 
