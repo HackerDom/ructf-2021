@@ -4,6 +4,7 @@ using DoNotIncludeThisPlease.Client;
 using FluentAssertions;
 using FluentAssertions.Extensions;
 using NUnit.Framework;
+using Vostok.Clusterclient.Core.Model;
 using Vostok.Configuration.Sources.Object;
 using Vostok.Hosting;
 using Vostok.Hosting.Setup;
@@ -24,10 +25,12 @@ namespace DoNotIncludeThisPlease
         private AlbumName albumName;
         private Client.Client client;
         private VostokHost host;
-        private UserId? userId2;
-        private UserName? userName2;
-        private AlbumId? albumId2;
-        private AlbumName? albumName2;
+        private UserId userId2;
+        private UserName userName2;
+        private AlbumId albumId2;
+        private AlbumName albumName2;
+        private SingleId? singleId;
+        private SingleName? singleName;
 
         [SetUp]
         public void SetUp()
@@ -44,7 +47,7 @@ namespace DoNotIncludeThisPlease
                     .SetupLog(logBuilder => logBuilder.SetupConsoleLog())
                     .SetPort(1234);
             }
-            
+
             host = new VostokHost(new VostokHostSettings(new WhiteAlbumApplication(), EnvironmentSetup));
 
             host.WithConsoleCancellation().StartAsync().GetAwaiter().GetResult();
@@ -61,34 +64,23 @@ namespace DoNotIncludeThisPlease
             albumId2 = new AlbumId(Guid.NewGuid());
             albumName2 = new AlbumName($"album_name_{albumId2.Id}");
             
+            singleId = new SingleId(Guid.NewGuid());
+            singleName = new SingleName($"single_name1_{singleId}");
+            
             var log = new SynchronousConsoleLog();
             var authProvider = new AsyncLocalAuthProvider();
 
             client = new Client.Client("http://localhost:1234/", authProvider, log);
         }
-        
-        [Test]
-        public async Task Should_not_fail_when_get_authorized()
+
+        [TearDown]
+        public async Task TearDown()
         {
-            var userToken = (await client.UsersClient.Create(new CreateUserRequest(userId, userName), 60.Seconds())).Result;
-
-            ApiKey.Set(userToken.Id.ToString());
-        
-            var createAlbumRequest = new CreateAlbumRequest(albumId, albumName, new AlbumMeta(null, null));
-
-            var createResult = (await client.AlbumClient.Create(createAlbumRequest, 60.Seconds()));
-
-            ApiKey.Set(null);
-            
-            var getResult = (await client.AlbumClient.Get(new GetAlbumRequest(albumId), 60.Seconds())).Result;
-            
-            Console.WriteLine($"alnum : {getResult.Name}");
-            
             await host.StopAsync();
         }
         
         [Test]
-        public async Task Should_fail_when_get_unautorized()
+        public async Task Should_not_fail_to_get_album_when_get_authorized()
         {
             var userToken = (await client.UsersClient.Create(new CreateUserRequest(userId, userName), 60.Seconds())).Result;
 
@@ -97,18 +89,132 @@ namespace DoNotIncludeThisPlease
             var createAlbumRequest = new CreateAlbumRequest(albumId, albumName, new AlbumMeta(null, null));
 
             var createResult = (await client.AlbumClient.Create(createAlbumRequest, 60.Seconds()));
+            createResult.EnsureSuccess();
+
+            var getResult = (await client.AlbumClient.Get(new GetAlbumRequest(albumId), 60.Seconds()));
+            
+            getResult.EnsureSuccess();
+        }
+        
+        [Test]
+        public async Task Should_not_fail_to_get_single_when_get_authorized()
+        {
+            var userToken = (await client.UsersClient.Create(new CreateUserRequest(userId, userName), 60.Seconds())).Result;
+
+            ApiKey.Set(userToken.Id.ToString());
+        
+            var creteSingleRequest = new CreateSingleRequest(singleId, new SingleMeta("author", null), singleName, new Track());
+
+            var createResult = (await client.SinglesClient.Create(creteSingleRequest, 60.Seconds()));
+            createResult.EnsureSuccess();
+
+            var getResult = (await client.SinglesClient.Get(new GetSingleRequest(singleId), 60.Seconds()));
+            
+            getResult.EnsureSuccess();
+        }
+        
+        [Test]
+        public async Task Should_fail_to_get_single_when_get_unauthorized()
+        {
+            var userToken = (await client.UsersClient.Create(new CreateUserRequest(userId, userName), 60.Seconds())).Result;
+
+            ApiKey.Set(userToken.Id.ToString());
+        
+            var creteSingleRequest = new CreateSingleRequest(singleId, new SingleMeta("author", null), singleName, new Track());
+
+            var createResult = (await client.SinglesClient.Create(creteSingleRequest, 60.Seconds()));
+            createResult.EnsureSuccess();
+
+            ApiKey.Set(null);
+            var getResult = (await client.SinglesClient.Get(new GetSingleRequest(singleId), 60.Seconds()));
+            
+            getResult.ResponseCode.Should().Be(ResponseCode.Unauthorized);
+        }
+        
+        [Test]
+        public async Task Should_fail_to_get_album_when_get_unauthorized()
+        {
+            var userToken = (await client.UsersClient.Create(new CreateUserRequest(userId, userName), 60.Seconds())).Result;
+
+            ApiKey.Set(userToken.Id.ToString());
+        
+            var createAlbumRequest = new CreateAlbumRequest(albumId, albumName, new AlbumMeta(null, null));
+
+            var createResult = (await client.AlbumClient.Create(createAlbumRequest, 60.Seconds()));
+            createResult.EnsureSuccess();
 
             ApiKey.Set(null);
             
-            var getResult = (await client.AlbumClient.Get(new GetAlbumRequest(albumId), 60.Seconds())).Result;
+            var getResult = (await client.AlbumClient.Get(new GetAlbumRequest(albumId), 60.Seconds()));
+
+            getResult.ResponseCode.Should().Be(ResponseCode.Forbidden);
+        }
+
+        [Test]
+        public async Task AlbumGetByDateShouldWork()
+        {
             
-            Console.WriteLine($"alnum : {getResult.Name}");
             
-            await host.StopAsync();
         }
         
         [Test]
         public async Task Sploit()
+        {
+            var userToken = (await client.UsersClient.Create(new CreateUserRequest(userId, userName), 60.Seconds())).Result;
+
+            ApiKey.Set(userToken.Id.ToString());
+        
+            var createAlbumRequest = new CreateAlbumRequest(albumId, albumName, new AlbumMeta(null, null));
+
+            var createResult = (await client.AlbumClient.Create(createAlbumRequest, 60.Seconds()));
+            
+            createResult.EnsureSuccess();
+            
+            var getResult = (await client.AlbumClient.Get(new GetAlbumRequest(albumId), 60.Seconds()));
+            
+            getResult.EnsureSuccess();
+            
+            var createSingleRequest = new CreateSingleRequest(singleId, new SingleMeta("author", null), singleName, new Track());
+            var createSingleResult = (await client.SinglesClient.Create(createSingleRequest, 60.Seconds()));
+            
+            createSingleResult.EnsureSuccess();
+            
+            var attachResult = await client.AlbumClient.Attach(new AttachSingleToAlbumRequest(singleId, albumId), 60.Seconds());
+            attachResult.EnsureSuccess();
+            
+            ApiKey.Set(null);
+            
+            var userToken2 = (await client.UsersClient.Create(new CreateUserRequest(userId2, userName2), 60.Seconds())).Result;
+            
+            ApiKey.Set(userToken2.Id.ToString());
+            
+            var createAlbumRequest2 = new CreateAlbumRequest(albumId2, albumName2, new AlbumMeta(null, null));
+
+            var createResult2 = (await client.AlbumClient.Create(createAlbumRequest2, 60.Seconds()));
+            
+            createResult2.EnsureSuccess();
+            
+            var getResult2 = (await client.AlbumClient.Get(new GetAlbumRequest(albumId2), 60.Seconds()));
+            
+            getResult2.EnsureSuccess();
+            
+            var singleId2 = new SingleId(Guid.NewGuid());
+            var singleName2 = singleName;
+            var createSingleRequest2 = new CreateSingleRequest(singleId2, new SingleMeta("author2", null), singleName2, new Track());
+            var createSingleResult2 = (await client.SinglesClient.Create(createSingleRequest2, 60.Seconds()));
+            
+            createSingleResult2.EnsureSuccess();
+
+            
+            var attachResult2 = await client.AlbumClient.Attach(new AttachSingleToAlbumRequest(singleId, albumId2), 60.Seconds());
+            attachResult2.EnsureSuccess();
+            
+            var getAllSinglesResult = await client.AlbumClient.GetAllSingles(new GetAllSinglesRequest(albumId2), 60.Seconds());
+            getAllSinglesResult.Result.Should().Contain(x => x.Id.Id.Equals(singleId.Id));
+        }
+        
+        [Test]
+         public async Task Sploit_should_fail_when_single_has_different_name()
         {
             var userToken = (await client.UsersClient.Create(new CreateUserRequest(userId, userName), 60.Seconds())).Result;
 
@@ -134,9 +240,6 @@ namespace DoNotIncludeThisPlease
             var attachResult = await client.AlbumClient.Attach(new AttachSingleToAlbumRequest(singleId, albumId), 60.Seconds());
             attachResult.EnsureSuccess();
             
-            // ApiKey.Set(null);
-
-            
             ApiKey.Set(null);
             
             var userToken2 = (await client.UsersClient.Create(new CreateUserRequest(userId2, userName2), 60.Seconds())).Result;
@@ -154,34 +257,17 @@ namespace DoNotIncludeThisPlease
             getResult2.EnsureSuccess();
             
             var singleId2 = new SingleId(Guid.NewGuid());
-            // var singleName2 = new SingleName($"single_name2_{singleId2}");
-            var singleName2 = singleName;
+            var singleName2 = new SingleName($"single_name2_{singleId2}");
             var createSingleRequest2 = new CreateSingleRequest(singleId2, new SingleMeta("author2", null), singleName2, new Track());
             var createSingleResult2 = (await client.SinglesClient.Create(createSingleRequest2, 60.Seconds()));
             
             createSingleResult2.EnsureSuccess();
 
-            // var getSingleResult = (await client.SinglesClient.Get(new GetSingleRequest(singleId2), 60.Seconds()));
-            // Console.WriteLine($"signa :{getSingleResult.Result.Signature}");
-            
-            
             var attachResult2 = await client.AlbumClient.Attach(new AttachSingleToAlbumRequest(singleId, albumId2), 60.Seconds());
-            // var attachResult2 = await client.AlbumClient.Attach(new AttachSingleToAlbumRequest(singleId2, albumId2), 60.Seconds());
-            attachResult2.EnsureSuccess();
+            attachResult2.ResponseCode.Should().Be(ResponseCode.Forbidden);
             
-            var getSingle2 = await client.AlbumClient.GetAllSingles(new GetAllSinglesRequest(albumId2), 60.Seconds());
-            getSingle2.EnsureSuccess();
-            
-            foreach (var single in getSingle2.Result)
-            {
-                Console.WriteLine($"result :| {single.Id.Id}");
-            }
-            
-            
-            Console.WriteLine($"singleId  : {singleId.Id}");
-            Console.WriteLine($"singleId2 : {singleId2.Id}");
-            
-            await host.StopAsync();
+            var getAllSinglesResult = await client.AlbumClient.GetAllSingles(new GetAllSinglesRequest(albumId2), 60.Seconds());
+            getAllSinglesResult.Result.Should().NotContain(x => x.Id.Id.Equals(singleId.Id));
         }
     }
 }
