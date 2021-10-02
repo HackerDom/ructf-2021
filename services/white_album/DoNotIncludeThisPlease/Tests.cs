@@ -62,6 +62,7 @@ namespace DoNotIncludeThisPlease
                             .SetProject("White")
                             .SetApplication("Album")
                             .SetInstance("0"))
+                    .DisableClusterConfig()
                     .SetupLog(logBuilder => logBuilder.SetupConsoleLog())
                     .SetPort(1234);
             }

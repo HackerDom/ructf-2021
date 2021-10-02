@@ -30,6 +30,7 @@ namespace WhiteAlbum
                             .SetProject("White")
                             .SetApplication("Album")
                             .SetInstance("0"))
+                    .DisableClusterConfig()
                     .SetupLog(logBuilder => logBuilder.SetupFileLog())
                     .SetPort(1234);
             }
