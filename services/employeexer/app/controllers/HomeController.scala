@@ -22,7 +22,7 @@ object Context {
       None
   }
 
-  private val jedisPool = new JedisPool()
+  private val jedisPool = new JedisPool("redis", 6379)
   val store = new Store(Paths.get("store"))
   val sessionManager = new SessionManager(jedisPool)
   val userManager = new UserManager(jedisPool)

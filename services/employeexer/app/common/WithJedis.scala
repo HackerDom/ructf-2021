@@ -19,6 +19,7 @@ class WithJedis(private val jedisPool: JedisPool) {
     } finally {
       jedisForClose match {
         case Some(value) => value.close()
+        case None =>
       }
     }
   }

@@ -1,4 +1,3 @@
-
 name := """employeexer"""
 organization := "ru.hackerdom"
 
@@ -14,7 +13,7 @@ libraryDependencies += "com.typesafe.play" %% "play-json" % "2.9.2"
 libraryDependencies += "redis.clients" % "jedis" % "3.7.0"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.8" % Test
 
-//enablePlugins(ProtobufPlugin)
+enablePlugins(ProtobufPlugin)
 
 Compile / PB.targets := Seq(
   scalapb.gen() -> (Compile / sourceManaged).value / "scalapb"
