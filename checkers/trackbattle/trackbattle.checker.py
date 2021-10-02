@@ -191,11 +191,11 @@ def check(check_request: CheckRequest) -> Verdict:
 
 def check_make_some_post(check_request, session, user_agent, auth_token):
     track = json.dumps({
-        'notes': base64.b64encode(''.join(
-            [random.choice(["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]) for _ in
-             range(20)]).encode('utf-8')),
+        'notes': ''.join(
+            [random.choice(["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]) for _ in range(20)]),
         'waveform': random.choice(["sine", "square", "sawtooth", "triangle"])
     })
+    track = base64.b64encode(track.encode('utf-8')).decode('utf-8')
     title = ''.join([random.choice(string.ascii_letters) for _ in range(15)])
     description = ''.join([random.choice(string.ascii_letters) for _ in range(15)])
     r = session.post(
@@ -223,7 +223,8 @@ def check_make_some_post(check_request, session, user_agent, auth_token):
     )
     log.info(r.text)
 
-    if r.status_code != 200 or r.json().get('track') != track or r.json().get('title') != title or r.json().get('description') != description:
+    if r.status_code != 200 or r.json().get('track') != track or r.json().get('title') != title or r.json().get(
+            'description') != description:
         return None, mumble
 
     return post_id, None
