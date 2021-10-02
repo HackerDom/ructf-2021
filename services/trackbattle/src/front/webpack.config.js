@@ -3,6 +3,7 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const HtmlMinifierPlugin = require("html-minifier-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const DotenvPlugin = require("dotenv-webpack");
 
 const src = path.resolve(__dirname, "src");
 
@@ -52,6 +53,10 @@ module.exports = {
         new CleanWebpackPlugin(),
         new HtmlWebpackPlugin({
             template: 'public/index.html',
+        }),
+        new DotenvPlugin({
+            path: './.env',
+            safe: true,
         })
     ],
     optimization: {
