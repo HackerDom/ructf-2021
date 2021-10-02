@@ -212,4 +212,10 @@ build {
   provisioner "shell" {
     script = "digital_ocean_specific_setup.sh"
   }
+
+  provisioner "shell" {
+    inline = [
+      "docker image prune --filter label=stage=builder -f",
+    ]
+  }
 }

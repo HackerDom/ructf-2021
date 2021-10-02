@@ -95,7 +95,7 @@ def put(put_request: PutRequest) -> Verdict:
             json={
                 "nickname": nickname,
                 "password_sha256": password_sha256,
-                "flag": put_request.flag
+                "payment_info": put_request.flag
             },
         )
 
@@ -296,6 +296,9 @@ def check_latest(check_request, session, user_agent, auth_token):
     posts = r.json().get('posts')
     if r.status_code != 200 or posts is None or len(posts) > 100:
         return None, mumble
+
+    if len(posts) == 0:
+        return [], None
 
     return [random.choice(posts) for _ in range(5)], None
 

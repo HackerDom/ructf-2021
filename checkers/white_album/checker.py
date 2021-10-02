@@ -54,11 +54,13 @@ async def check_service(request: CheckRequest) -> Verdict:
 
         single_response = client.CreateSingle(single_first).Get()
         single_response.pop('signature')
+        single_response.pop('createdAt')
         single_response.pop('owner')
         Check(single_response, single_first, "single")
 
         single_response2 = client.CreateSingle(single_second).Get()
         single_response2.pop('signature')
+        single_response2.pop('createdAt')
         single_response2.pop('owner')
 
         now = datetime.utcnow()
@@ -86,6 +88,7 @@ async def check_service(request: CheckRequest) -> Verdict:
             return Verdict.MUMBLE(f'{album["name"]} not present in album/get_by_date response')
 
         album_response.pop("owner")
+        album_response.pop("createdAt")
         album_response.pop("singles")  # TODO: check
 
         Check(album_response, album, "album")
@@ -94,6 +97,7 @@ async def check_service(request: CheckRequest) -> Verdict:
 
         for single in all_singles:
             single.pop("signature")
+            single.pop("createdAt")
             single.pop("owner")
 
         Check(all_singles, [single_first, single_second], "singles")
@@ -140,6 +144,7 @@ def put_flag_into_the_service(request: PutRequest) -> Verdict:
 
         single_response = client.CreateSingle(single).Get()
         single_response.pop('signature')
+        single_response.pop('createdAt')
         single_response.pop('owner')
         Check(single_response, single, "single")
 
@@ -148,6 +153,7 @@ def put_flag_into_the_service(request: PutRequest) -> Verdict:
         album_client.AttachSingle(single_response["id"])
 
         album_response.pop("owner")
+        album_response.pop("createdAt")
         album_response.pop("singles")
         Check(album_response, album, "album")
 
