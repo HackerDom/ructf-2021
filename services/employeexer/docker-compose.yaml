@@ -16,4 +16,8 @@ services:
     volumes:
       - "./volumes/service/:/app/mount/"
   redis:
+    restart: "always"
     image: "redis:alpine"
+    mem_limit: 1G
+    memswap_limit: 1G
+    pids_limit: 100
