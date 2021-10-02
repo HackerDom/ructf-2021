@@ -24,6 +24,12 @@ class RuntimeIndex(private val jedisPool: JedisPool) extends WithJedis(jedisPool
         transaction.set(tokenWithIds._1, tokenWithIds._2.mkString(" "))
       }
     })
+
+    tokens.foreach { token =>
+      withJedis { jedis =>
+        jedis.set("idx/" + token, "idx")
+      }
+    }
   }
 
   def search(text: String): List[String] = {
@@ -31,9 +37,13 @@ class RuntimeIndex(private val jedisPool: JedisPool) extends WithJedis(jedisPool
 
     Tokenizer.split(text).foreach { token =>
       withJedis { jedis =>
-        val relatedIdsRecord = jedis.get(token)
-        if (relatedIdsRecord != null) {
-          employeeIds.addAll(relatedIdsRecord.split(" "))
+        println(token)
+        println(jedis.get(token))
+        if (jedis.get("idx/" + token) == "idx") {
+          val relatedIdsRecord = jedis.get(token)
+          if (relatedIdsRecord != null) {
+            employeeIds.addAll(relatedIdsRecord.split(" "))
+          }
         }
       }
     }

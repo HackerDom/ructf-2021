@@ -10,6 +10,7 @@ jobs:
       matrix:
         service:
           - employeexer
+          - metrics
       fail-fast: false
 
     steps:

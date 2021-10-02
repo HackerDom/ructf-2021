@@ -4,7 +4,6 @@ import com.google.protobuf.InvalidProtocolBufferException
 import common.{SessionManager, Store, UserManager, UserManagerException, Utils, WithJedisException}
 import index.RuntimeIndex
 import org.request.{Employee, NewEmployee, StringList, StrippedEmployees, UserPair}
-import play.api.libs.json.Json
 import play.api.mvc.{Cookie, _}
 import redis.clients.jedis.JedisPool
 
@@ -23,9 +22,9 @@ object Context {
   }
 
   private val jedisPool = new JedisPool("redis", 6379)
-  val store = new Store(Paths.get("store"))
+  val store = new Store(Paths.get("mount/store"))
   val sessionManager = new SessionManager(jedisPool)
-  val userManager = new UserManager(jedisPool)
+  val userManager = new UserManager(store)
   val index = new RuntimeIndex(jedisPool)
 }
 
@@ -158,15 +157,15 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
   private def withAuth(request: Request[AnyContent], block: String => Result): Result = {
     val secretCookie = request.cookies.get("secret")
     if (secretCookie.isEmpty) {
-      return BadRequest("Secret is empty")
+      return Redirect("/login_page")
     }
     val usernameCookie = request.cookies.get("username")
     if (usernameCookie.isEmpty) {
-      return BadRequest("Username cookie is empty")
+      return Redirect("/login_page")
     }
     val username = usernameCookie.get.value
     if (!Context.sessionManager.validate(username, secretCookie.get.value)) {
-      return BadRequest("Invalid cookies")
+      return Redirect("/login_page")
     }
     block(username)
   }
