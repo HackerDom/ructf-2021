@@ -54,6 +54,7 @@ build {
       # Add users for services
       "useradd -m -u 10000 -s /bin/bash employeexer",
       "useradd -m -u 10001 -s /bin/bash studio",
+      "useradd -m -u 10002 -s /bin/bash metrics",
     ]
   }
 
@@ -90,6 +91,13 @@ build {
     destination = "/home/employeexer/"
   }
 
+  # Metrics service
+
+  provisioner "file" {
+    source = "../services/Metrics/"
+    destination = "/home/metrics/"
+  }
+
   # Studio service
   provisioner "shell" {
     inline = [
@@ -113,11 +121,16 @@ build {
     destination = "/home/studio/"
   }
 
-  # Build and run services for the first time
-
   provisioner "shell" {
     inline = [
       "cd ~employeexer",
+      "docker-compose up --build -d || true",
+    ]
+  }
+
+  provisioner "shell" {
+    inline = [
+      "cd ~metrics",
       "docker-compose up --build -d || true",
     ]
   }
@@ -143,7 +156,7 @@ build {
       "VBoxManage modifyvm Studio --autostart-enabled on",
       "VBoxManage modifyvm Studio --cpus 4",
       "VBoxManage modifyvm Studio --memory 8192",
-      "VBoxManage modifyvm Studio --natpf1 "serviceport,tcp,0.0.0.0,8000,,8000",
+      "VBoxManage modifyvm Studio --natpf1 'serviceport,tcp,0.0.0.0,8000,,8000'",
 
       "systemctl start studio-vm",
       "systemctl enable studio-vm",
