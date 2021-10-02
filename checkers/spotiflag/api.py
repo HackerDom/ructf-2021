@@ -111,7 +111,7 @@ class Spotiflag:
                     except Exception:
                         raise MumbleException(f'/api/listen/: can\'t get chunk')
 
-                if i > 0 and len(chunk) != expected_chunk_size:
+                if len(chunk) != expected_chunk_size:
                     raise MumbleException(f'/api/listen/: incorrect chunk size')
 
                 chunks.append(chunk)
