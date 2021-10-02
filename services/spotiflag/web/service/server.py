@@ -48,7 +48,7 @@ async def api_generate(request: Request):
 
 @app.get('/api/listen/{id}/')
 async def api_listen(id: uuid.UUID, range: str=Header(...)):
-    offset = int(re.search(r'\d+', range).group(0))
+    offset = int(re.findall(r'\d+', range)[0])
 
     if redis.get(f'{PREFIX}{id}') is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND)
@@ -58,14 +58,16 @@ async def api_listen(id: uuid.UUID, range: str=Header(...)):
     if data is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND)
 
-    new_range = f'bytes {offset}-{offset + len(data)}/{offset + 2 * len(data)}'
+    new_start = offset
+    new_end = offset + len(data)
+    new_length = new_end + len(data)
 
     return Response(
         data,
         status_code=status.HTTP_206_PARTIAL_CONTENT,
         media_type='audio/wav',
         headers={
-            'Content-Range': new_range,
+            'Content-Range': f'bytes {new_start}-{new_end}/{new_length}',
         }
     )
 
