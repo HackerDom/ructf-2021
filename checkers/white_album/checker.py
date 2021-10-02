@@ -61,12 +61,22 @@ async def check_service(request: CheckRequest) -> Verdict:
         single_response2.pop('signature')
         single_response2.pop('owner')
 
+        now = datetime.utcnow()
+        single_by_date = client.GetSinglesByDate(now)
+        Check(sorted([s["id"]["id"] for s in single_by_date]), sorted([single_first["id"]["id"], single_second["id"]["id"]]), "singles by date")
+        Check(sorted([s["name"] for s in single_by_date]), sorted([single_first["name"], single_second["name"]]), "singles by date")
+
         Check(single_response2, single_second, "single")
 
         album_client = client.CreateAlbum(album)
         album_response = album_client.Get()
         album_client.AttachSingle(single_response["id"])
         album_client.AttachSingle(single_response2["id"])
+
+        now = datetime.utcnow()
+        album_by_date = client.GetAlbumByDate(now)
+        Check(sorted([s["id"]["id"] for s in album_by_date]), [album["id"]["id"]], "albums by date")
+        Check(sorted([s["name"] for s in album_by_date]), [album["name"]], "albums by date")
 
         album_response.pop("owner")
         album_response.pop("singles")  # TODO: check
