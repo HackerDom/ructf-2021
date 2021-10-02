@@ -12,7 +12,7 @@ export interface Result<R> {
 }
 
 export class api {
-    private static readonly baseUrl: string = "http://localhost:5000/api";
+    private static readonly baseUrl: string = "http://localhost:8080/api";
     private static readonly authHeader = "XTBAuth";
     private static readonly contentTypeHeader = "Content-Type";
 
