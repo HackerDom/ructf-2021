@@ -86,11 +86,12 @@ func (wp *WorkerPool) NextResult() (Result, bool, bool) {
 }
 
 func (wp *WorkerPool) GenerateJobId() string {
-	jobsCount := atomic.AddUint64(&wp.receivedJobsCount, 1)
-	return strconv.FormatUint(jobsCount, 10)
+	id := time.Now().UnixNano()
+	return strconv.FormatInt(id, 10)
 }
 
 func (wp *WorkerPool) AddJob(job Job) {
+	atomic.AddUint64(&wp.receivedJobsCount, 1)
 	wp.jobs <- job
 }
 
