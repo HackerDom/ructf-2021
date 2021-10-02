@@ -15,11 +15,16 @@ using WhiteAlbum.Entities.Users;
 using WhiteAlbum.Helpers;
 using WhiteAlbum.Settings;
 using WhiteAlbum.Stores;
+using Single = WhiteAlbum.Entities.Single;
 
 namespace WhiteAlbum
 {
     public class WhiteAlbumApplication : VostokAspNetCoreApplication<Startup>
     {
+        private UserStore userStore;
+        private SingleStore singleStore;
+        private AlbumStore albumStore;
+
         public override void Setup(IVostokAspNetCoreApplicationBuilder builder, IVostokHostingEnvironment environment)
         {
             environment.ConfigurationProvider.SetupSourceFor<WhiteAlbumSettings>(new JsonFileSource("white_album_settings"));
@@ -45,21 +50,41 @@ namespace WhiteAlbum
         {
             var settings = serviceProvider.GetService<Func<WhiteAlbumSettings>>()!();
 
-            if (File.Exists(settings.UsersLogPath))
+            userStore = serviceProvider.GetService<UserStore>()!;
+            if (File.Exists(settings.UsersDumpPath))
             {
-                var userStore = serviceProvider.GetService<UserStore>();
-                var users = Encoding.UTF8.GetString(File.ReadAllBytes(settings.UsersLogPath)).FromJson<Dictionary<string, User>>();
+                var users = Encoding.UTF8.GetString(File.ReadAllBytes(settings.UsersDumpPath)).FromJson<User[]>();
                 userStore!.Initialize(users);
             }
             
-            if (File.Exists(settings.AlbumsLogPath))
+            albumStore = serviceProvider.GetService<AlbumStore>()!;
+            if (File.Exists(settings.AlbumsDumpPath))
             {
-                var albumStore = serviceProvider.GetService<AlbumStore>();
-                var albums = Encoding.UTF8.GetString(File.ReadAllBytes(settings.AlbumsLogPath)).FromJson<Dictionary<string, Album>>();
+                var albums = Encoding.UTF8.GetString(File.ReadAllBytes(settings.AlbumsDumpPath)).FromJson<Album[]>();
                 albumStore!.Initialize(albums);
             }
             
+            singleStore = serviceProvider.GetService<SingleStore>()!;
+            if (File.Exists(settings.SinglesDumpPath))
+            {
+                var singles = Encoding.UTF8.GetString(File.ReadAllBytes(settings.SinglesDumpPath)).FromJson<Single[]>();
+                singleStore!.Initialize(singles);
+            }
+            
+            singleStore.Start();
+            albumStore.Start();
+            userStore.Start();
+            
             return base.WarmupAsync(environment, serviceProvider);
+        }
+
+        public override void DoDispose()
+        {
+            userStore.Stop();
+            albumStore.Stop();
+            singleStore.Stop();
+            
+            base.DoDispose();
         }
     }
 }

@@ -17,8 +17,6 @@ namespace WhiteAlbum
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            // services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
-            
             services
                 .AddControllers()
                 .AddNewtonsoftJson(
