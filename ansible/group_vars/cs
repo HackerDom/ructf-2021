@@ -24,7 +24,13 @@ cs_hypnotoad_workers: 8
 cs_hypnotoad_accepts: 2048
 cs_nginx_upstream_keepalive: 64
 cs_nginx_workers: 8
-cs_nginx_listen: 10.10.10.10:80
+#cs_nginx_listen: 10.10.10.10:80
+cs_nginx_listen: 0.0.0.0:80
+
+cs_nginx_auth_enabled: true
+cs_nginx_auth_user: root
+# use this to generate: `echo 'deepfriedructfpanic' | openssl passwd -apr1 -stdin`
+cs_nginx_auth_password: $apr1$nbfQX.UC$yuexIWujEabv9ZzSwPEEO0
 
 cs_base_url: http://10.10.10.10/
 cs_admin_auth: root:vWhvhqHnmAtlfxfr

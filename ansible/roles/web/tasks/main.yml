@@ -50,6 +50,17 @@
   notify:
     - restart nginx
 
+- name: nginx .htpasswd file
+  template:
+    src: htpasswd.j2
+    dest: /etc/nginx/.htpasswd
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - restart nginx
+  tags: update
+
 - name: nginx cs config
   template:
     src: cs.nginx.conf.j2
