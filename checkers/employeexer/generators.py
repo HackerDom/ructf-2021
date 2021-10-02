@@ -3,7 +3,7 @@ import string
 
 from request_pb2 import NewEmployee, FullName, BankCard, Location
 
-ALPHA = string.ascii_letters + string.digits
+ALPHA = string.ascii_lowercase + string.digits
 
 
 def gen_string(a=20, b=20):
