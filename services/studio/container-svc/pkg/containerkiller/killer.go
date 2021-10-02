@@ -4,11 +4,13 @@ import (
 	"bytes"
 	"github.com/usernamedt/container-service-gin/pkg/logging"
 	"os/exec"
+	"fmt"
 )
 
-func KillStuckContainers() {
-	args := []string{"ps", "--format", "'{{.RunningFor}} {{.Names}}'", "|", "grep -v '[012] seconds ago'", "|",  "awk", "'{print $NF}'", "|", "xargs",  "docker rm -f"}
-	cmd := exec.Command("docker", args...)
+func KillStuckContainers(excludedPeriods string) {
+	command := fmt.Sprintf("/usr/bin/docker ps --format '{{.RunningFor}} {{.Names}}' | grep -v '[%s] seconds ago' | awk '{print $NF}' | xargs -r docker rm -f", excludedPeriods)
+	args := []string{"-c", command}
+	cmd := exec.Command("bash", args...)
 	outputBuf := bytes.NewBuffer(nil)
 	cmd.Stdout = outputBuf
 	cmd.Stderr = outputBuf
@@ -21,6 +23,10 @@ func KillStuckContainers() {
 	if err != nil {
 		logging.Errorf("failed to kill stuck containers: err %v, out: %s", err, outputBuf.String())
 	}
-
-	logging.Infof("stuck container killer out: %s", outputBuf.String())
+	res := outputBuf.String()
+	if len(res) > 0 {
+		logging.Infof("stuck container killer out: %s", outputBuf.String())
+	}
 }
+
+

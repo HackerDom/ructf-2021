@@ -161,17 +161,27 @@ func (wp *WorkerPool) initRpmStatWriter() {
 func (wp *WorkerPool) initContainerKiller() {
 	period := setting.AppSetting.ContainerKillPeriod
 	if period == 0 {
-		logging.Infof("WorkerPool: container killer period should be > 0")
+		logging.Fatal("WorkerPool: container killer period should be > 0")
 		return
 	}
 
-	logging.Infof("WorkerPool: init container killer (each %d seconds)", period)
+	maxExecTime := int(setting.AppSetting.ContainerMaxExecTime.Seconds())
+        if maxExecTime == 0 || maxExecTime >= 10  {
+                logging.Fatal("WorkerPool: container killer max exec time should be in range [1,9]")
+                return
+        }
+
+	logging.Infof("WorkerPool: init container killer (each %d seconds)", int(period.Seconds()))
 	timer := time.NewTicker(period)
+        excludedPeriods := ""
+        for i := range makeRange(0, maxExecTime) {
+                excludedPeriods += strconv.Itoa(i)
+        }
 	go func() {
 		for {
 			select {
 			case <-timer.C:
-				containerkiller.KillStuckContainers()
+				containerkiller.KillStuckContainers(excludedPeriods)
 			case <-wp.killerDone:
 				logging.Info("WorkerPool: stopping container killer")
 				timer.Stop()
@@ -179,6 +189,14 @@ func (wp *WorkerPool) initContainerKiller() {
 			}
 		}
 	}()
+}
+
+func makeRange(min, max int) []int {
+    a := make([]int, max-min+1)
+    for i := range a {
+        a[i] = min + i
+    }
+    return a
 }
 
 func Setup() {
