@@ -49,7 +49,7 @@ func Run(ctx context.Context, payload workerpool.JobDescriptor) (workerpool.Exec
 func runContainer(memId string, payload io.Reader, username string) (string, error) {
 	launchArgs := fmt.Sprintf("cat > ~/payload && chmod +x ~/payload && ~/payload %s", memId)
 	containerId := uuid.NewString()
-	args := []string{"run", "--network", "none", "--cpus", ".05", "--memory", "25M", "--name", containerId, "--user", username, "--ipc", "host", "-i", "basealpine", "timeout", "1", "ash", "-c", launchArgs}
+	args := []string{"run", "--rm", "--network", "none", "--cpus", ".05", "--memory", "25M", "--name", containerId, "--user", username, "--ipc", "host", "-i", "basealpine", "timeout", "1", "ash", "-c", launchArgs}
 
 	cmd := exec.Command("docker", args...)
 	outputBuf := bytes.NewBuffer(nil)
