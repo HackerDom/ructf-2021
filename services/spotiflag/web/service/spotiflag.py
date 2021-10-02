@@ -36,8 +36,6 @@ class Spotiflag:
             writer.write(description)
             await writer.drain()
 
-            await writer.wait_closed()
-
     @staticmethod
     async def read(id: uuid.UUID, offset: int):
         async with Spotiflag.connect_with_id(id) as (reader, writer):
