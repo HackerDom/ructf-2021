@@ -2,7 +2,7 @@
 
 SERVICES = [
   'employeexer',
-  'Metrics',
+  'metrics',
 ]
 
 

@@ -94,7 +94,7 @@ build {
   # Metrics service
 
   provisioner "file" {
-    source = "../services/Metrics/"
+    source = "../services/metrics/"
     destination = "/home/metrics/"
   }
 

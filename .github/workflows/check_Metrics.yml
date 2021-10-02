@@ -1,12 +1,12 @@
 
-name: Check Metrics
+name: Check metrics
 on:
   push:
     branches:
       - main
     paths:
-      - 'services/Metrics/**'
-      - 'checkers/Metrics/**'
+      - 'services/metrics/**'
+      - 'checkers/metrics/**'
   workflow_dispatch:
     inputs:
       cleanup_before_deploy:
@@ -15,8 +15,8 @@ on:
         default: "no"
 
 jobs:
-  check_Metrics:
-    name: Check Metrics
+  check_metrics:
+    name: Check metrics
     runs-on: ubuntu-18.04
 
     steps:
@@ -24,10 +24,10 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Run prebuilt hook
-      run: if [ -f services/Metrics/before_image_build.sh ]; then (cd ./services/Metrics && ./before_image_build.sh); fi
+      run: if [ -f services/metrics/before_image_build.sh ]; then (cd ./services/metrics && ./before_image_build.sh); fi
 
-    - name: Setup Metrics
-      run: (cd ./services/Metrics && docker-compose pull && docker-compose build && docker-compose up --build -d)
+    - name: Setup metrics
+      run: (cd ./services/metrics && docker-compose pull && docker-compose build && docker-compose up --build -d)
 
     - name: Prepare python for checker
       uses: actions/setup-python@v2
@@ -35,14 +35,14 @@ jobs:
         python-version: 3.8.5
 
     - name: Setup checker libraries
-      run: if [ -f checkers/Metrics/requirements.txt ]; then python -m pip install -r checkers/Metrics/requirements.txt; fi
+      run: if [ -f checkers/metrics/requirements.txt ]; then python -m pip install -r checkers/metrics/requirements.txt; fi
 
     - name: Test checker on service
-      run: checkers/Metrics/checker.py TEST 127.0.0.1
+      run: checkers/metrics/checker.py TEST 127.0.0.1
 
-  update_Metrics:
+  update_metrics:
     name: Deploy service using ansible to first teams
-    needs: check_Metrics
+    needs: check_metrics
     runs-on: ubuntu-18.04
     if: ${{ false }} # disable on game just in case
 
@@ -57,12 +57,12 @@ jobs:
       run: chmod 0600 ./vuln_image/keys/id_rsa
 
     - name: Run prebuilt hook
-      run: if [ -f services/Metrics/before_image_build.sh ]; then (cd ./services/Metrics && ./before_image_build.sh); fi
+      run: if [ -f services/metrics/before_image_build.sh ]; then (cd ./services/metrics && ./before_image_build.sh); fi
 
-    - name: stop Metrics, destroy volumes and cleanup service before fresh deploy
+    - name: stop metrics, destroy volumes and cleanup service before fresh deploy
       if: ${{ github.event.inputs.cleanup_before_deploy == 'yes' }}
-      run: ./vuln_image/cleanup_first_ten_teams.sh Metrics
+      run: ./vuln_image/cleanup_first_ten_teams.sh metrics
 
-    - name: try to deploy Metrics
-      run: ./vuln_image/update_first_ten_teams.sh Metrics
+    - name: try to deploy metrics
+      run: ./vuln_image/update_first_ten_teams.sh metrics
 
