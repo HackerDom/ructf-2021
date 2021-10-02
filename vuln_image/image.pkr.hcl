@@ -56,6 +56,8 @@ build {
       "useradd -m -u 10001 -s /bin/bash studio",
       "useradd -m -u 10002 -s /bin/bash metrics",
       "useradd -m -u 10003 -s /bin/bash white_album",
+      "useradd -m -u 10004 -s /bin/bash spotiflag",
+      "useradd -m -u 10005 -s /bin/bash trackbattle",
     ]
   }
 
@@ -106,6 +108,20 @@ build {
     destination = "/home/white_album/"
   }
 
+  # white_album service
+
+  provisioner "file" {
+    source = "../services/spotiflag/"
+    destination = "/home/spotiflag/"
+  }
+
+  # trackbattle service
+
+  provisioner "file" {
+    source = "../services/trackbattle/"
+    destination = "/home/trackbattle/"
+  }
+
   # Studio service
   provisioner "shell" {
     inline = [
@@ -152,7 +168,23 @@ build {
 
   provisioner "shell" {
     inline = [
+      "cd ~spotiflag",
+      "docker-compose up --build -d || true",
+    ]
+  }
+
+  provisioner "shell" {
+    inline = [
+      "cd ~trackbattle",
+      "docker-compose up --build -d || true",
+    ]
+  }
+
+  provisioner "shell" {
+    inline = [
       "cd ~studio",
+      # Wait apt-get lock
+      "while ps -opid= -C apt-get > /dev/null; do sleep 1; done",
       "apt-get -y -q install virtualbox",
   
       "systemctl daemon-reload",
@@ -165,13 +197,11 @@ build {
       "VBoxManage setproperty autostartdbpath /etc/vbox/",
 
       "VBoxManage import image/packer-studio.ova --vsys 0 --vmname Studio",
-      "VBoxManage hostonlyif create",
-      "VBoxManage hostonlyif ipconfig vboxnet0 --ip 192.168.56.1",
-      "VBoxManage modifyvm Studio --nic1 hostonly --hostonlyadapter1 vboxnet0",
       "VBoxManage modifyvm Studio --autostart-enabled on",
       "VBoxManage modifyvm Studio --cpus 4",
       "VBoxManage modifyvm Studio --memory 8192",
       "VBoxManage modifyvm Studio --natpf1 'serviceport,tcp,0.0.0.0,8000,,8000'",
+      "VBoxManage modifyvm Studio --natpf1 'sshport,tcp,127.0.0.1,22,,2222'",
 
       "systemctl start studio-vm",
       "systemctl enable studio-vm",

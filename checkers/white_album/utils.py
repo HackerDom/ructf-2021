@@ -6,15 +6,6 @@ from random import randrange
 UserAgents = None
 Names = None
 
-
-def get_user_agent():
-    global UserAgents
-    if UserAgents is None:
-        with open('user-agents') as fin:
-            UserAgents = [line.strip() for line in fin]
-    return random.choice(UserAgents)
-
-
 def get_album_name():
     return F"album-{str(uuid.uuid4())}"
 

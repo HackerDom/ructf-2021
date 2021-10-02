@@ -4,6 +4,8 @@ SERVICES = [
   'employeexer',
   'metrics',
   'white_album',
+  'spotiflag',
+  'trackbattle'
 ]
 
 

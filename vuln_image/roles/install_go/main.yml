@@ -1,0 +1,16 @@
+- name: download golang tar 
+  get_url:
+    url: "https://storage.googleapis.com/golang/go1.17.1.linux-amd64.tar.gz"
+    dest: "/home/{{ service_name }}"
+    mode: 0440
+
+- name: Extract the Go tarball
+  unarchive:
+    src: "/home/{{ service_name }}/go1.17.1.linux-amd64.tar.gz"
+    dest: /usr/local
+    copy: no
+
+- name: Create go directory
+  file:
+    path: /etc/go
+    state: directory
