@@ -50,8 +50,13 @@ async def api_generate(request: Request):
 
 
 @app.get('/api/listen/{id}/')
-async def api_listen(id: uuid.UUID, range: str=Header(...)):
-    offset = int(re.findall(r'\d+', range)[0])
+async def api_listen(id: uuid.UUID, range_header: str=Header(..., alias='range')):
+    offset_data = re.search(r'(bytes=)?(\d+)\-', range_header)
+
+    if offset_data is None:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST)
+
+    offset = int(offset_data.group(2))
 
     if redis.get(str(id)) is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND)
