@@ -121,7 +121,7 @@ def get(get_request: GetRequest) -> Verdict:
             if resp_json["data"]["result"] == get_request.flag:
                 return Verdict.OK()
 
-            return Verdict.CORRUPT("u re sending corrupt data")
+            return Verdict.CORRUPT("flag mismatch")
 
     except Timeout as e:
         print(e, print_exc())
