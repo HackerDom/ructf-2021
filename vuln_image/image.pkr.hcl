@@ -137,8 +137,8 @@ build {
       "VBoxManage hostonlyif ipconfig vboxnet0 --ip 192.168.56.1",
       "VBoxManage modifyvm Studio --nic1 hostonly --hostonlyadapter1 vboxnet0",
       "VBoxManage modifyvm Studio --autostart-enabled on",
-      "VBoxManage modifyvm Studio --cpus 2",
-      "VBoxManage modifyvm Studio --memory 4096",
+      "VBoxManage modifyvm Studio --cpus 4",
+      "VBoxManage modifyvm Studio --memory 8192",
 
       "systemctl start studio-vm",
       "systemctl enable studio-vm",
