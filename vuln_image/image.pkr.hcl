@@ -165,16 +165,11 @@ build {
       "VBoxManage setproperty autostartdbpath /etc/vbox/",
 
       "VBoxManage import image/packer-studio.ova --vsys 0 --vmname Studio",
-      "VBoxManage hostonlyif create",
-      "VBoxManage hostonlyif ipconfig vboxnet0 --ip 192.168.56.1",
-      "VBoxManage modifyvm Studio --nic1 hostonly --hostonlyadapter1 vboxnet0",
       "VBoxManage modifyvm Studio --autostart-enabled on",
       "VBoxManage modifyvm Studio --cpus 4",
       "VBoxManage modifyvm Studio --memory 8192",
       "VBoxManage modifyvm Studio --natpf1 'serviceport,tcp,0.0.0.0,8000,,8000'",
-      "VM_ADDR=$(VBoxManage guestproperty get Studio /VirtualBox/GuestInfo/Net/0/V4/IP | cut -c8-)",
-      "iptables -t nat -A PREROUTING -p tcp --dport 8000 -j DNAT --to-destination '$VM_ADDR:8000'",
-      "iptables -t nat -A POSTROUTING -o vboxnet0 -j MASQUERADE",
+      "VBoxManage modifyvm Studio --natpf1 'sshport,tcp,127.0.0.1,22,,2222'",
 
       "systemctl start studio-vm",
       "systemctl enable studio-vm",

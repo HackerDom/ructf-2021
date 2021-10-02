@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import os
 import uuid
 import typing
 import struct
@@ -31,12 +32,13 @@ def wrap_errors(func: typing.Callable[..., Verdict]) -> typing.Callable[..., Ver
 
 
 async def song_generate(description: bytes) -> bytes:
-    cmd = './spotiflag/spotiflag'
+    dir = os.path.dirname(os.path.realpath(__file__))
+    exe = 'spotiflag/spotiflag'
 
     description_length = struct.pack('<Q', len(description))
 
     io = await asyncio.subprocess.create_subprocess_exec(
-        cmd,
+        os.path.join(dir, exe),
         stdin=asyncio.subprocess.PIPE,
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE,
