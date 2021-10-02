@@ -8,7 +8,6 @@ import (
 	"github.com/usernamedt/container-service-gin/pkg/logging"
 	"github.com/usernamedt/container-service-gin/pkg/workerpool"
 	"io"
-	"time"
 )
 
 
@@ -17,14 +16,12 @@ type JobService struct {}
 
 func (js *JobService) Add(binary io.Reader, ctx context.Context) (*models.Job, error) {
 	timeInfo := workerpool.JobTimeInfo{}
-	timeInfo.AllocMemStart = time.Now()
 	jobId := workerpool.Pool.GenerateJobId()
 
 
 	cred := credprovider.CredentialProvider.Next()
 
-	memId, err := executor.AllocMemory(jobId, cred)
-	timeInfo.AllocMemFinish = time.Now()
+	memId, err := executor.GetJobKey(jobId, cred)
 
 	if err != nil {
 		logging.Error(err)

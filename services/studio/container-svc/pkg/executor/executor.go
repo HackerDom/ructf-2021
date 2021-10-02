@@ -16,10 +16,17 @@ import (
 
 func Run(ctx context.Context, payload workerpool.JobDescriptor) (workerpool.ExecResult, error) {
 	timeInfo := payload.TimeInfo
-	defer DeallocMemory(payload.ID)
+        defer DeallocMemory(payload.ID)
+	v, err := AllocMemory(payload.ID, payload.RunCredential)
+	 if err != nil {
+                errMsg := fmt.Sprintf("Executor: failed to allocate memory: %s, %v", v, err)
+                logging.Error(errMsg)
+                return workerpool.ExecResult{Res: []byte(errMsg), TimeInfo: timeInfo}, nil
+        }
+
 
 	timeInfo.StartContainer = time.Now()
-	v, err := runContainer(payload.MemID, payload.Metadata, payload.RunCredential)
+	v, err = runContainer(payload.MemID, payload.Metadata, payload.RunCredential)
 	timeInfo.StopContainer = time.Now()
 
 
@@ -89,6 +96,26 @@ func AllocMemory(jobId string, cred string) (string, error) {
 	}
 
 	return outputBuf.String(), nil
+}
+
+func GetJobKey(jobId string, cred string) (string, error) {
+        arg := fmt.Sprintf("%s %s %s",setting.AppSetting.KeyGenPath, jobId, setting.AppSetting.KeyPath)
+
+        cmd := exec.Command("su", "-", cred, "-c", arg)
+        outputBuf := bytes.NewBuffer(nil)
+        cmd.Stdout = outputBuf
+        cmd.Stderr = outputBuf
+
+        err := cmd.Start()
+        if err != nil {
+                return "", fmt.Errorf("failed to generate key: err %v, out: %s", err, outputBuf.String())
+        }
+        err = cmd.Wait()
+        if err != nil {
+                return "", fmt.Errorf("failed togenerate key: err %v, out: %s", err, outputBuf.String())
+        }
+
+        return outputBuf.String(), nil
 }
 
 

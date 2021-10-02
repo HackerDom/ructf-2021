@@ -22,6 +22,7 @@ type App struct {
 	AllocatorPath string
 	DeallocatorPath string
 	ReaderPath string
+	KeyGenPath string
 	KeyPath           string
 	QueueStatInterval time.Duration
 	RequestStatInterval time.Duration
