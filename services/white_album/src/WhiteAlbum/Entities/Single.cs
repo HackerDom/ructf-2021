@@ -5,13 +5,14 @@ namespace WhiteAlbum.Entities
 {
     public class Single
     {
-        public Single(SingleId id, SingleName name, SingleMeta meta, Track track, UserId owner)
+        public Single(SingleId id, SingleName name, SingleMeta meta, Track track, UserId owner, Date createdAt)
         {
             Id = id;
             Name = name;
             Meta = meta;
             Track = track;
             this.Owner = owner;
+            CreatedAt = createdAt;
         }
 
         public SingleId Id { get; init; }
@@ -21,9 +22,9 @@ namespace WhiteAlbum.Entities
         public SingleMeta Meta { get; init; }
         public Track Track { get; init; }
         public UserId Owner { get; }
-        
-        
-        
+        public Date CreatedAt { get; }
+
+
         #region Equality members
 
         public override bool Equals(object? obj)

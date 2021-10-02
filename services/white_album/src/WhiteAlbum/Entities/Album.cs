@@ -10,16 +10,18 @@ namespace WhiteAlbum.Entities
 
         public AlbumName Name { get; init; }
         public AlbumMeta Meta { get; init; }
-       
+        public Date CreatedAt { get; }
+
         public ImmutableArray<SingleId> Singles { get; set; } = ImmutableArray<SingleId>.Empty;
         
         public UserId Owner { get; set; }
 
-        public Album(AlbumId id, AlbumName name, AlbumMeta meta)
+        public Album(AlbumId id, AlbumName name, AlbumMeta meta, Date createdAt)
         {
             Id = id;
             Name = name;
             Meta = meta;
+            CreatedAt = createdAt;
         }
 
         #region Equality members
