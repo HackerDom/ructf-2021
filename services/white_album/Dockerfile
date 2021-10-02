@@ -1,13 +1,17 @@
-FROM mcr.microsoft.com/dotnet/sdk:5.0
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS builder
+LABEL stage=builder
 
 COPY ./src /app
 
 WORKDIR /app
 
-RUN DOTNET_CLI_TELEMETRY_OPTOUT=1 dotnet restore && dotnet publish -c Release -o publish
+RUN dotnet restore && dotnet publish -c Release -o publish
 
+FROM mcr.microsoft.com/dotnet/aspnet:5.0
 
-ENV DOTNET_CLI_TELEMETRY_OPTOUT=1 COMPlus_JitTelemetry=0 COMPlus_legacyCorruptedStateExceptionsPolicy=1 COMPlus_legacyUnhandledExceptionPolicy=1
+WORKDIR /app
+
+COPY --from=0 /app ./
 
 RUN adduser --system --home /app --shell /usr/sbin/nologin --no-create-home --disabled-password deployer
 
