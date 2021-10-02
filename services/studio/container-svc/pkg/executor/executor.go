@@ -39,7 +39,7 @@ func Run(ctx context.Context, payload workerpool.JobDescriptor) (workerpool.Exec
 	timeInfo.ReadMem = time.Now()
 	res, err := readResult(payload.ID)
 	if err != nil {
-		errMsg := fmt.Sprintf("Executor: failed to read the container job result: %s, %v", v, err)
+		errMsg := fmt.Sprintf("Executor: failed to read the container job result: %s, %v", res, err)
 		logging.Error(errMsg)
 		return workerpool.ExecResult{Res: []byte(errMsg), TimeInfo: timeInfo}, nil
 	}
@@ -144,14 +144,15 @@ func readResult(out string) (string, error) {
 	cmd := exec.Command(setting.AppSetting.ReaderPath, args...)
 	outputBuf := bytes.NewBuffer(nil)
 	cmd.Stdout = outputBuf
+	cmd.Stderr = outputBuf
 	err := cmd.Start()
 	if err != nil {
-		return "", err
+		return outputBuf.String(), err
 	}
 
 	err = cmd.Wait()
 	if err != nil {
-		return "", err
+		return outputBuf.String(), err
 	}
 
 	return outputBuf.String(), nil
