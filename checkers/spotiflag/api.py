@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import asyncio
 import uuid
 import typing
 import aiohttp
@@ -42,7 +41,7 @@ class Spotiflag:
                     raise MumbleException(f'/api/ping/: can\'t get text')
 
         if data != answer:
-            raise MumbleException(f'/api/ping/: incorrect pong')
+            raise MumbleException(f'/api/ping/: incorrect answer')
 
     async def list(self) -> typing.List[str]:
         url = f'{self.url}/api/list/'
@@ -78,7 +77,7 @@ class Spotiflag:
         try:
             id = uuid.UUID(data.strip(), version=4)
         except Exception:
-            raise MumbleException(f'/api/generate/: invalid id')
+            raise MumbleException(f'/api/generate/: invalid id format')
 
         return id
 
@@ -109,10 +108,10 @@ class Spotiflag:
                     try:
                         chunk = await response.read()
                     except Exception:
-                        raise MumbleException(f'/api/listen/: can\'t get chunk')
+                        raise MumbleException(f'/api/listen/: can\'t get content')
 
                 if len(chunk) != expected_chunk_size:
-                    raise MumbleException(f'/api/listen/: incorrect chunk size')
+                    raise MumbleException(f'/api/listen/: incorrect content size')
 
                 chunks.append(chunk)
                 offset += len(chunk)

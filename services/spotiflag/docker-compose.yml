@@ -26,7 +26,7 @@ services:
     environment:
       - REDIS_ADDRESS=redis
       - SPOTIFLAG_SOCKET=/tmp/spotiflag/spotiflag.sock
-      - EXPIRE=600 # 10 minutes
+      - EXPIRE=1200 # 20 minutes
     ports:
       - 17171:8000
     depends_on:
@@ -50,6 +50,26 @@ services:
     mem_limit: 1G
     memswap_limit: 1G
     pids_limit: 128
+
+  cleaner:
+    container_name: spotiflag_cleaner
+    build: cleaner
+    restart: always
+    volumes:
+      - songs:/tmp/songs/
+    environment:
+      - FOLDER=/tmp/songs/
+      - EXPIRE=1200 # 20 minutes
+    depends_on:
+      - spotiflag
+    stop_grace_period: 3s
+    mem_limit: 512M
+    memswap_limit: 512M
+    pids_limit: 128
+    ulimits: 
+      nofile:
+        soft: 8192
+        hard: 8192
 
 volumes:
   spotiflag:
