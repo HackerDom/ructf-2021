@@ -15,6 +15,7 @@ namespace WhiteAlbum
     {
         static void Main(string[] args)
         {
+            Directory.CreateDirectory($"{Environment.CurrentDirectory}/data");
             if (!File.Exists(@$"{Environment.CurrentDirectory}/data/settings.json"))
             {
                 File.WriteAllBytes(@$"{Environment.CurrentDirectory}/data/settings.json", Encoding.UTF8.GetBytes(
@@ -31,7 +32,7 @@ namespace WhiteAlbum
                             .SetApplication("Album")
                             .SetInstance("0"))
                     .DisableClusterConfig()
-                    .SetupLog(logBuilder => logBuilder.SetupFileLog())
+                    .SetupLog(logBuilder => logBuilder.SetupConsoleLog())
                     .SetPort(1234);
             }
             
