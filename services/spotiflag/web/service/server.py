@@ -14,8 +14,6 @@ from fastapi.staticfiles import StaticFiles
 from spotiflag import Spotiflag
 
 
-PREFIX = 'spotiflag_'
-
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 redis = Redis(os.getenv('REDIS_ADDRESS'))
 expire = int(os.getenv('EXPIRE'))
@@ -46,7 +44,7 @@ async def api_generate(request: Request):
 
     await Spotiflag.generate(id, description)
 
-    redis.set(f'{PREFIX}{id}', 1, ex=expire)
+    redis.set(str(id), 1, ex=expire)
 
     return Response(str(id))
 
@@ -55,7 +53,7 @@ async def api_generate(request: Request):
 async def api_listen(id: uuid.UUID, range: str=Header(...)):
     offset = int(re.findall(r'\d+', range)[0])
 
-    if redis.get(f'{PREFIX}{id}') is None:
+    if redis.get(str(id)) is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND)
 
     data = await Spotiflag.read(id, offset)
@@ -80,6 +78,4 @@ async def api_listen(id: uuid.UUID, range: str=Header(...)):
 
 @app.get('/api/list/')
 async def api_list():
-    keys = redis.keys(f'{PREFIX}*')
-
-    return [key.decode().removeprefix(PREFIX) for key in keys]
+    return redis.keys('*')
