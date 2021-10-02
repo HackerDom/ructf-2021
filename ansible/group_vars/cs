@@ -71,6 +71,7 @@ teams: |
   {name => 'SPbCTF', network => '10.60.24.0/24', host => '10.60.24.3', token => '24_ebd8a77c7cac1621c7a4ab1958dd74f4', logo => '/data/logos/24.png'},
   {name => 'Pixels', network => '10.60.26.0/24', host => '10.60.26.3', token => '26_2684c5a799b66882bfe386e47ffd02bf', logo => '/data/logos/26.png'},
   {name => 'ZenHack', network => '10.60.27.0/24', host => '10.60.27.3', token => '27_f07b3b080f62dc7cee37665f0680c6b2', logo => '/data/logos/27.png'},
+  {name => 'SPRUSH', network => '10.60.28.0/24', host => '10.60.28.3', token => '28_aaf1aa967f1d6913304eb9b9607e8d9c', logo => '/data/logos/28.png'},
 
 services: |
   {name => 'metrics',       path => 'checkers/metrics/checker.py',                 timeout => 30, tcp_port => 5051},
