@@ -66,6 +66,8 @@ void song_generate_handler(FILE *io, char *wavfile_path) {
 
     fflush(wavfile);
     fclose(wavfile);
+
+    fwrite("DONEDONE", sizeof(char), 8, io);
 }
 
 
@@ -91,6 +93,8 @@ void song_read_handler(FILE *io, char *wavfile_path) {
     fwrite(&buffer, sizeof(uint8_t), size, io);
 
     fclose(wavfile);
+
+    fwrite("DONEDONE", sizeof(char), 8, io);
 }
 
 

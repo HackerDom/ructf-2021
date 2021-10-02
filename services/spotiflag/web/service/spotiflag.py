@@ -28,13 +28,15 @@ class Spotiflag:
 
     @staticmethod
     async def generate(id: uuid.UUID, description: bytes):
-        async with Spotiflag.connect_with_id(id) as (_, writer):
+        async with Spotiflag.connect_with_id(id) as (reader, writer):
             description_length = struct.pack('<Q', len(description))
 
             writer.write(b'GENERATE')
             writer.write(description_length)
             writer.write(description)
             await writer.drain()
+
+            await reader.readexactly(8)
 
     @staticmethod
     async def read(id: uuid.UUID, offset: int):
