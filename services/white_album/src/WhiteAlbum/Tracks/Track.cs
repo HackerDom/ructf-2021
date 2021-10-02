@@ -4,6 +4,11 @@ namespace WhiteAlbum.Tracks
 {
     public class Track
     {
-        public string[] Tokens { get; } = Array.Empty<string>();
+        public Track(string[] tokens)
+        {
+            Tokens = tokens;
+        }
+
+        public string[] Tokens { get; init; }
     }
 }
