@@ -28,6 +28,11 @@ async def main(_: Request):
     return FileResponse('index.html')
 
 
+@app.route('/api/ping/')
+async def ping(_: Request):
+    return Response('pong')
+
+
 @app.post('/api/generate/')
 async def api_generate(request: Request):
     max_description_length = 16 * 1024
