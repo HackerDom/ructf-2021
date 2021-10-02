@@ -12,7 +12,6 @@ import (
 
 var RedisConn *redis.Pool
 
-
 // Setup Initialize the Redis instance
 func Setup() error {
 	RedisConn = &redis.Pool{

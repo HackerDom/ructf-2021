@@ -30,12 +30,12 @@ func NewCredProvider() (*CredProvider, error) {
 
 	credProvider := &CredProvider{
 		pool: credPool,
-		i: 0,
+		i:    0,
 	}
 	return credProvider, nil
 }
 
 func (cp *CredProvider) Next() string {
 	credIdx := atomic.AddUint64(&cp.i, 1)
-	return cp.pool[credIdx % uint64(len(cp.pool))]
+	return cp.pool[credIdx%uint64(len(cp.pool))]
 }

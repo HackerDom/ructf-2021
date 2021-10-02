@@ -17,17 +17,17 @@ type App struct {
 	LogFileExt  string
 	TimeFormat  string
 
-	JobLifetimeMinutes time.Duration
-	WorkersCount int
-	AllocatorPath string
-	DeallocatorPath string
-	ReaderPath string
-	KeyGenPath string
-	KeyPath           string
-	QueueStatInterval time.Duration
+	JobLifetimeMinutes  time.Duration
+	WorkersCount        int
+	AllocatorPath       string
+	DeallocatorPath     string
+	ReaderPath          string
+	KeyGenPath          string
+	KeyPath             string
+	QueueStatInterval   time.Duration
 	RequestStatInterval time.Duration
-	DockerfilePath string
-	CredPoolList []string
+	DockerfilePath      string
+	CredPoolList        []string
 }
 
 var AppSetting = &App{}

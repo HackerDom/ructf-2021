@@ -10,14 +10,11 @@ import (
 	"io"
 )
 
-
-type JobService struct {}
-
+type JobService struct{}
 
 func (js *JobService) Add(binary io.Reader, ctx context.Context) (*models.Job, error) {
 	timeInfo := workerpool.JobTimeInfo{}
 	jobId := workerpool.Pool.GenerateJobId()
-
 
 	cred := credprovider.CredentialProvider.Next()
 
@@ -30,10 +27,10 @@ func (js *JobService) Add(binary io.Reader, ctx context.Context) (*models.Job, e
 
 	workerpool.Pool.AddJob(workerpool.Job{
 		Descriptor: workerpool.JobDescriptor{
-			Metadata: binary,
-			MemID: memId,
-			ID: jobId,
-			TimeInfo: timeInfo,
+			Metadata:      binary,
+			MemID:         memId,
+			ID:            jobId,
+			TimeInfo:      timeInfo,
 			RunCredential: cred,
 		},
 		ExecFn: func(ctx context.Context, payload workerpool.JobDescriptor) (workerpool.ExecResult, error) {

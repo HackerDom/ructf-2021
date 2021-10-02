@@ -20,36 +20,36 @@ func NewNonExistJobError(id string) NonExistJobError {
 
 type JobStatus string
 
-const(
+const (
 	Created JobStatus = "created"
 	Success JobStatus = "success"
-	Error JobStatus = "error"
+	Error   JobStatus = "error"
 )
 
 type JobExecStat struct {
-	AllocMemStart time.Time
+	AllocMemStart  time.Time
 	AllocMemFinish time.Time
 	StartContainer time.Time
-	StopContainer time.Time
-	ReadMem time.Time
-	DeallocMem time.Time
+	StopContainer  time.Time
+	ReadMem        time.Time
+	DeallocMem     time.Time
 }
 
 type Job struct {
-	ID     string    `json:"id"`
-	MemID  string    `json:"mem_id"`
-	Status JobStatus `json:"status"`
-	Result string	 `json:"result"`
+	ID       string      `json:"id"`
+	MemID    string      `json:"mem_id"`
+	Status   JobStatus   `json:"status"`
+	Result   string      `json:"result"`
 	TimeInfo JobExecStat `json:"time_info"`
 }
 
 func NewJob(id string, memId string) (*Job, error) {
 	job := &Job{
-		ID: id,
-		MemID: memId,
+		ID:     id,
+		MemID:  memId,
 		Status: Created,
 	}
-	err := gredis.Set(e.PREFIX_JOB + id, job, getJobLifetime())
+	err := gredis.Set(e.PREFIX_JOB+id, job, getJobLifetime())
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +57,7 @@ func NewJob(id string, memId string) (*Job, error) {
 }
 
 func (j *Job) Update() error {
-	return gredis.Set(e.PREFIX_JOB + j.ID, j, getJobLifetime())
+	return gredis.Set(e.PREFIX_JOB+j.ID, j, getJobLifetime())
 }
 
 func GetJob(id string) (*Job, error) {

@@ -38,10 +38,10 @@ type WorkerPool struct {
 	receivedJobsCount  uint64
 	processedJobsCount uint64
 	jobs               chan Job
-	results    chan Result
-	workerDone    chan struct{}
-	queueStatDone chan struct{}
-	rpmStatDone   chan struct{}
+	results            chan Result
+	workerDone         chan struct{}
+	queueStatDone      chan struct{}
+	rpmStatDone        chan struct{}
 }
 
 func New(wcount int) *WorkerPool {
@@ -106,13 +106,13 @@ func (wp *WorkerPool) initQueueStatWriter() {
 	go func() {
 		for {
 			select {
-			case <- timer.C:
+			case <-timer.C:
 				queueSize := wp.receivedJobsCount - wp.processedJobsCount
 				if queueSize == 0 {
 					continue
 				}
 				logging.Infof("WorkerPool: queue size is %d, ", queueSize)
-			case <- wp.queueStatDone:
+			case <-wp.queueStatDone:
 				logging.Info("WorkerPool: stopping queue statistics writer")
 				timer.Stop()
 				return
@@ -135,14 +135,14 @@ func (wp *WorkerPool) initRpmStatWriter() {
 	go func() {
 		for {
 			select {
-			case <- timer.C:
+			case <-timer.C:
 				currProcessed := wp.processedJobsCount
 				currReceived := wp.receivedJobsCount
 				logging.Infof("WorkerPool: processed %d jobs, received %d jobs / %d seconds",
-					currProcessed - prevProcessed, currReceived - prevReceived, statInterval)
+					currProcessed-prevProcessed, currReceived-prevReceived, statInterval)
 				prevProcessed = currProcessed
 				prevReceived = currReceived
-			case <- wp.queueStatDone:
+			case <-wp.queueStatDone:
 				logging.Info("WorkerPool: stopping request statistics writer")
 				timer.Stop()
 				return
@@ -178,7 +178,7 @@ func Setup() {
 				Status: status,
 				Result: string(r.ExecResult.Res),
 				TimeInfo: models.JobExecStat{
-					AllocMemStart:   r.ExecResult.TimeInfo.AllocMemStart,
+					AllocMemStart:  r.ExecResult.TimeInfo.AllocMemStart,
 					AllocMemFinish: r.ExecResult.TimeInfo.AllocMemFinish,
 					StartContainer: r.ExecResult.TimeInfo.StartContainer,
 					StopContainer:  r.ExecResult.TimeInfo.StopContainer,
