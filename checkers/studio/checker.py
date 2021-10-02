@@ -82,7 +82,9 @@ def put(put_request: PutRequest) -> Verdict:
         )
 
         resp_json = resp.json()
-        return Verdict.OK(resp_json["id"])
+        nc.verdict = Verdict.OK(resp_json["data"]["id"])
+
+    return nc.verdict
 
 
 @checker.define_get(vuln_num=1)
