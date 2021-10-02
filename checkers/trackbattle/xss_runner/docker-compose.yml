@@ -9,9 +9,7 @@ services:
     ports:
       - "5000:5432"
     volumes:
-      - trackbattle-postgres-data:/var/lib/postgresql/data
-    networks:
-      - app-network
+      - xss-runner-data:/var/lib/postgresql/data
 
   trackbattle:
     build: .
@@ -20,14 +18,24 @@ services:
       - variables.env
     depends_on:
       - postgres
-    networks:
-      - app-network
+      - selenium
     ports:
       - "31337:31337"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  selenium:
+    image: selenium/standalone-chrome
+    environment:
+      - JAVA_OPTS=-Dwebdriver.chrome.whitelistedIps=
+    restart: always
+    privileged: true
+    shm_size: 2g
+    ports:
+      - "4444:4444"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
 volumes:
-  trackbattle-postgres-data:
+  xss-runner-data:
 
-networks:
-  app-network:
-    driver: bridge

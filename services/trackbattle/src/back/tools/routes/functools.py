@@ -15,11 +15,6 @@ def need_authentication(keep_user_arg=None, keep_session_arg=None):
     def real_decorator(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
-            auth_token = request.headers.get(AUTH_HEADER, default=None)
-
-            if auth_token is None:
-                return get_not_authenticated_response()
-
             session = make_session()
             user = get_authenticated_user_using_session(session)
 

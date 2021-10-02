@@ -9,22 +9,26 @@ CONTENT_TYPE_JSON = 'application/json'
 MAX_TRACK_LENGTH = 124
 
 
-def get_authenticated_user():
-    with make_session() as session:
-        return get_authenticated_user_using_session(session)
+def get_auth_token_from_request():
+    auth_from_header = request.headers.get(AUTH_HEADER, default=None)
+    auth_from_cookies = request.cookies.get(AUTH_HEADER, default=None)
+
+    if auth_from_header is not None:
+        return auth_from_header
+
+    if auth_from_cookies is not None:
+        return auth_from_cookies
+
+    return None
 
 
 def get_authenticated_user_using_session(session):
-    auth_header = request.headers.get(AUTH_HEADER, default=None)
+    auth_token = get_auth_token_from_request()
 
-    if auth_header is None:
+    if auth_token is None:
         return None
 
-    return session.query(User).filter(User.auth_token == auth_header).first()
-
-
-def is_authenticated(session):
-    return get_authenticated_user_using_session(session) is not None
+    return session.query(User).filter(User.auth_token == auth_token).first()
 
 
 def get_not_authenticated_response():
@@ -90,6 +94,7 @@ def get_success_auth_response(auth_token):
         200
     )
     response.headers[AUTH_HEADER] = auth_token
+    response.set_cookie(AUTH_HEADER, auth_token)
 
     return response
 

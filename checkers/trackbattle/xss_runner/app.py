@@ -2,22 +2,19 @@ import datetime
 import os
 import threading
 import time
+
 import requests
-
-from contextlib import contextmanager
 from filelock import FileLock, Timeout
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 from flask import Flask, request, make_response, jsonify
-from sqlalchemy import create_engine, Column, String, DateTime
-from sqlalchemy.orm import Session
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy_utils import database_exists, create_database, drop_database
-from requests.packages.urllib3.util.retry import Retry
 from requests.adapters import HTTPAdapter
-from user_agent_randomizer import get_random_user_agent
+from requests.packages.urllib3.util.retry import Retry
+from selenium import webdriver
+from sqlalchemy import create_engine, Column, String, DateTime
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import Session
+from sqlalchemy_utils import database_exists, create_database, drop_database
 
-import user_agent_randomizer
+from user_agent_randomizer import get_random_user_agent
 
 app = Flask(__name__)
 
@@ -43,6 +40,7 @@ def get_session_with_retry(
 
 
 TB_API_PORT = 8080
+TB_PORT = 8080
 TB_AUTH_HEADER = 'XTBAuth'
 
 
@@ -146,14 +144,6 @@ def find_user_by_token(auth_token, session):
     return session.query(User).filter(User.auth_token == auth_token).first()
 
 
-def managed_firefox_driver():
-    driver = webdriver.Firefox()
-    try:
-        yield driver
-    finally:
-        driver.close()
-
-
 def build_host_to_users_map(users):
     host_to_users = {}
 
@@ -169,7 +159,29 @@ def build_host_to_users_map(users):
 
 
 def run_execute_play_page(host, user, track):
-    pass
+    options = webdriver.ChromeOptions()
+    options.add_argument("--headless")
+    options.add_argument("--disable-xss-auditor")
+    driver = None
+    try:
+        driver = webdriver.Remote("http://selenium:4444/wd/hub", options=options)
+        driver.get(f'http://{host}:{TB_PORT}/#/track?{track}')
+
+        driver.add_cookie({
+            'name': TB_AUTH_HEADER,
+            'value': user.auth_token,
+            'path': '/'
+        })
+
+        driver.get(f'http://{host}:{TB_PORT}/#/track?{track}')
+
+        driver.find_element_by_xpath("//button[text()='play']").click()
+
+        time.sleep(1)
+
+    finally:
+        if driver is not None:
+            driver.close()
 
 
 def run_execute_play_page_in_thread(host, user, track):
@@ -290,7 +302,7 @@ def run():
 
     return make_response(
         jsonify(
-            message='previous tracks playing not finished yet'
+            message='pages execution successfully started'
         ),
         409
     )
