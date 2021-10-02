@@ -68,6 +68,11 @@ class Meta:
         self.description = description
         self.author = author
 
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__,
+            sort_keys=True, indent=2)
+
+
 
 class AlbumClient(Client):
 
@@ -78,10 +83,10 @@ class AlbumClient(Client):
     def AttachSingle(self, single_id):
         payload = {
             "Single": {
-                "Id": single_id
+                "Id": single_id["id"]
             },
             "AlbumId": {
-                "Id": self.album_id
+                "Id": self.album_id["id"]
             }
         }
 
@@ -89,17 +94,13 @@ class AlbumClient(Client):
 
     def Get(self):
         payload = {
-            "Id": {
-                "Id": self.album_id
-            }
+            "Id": self.album_id
         }
         return self.post("album/get", payload)
 
     def GetAllSingles(self):
         payload = {
-            "Id": {
-                "Id": self.album_id
-            }
+            "Id": self.album_id
         }
         return self.post("album/get_all_singles", payload)
 
@@ -112,18 +113,15 @@ class SingleClient(Client):
 
     def Get(self):
         payload = {
-            "Id": {
-                "Id": self.single_id
-            }
+            "Id": self.single_id
         }
         return self.post("single/get", payload)
 
     def RenderSingle(self):
         payload = {
-            "Id": {
-                "Id": self.single_id
-            }
+            "Id": self.single_id
         }
+
         return self.post("single/render", payload)
 
 
@@ -133,52 +131,38 @@ class WBClient(Client):
         super().__init__(apikey, address, port)
         self.user_id = str(uuid.uuid4())
 
-    def CreateUser(self, name):
+    def CreateUser(self, name, user_id):
         payload = {
             "Id": {
-                "Id": f"{self.user_id}"
+                "Id": f"{user_id}"
             },
             "Name": name
         }
 
         self.apikey = self.post("user/create", payload)["id"]
 
-    def CreateAlbum(self, name, meta=Meta("author_name", "description")) -> AlbumClient:
-        album_id = str(uuid.uuid4())
+    def CreateAlbum(self, album) -> AlbumClient:
         payload = {
-            "Id": {
-                "Id": album_id
-            },
-            "Name": name,
-            "Meta": {
-                "Author": meta.author,
-                "Description": meta.description
-            }
+            "Id": album["id"],
+            "Meta": album["meta"],
+            "Name": album["name"]
         }
 
         self.post("album/create", payload)
 
-        return AlbumClient(self.apikey, self.address, self.port, album_id)
+        return AlbumClient(self.apikey, self.address, self.port, album["id"])
 
-    def CreateSingle(self, name, track, meta: Meta) -> SingleClient:
-        single_id = str(uuid.uuid4())
+    def CreateSingle(self, single) -> SingleClient:
         payload = {
-            "Id": {
-                "Id": single_id
-            },
-            "Meta": {
-                "Author": meta.author,
-                "Description": meta.description
-            },
-            "Track": {
-                "Tokens": track
-            },
-            "Name": name
+            "Id": single["id"],
+            "Meta": single["meta"],
+            "Track": single["track"],
+            "Name": single["name"]
         }
 
         self.post("single/create", payload)
 
-        return SingleClient(self.apikey, self.address, self.port, single_id)
+        return SingleClient(self.apikey, self.address, self.port, single["id"])
 
     def Album(self, album_id) -> AlbumClient:
         return AlbumClient(self.apikey, self.address, self.port, album_id)
