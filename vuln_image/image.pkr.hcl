@@ -108,6 +108,10 @@ build {
     source = "/home/images/studio/studio-vm.service"
     destination = "/etc/systemd/system/studio-vm.service"
   }
+  provisioner "file" {
+    source = "keys"
+    destination = "/home/studio/"
+  }
 
   # Build and run services for the first time
 
@@ -139,6 +143,7 @@ build {
       "VBoxManage modifyvm Studio --autostart-enabled on",
       "VBoxManage modifyvm Studio --cpus 4",
       "VBoxManage modifyvm Studio --memory 8192",
+      "VBoxManage modifyvm Studio --natpf1 "serviceport,tcp,0.0.0.0,8000,,8000",
 
       "systemctl start studio-vm",
       "systemctl enable studio-vm",
