@@ -36,9 +36,9 @@ export const LatestPage: React.FC = () => {
 
     return (
         <TrackBattleLayout>
+            <Button color={"green"} text={"Start new battle"} onClick={handleCreate} />
             {posts.length ? (
                 <>
-                    <Button color={"green"} text={"Start new battle"} onClick={handleCreate} />
                     <Posts postIds={posts}/>
                 </>
             ) : (

@@ -12,7 +12,8 @@ export interface Result<R> {
 }
 
 export class api {
-    private static readonly baseUrl: string = process.env.BASE_URL!;
+    private static readonly baseUrl: string = process.env.BASE_URL ? process.env.BASE_URL :
+        process.env.NODE_ENV === "production" ? "http://localhost:8080/api" : "http://localhost:5000/api"
     private static readonly authHeader = "XTBAuth";
     private static readonly contentTypeHeader = "Content-Type";
 
