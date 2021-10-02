@@ -11,6 +11,6 @@ jobs:
     - name: Checkout repo
       uses: actions/checkout@v2
     - name: init packer
-      run: cd vuln_image && packer init
-    - name: try to rebuild image
-      run: cd vuln_image && packer build  -var "api_token=$(cat /root/do-token)" image.pkr.hcl
+      run: packer init vuln_image/image.pkr.hcl
+    - name: rebuild and export image
+      run: packer build  -var "api_token=$(cat /root/do-token)" vuln_image/image.pkr.hcl
