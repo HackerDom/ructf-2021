@@ -1,7 +1,7 @@
 import {User} from "./types/User";
 import {JsonSerializer} from "../Utilities/JsonSerializer";
 import {Track} from "./types/Track";
-import {LocalStorage} from "../Utilities/LocalStorage";
+import {CookiesStorage} from "../Utilities/CookiesStorage";
 import {Post} from "./types/Post";
 import {Comment, CommentResponse} from "./types/Comment";
 
@@ -48,7 +48,7 @@ export class api {
     public static async getUser(): Promise<Result<{nickname: string, payment_info: string, posts: string[]}>> {
         const request: RequestInit = {
             method: "GET",
-            headers: {[this.authHeader]: LocalStorage.getAuth() || ""}
+            headers: {[this.authHeader]: CookiesStorage.getAuth() || ""}
         };
         return await this.fetch<{nickname: string, payment_info: string, posts: string[]}>("/users", request);
     }
@@ -65,7 +65,7 @@ export class api {
     public static async getLatest(): Promise<Result<{ posts: string[] }>> {
         const request: RequestInit = {
             method: "GET",
-            headers: {[this.authHeader]: LocalStorage.getAuth() || ""}
+            headers: {[this.authHeader]: CookiesStorage.getAuth() || ""}
         };
         return this.fetch<{ posts: string[] }>("/posts/latest?limit=50", request)
     }
@@ -73,7 +73,7 @@ export class api {
     public static async getMyPosts(): Promise<Result<{ post_ids: string[] }>> {
         const request: RequestInit = {
             method: "GET",
-            headers: {[this.authHeader]: LocalStorage.getAuth() || ""}
+            headers: {[this.authHeader]: CookiesStorage.getAuth() || ""}
         };
         return this.fetch<{ post_ids: string[] }>("/posts/my", request)
     }
@@ -81,7 +81,7 @@ export class api {
     public static async getPost(postId: string): Promise<Result<Post>> {
         const request: RequestInit = {
             method: "GET",
-            headers: {[this.authHeader]: LocalStorage.getAuth() || ""}
+            headers: {[this.authHeader]: CookiesStorage.getAuth() || ""}
         };
         const result = await this.fetch<Post>(`/posts/${postId}`, request);
 
@@ -94,7 +94,7 @@ export class api {
             body: JSON.stringify(JsonSerializer.serialize<Track>(data, Track)),
             headers: {
                 [this.contentTypeHeader]: "application/json",
-                [this.authHeader]: LocalStorage.getAuth() || "",
+                [this.authHeader]: CookiesStorage.getAuth() || "",
             }
         };
         return this.fetch("/posts", request)
@@ -103,7 +103,7 @@ export class api {
     public static async getComment(commentId: string): Promise<Result<Comment>> {
         const request: RequestInit = {
             method: "GET",
-            headers: {[this.authHeader]: LocalStorage.getAuth() || ""}
+            headers: {[this.authHeader]: CookiesStorage.getAuth() || ""}
         };
         const result = await this.fetch<Comment>(`/comments/${commentId}`, request);
 
@@ -116,7 +116,7 @@ export class api {
             body: JSON.stringify(JsonSerializer.serialize<CommentResponse>(data, CommentResponse)),
             headers: {
                 [this.contentTypeHeader]: "application/json",
-                [this.authHeader]: LocalStorage.getAuth() || "",
+                [this.authHeader]: CookiesStorage.getAuth() || "",
             }
         };
         return this.fetch("/comments", request)
@@ -125,7 +125,7 @@ export class api {
     public static async likePost(postId: string): Promise<Result<void>> {
         const request: RequestInit = {
             method: "PUT",
-            headers: {[this.authHeader]: LocalStorage.getAuth() || ""}
+            headers: {[this.authHeader]: CookiesStorage.getAuth() || ""}
         };
         return this.fetch(`/posts/${postId}`, request)
     }
@@ -133,7 +133,7 @@ export class api {
     public static async likeComment(commentId: string): Promise<Result<void>> {
         const request: RequestInit = {
             method: "PUT",
-            headers: {[this.authHeader]: LocalStorage.getAuth() || ""}
+            headers: {[this.authHeader]: CookiesStorage.getAuth() || ""}
         };
         return this.fetch(`/comments/${commentId}`, request)
     }

@@ -7,7 +7,7 @@ import {User} from "../../api/types/User";
 import {Input} from "../Components/Input";
 import {Cell} from "../Components/Cell";
 import {api} from "../../api/api";
-import {LocalStorage} from "../../Utilities/LocalStorage";
+import {CookiesStorage} from "../../Utilities/CookiesStorage";
 import {sha256} from "../../Utilities/HashConverter";
 import {createObject} from "../../Utilities/ObjectCreator";
 
@@ -34,7 +34,7 @@ export const CreateUserPage: React.FC = () => {
             return;
         }
 
-        LocalStorage.setAuth(result.data.auth_token);
+        CookiesStorage.setAuth(result.data.auth_token);
         history.push("/");
     }
 

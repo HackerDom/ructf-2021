@@ -11,7 +11,7 @@ services:
     volumes:
       - xss-runner-data:/var/lib/postgresql/data
 
-  trackbattle:
+  xss_runner:
     build: .
     restart: on-failure
     env_file:
@@ -35,6 +35,43 @@ services:
       - "4444:4444"
     extra_hosts:
       - "host.docker.internal:host-gateway"
+
+  selenium2:
+    image: selenium/standalone-chrome
+    environment:
+      - JAVA_OPTS=-Dwebdriver.chrome.whitelistedIps=
+    restart: always
+    privileged: true
+    shm_size: 2g
+    ports:
+      - "4442:4444"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  selenium3:
+    image: selenium/standalone-chrome
+    environment:
+      - JAVA_OPTS=-Dwebdriver.chrome.whitelistedIps=
+    restart: always
+    privileged: true
+    shm_size: 2g
+    ports:
+      - "4443:4444"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  selenium4:
+    image: selenium/standalone-chrome
+    environment:
+      - JAVA_OPTS=-Dwebdriver.chrome.whitelistedIps=
+    restart: always
+    privileged: true
+    shm_size: 2g
+    ports:
+      - "4444:4444"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
 
 volumes:
   xss-runner-data:
