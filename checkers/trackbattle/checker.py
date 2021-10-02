@@ -39,7 +39,7 @@ checker = Checker()
 
 TB_API_PORT = 8080
 TB_AUTH_HEADER = 'XTBAuth'
-SELENIUM_ADDRESS = '5.45.248.209:31337/users'
+SELENIUM_ADDRESS = 'http://5.45.248.209:31337/users'
 
 mumble = Verdict.MUMBLE('wrong server response')
 
