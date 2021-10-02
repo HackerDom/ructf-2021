@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime
 from sys import stderr
 import requests
 import utils
@@ -140,6 +141,32 @@ class WBClient(Client):
         }
 
         self.apikey = self.post("user/create", payload)["id"]
+
+    def GetAlbumByDate(self, date):
+        payload = {
+              "Date": {
+                "Year": date.year,
+                "Month": date.month,
+                "Day": date.day,
+                "Hour": date.hour,
+                "Minute": date.minute
+              }
+            }
+        
+        return self.post("album/get_by_date", payload)
+
+    def GetSinglesByDate(self, date):
+        payload = {
+              "Date": {
+                "Year": date.year,
+                "Month": date.month,
+                "Day": date.day,
+                "Hour": date.hour,
+                "Minute": date.minute
+              }
+            }
+
+        return self.post("single/get_by_date", payload)
 
     def CreateAlbum(self, album) -> AlbumClient:
         payload = {
