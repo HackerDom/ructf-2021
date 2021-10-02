@@ -38,12 +38,16 @@ class Store(private val path: Path) extends mutable.Map[String, Array[Byte]] {
   }
 
   private def get(key: String, encodeKey: Boolean): Option[Array[Byte]] = {
-    val filePath = getFilePath(key, encodeKey)
+    if (key.length <= 3) {
+      None
+    } else {
+      val filePath = getFilePath(key, encodeKey)
 
-    if (filePath.toFile.exists()) {
-      val res = Files.readAllBytes(filePath)
-      Some(res)
-    } else None
+      if (filePath.toFile.exists()) {
+        val res = Files.readAllBytes(filePath)
+        Some(res)
+      } else None
+    }
   }
 
   override def get(key: String): Option[Array[Byte]] = get(key, encodeKey = true)

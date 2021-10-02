@@ -198,9 +198,10 @@ function setHandlers() {
             qRes.append("<tr><td>id</td><td>name</td><td>description</td><td>tags</td></tr>");
             fetchEmployees(ids, function (employees) {
                 employees.forEach(function (employee) {
-                    let href = employee.owner === username ? ` href="/owner_view?employee_id=${employee.id}"` : "";
+                    let idElement = employee.owner === username ? `<a href="/owner_view?employee_id=${employee.id}">${employee.id}</a>` : employee.id;
+
                     let newRow = `<tr>
-                                      <td><a${href}>${employee.id}</a></td>
+                                      <td>${idElement}</td>
                                       <td>${renderFullName(employee)}</td>
                                       <td>${employee.description}</td>
                                       <td>${employee.tagsList.join(', ')}</td>
