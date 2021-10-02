@@ -18,7 +18,10 @@ services:
       - variables.env
     depends_on:
       - postgres
-      - selenium
+      - selenium0
+      - selenium1
+      - selenium2
+      - selenium3
     ports:
       - "31337:31337"
     extra_hosts:

@@ -123,7 +123,7 @@ def put(put_request: PutRequest) -> Verdict:
             )
             log.debug(response.text)
 
-            if response.status_code != 200:
+            if response.status_code != 201:
                 raise ValueError('status code is not 200')
         except Exception as e:
             log.error(f'cannot send user info into selenuim')
