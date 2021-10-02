@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Vostok.Clusterclient.Core;
+using WhiteAlbum.Entities;
 using WhiteAlbum.Requests;
 using Single = WhiteAlbum.Entities.Single;
 
@@ -18,6 +19,9 @@ namespace DoNotIncludeThisPlease.Client
             
         public Task<ClientResult<Single>> Get(GetSingleRequest request, TimeSpan timeout) =>
             Method<Single>("get").CallAsync(request, timeout);
+        
+        public Task<ClientResult<SingleEntry[]>> GetByDate(GetByDateRequest request, TimeSpan timeout) =>
+            Method<SingleEntry[]>("get_by_date").CallAsync(request, timeout);
             
             
         public Task<ContentResult> Mix(MixSingleRequest request, TimeSpan timeout) =>

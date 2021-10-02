@@ -71,7 +71,10 @@ namespace WhiteAlbum.Stores
 
         public async Task<AlbumEntry[]> GetByDate(Date date)
         {
-            return albumsByDate[date].Select(x => albums[x]).Select(x => new AlbumEntry(x.Id, x.Name, date)).ToArray();
+            if (!albumsByDate.TryGetValue(date, out var albumIds))
+                return Array.Empty<AlbumEntry>();
+            
+            return albumIds.Select(x => albums[x]).Select(x => new AlbumEntry(x.Id, x.Name, date)).ToArray();
         }
 
         public async Task Update(UpdateAlbumRequest request)
