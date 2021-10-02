@@ -93,12 +93,12 @@ build {
   # Studio service
   provisioner "shell" {
     inline = [
-      "cd ~sandbox",
+      "cd ~studio",
       "mkdir image",
     ]
   }
 
-  # For two following steps you need to run build scripts from ../services/sandbox/sandbox_vm_image and ../services/sandbox/sandbox_docker_image first
+  # For two following steps you need to run build scripts from ../services/studio/image first
   # And move image in /home/images/studio/packer-studio.ova
   provisioner "file" {
     source = "/home/images/studio/packer-studio.ova"
