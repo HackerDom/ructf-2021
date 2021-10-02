@@ -1,7 +1,7 @@
 package controllers
 
 import com.google.protobuf.InvalidProtocolBufferException
-import common.{SessionManager, Store, UserManager, UserManagerException, Utils}
+import common.{SessionManager, Store, UserManager, UserManagerException, Utils, WithJedisException}
 import index.RuntimeIndex
 import org.request.{Employee, NewEmployee, StringList, StrippedEmployees, UserPair}
 import play.api.libs.json.Json
@@ -65,9 +65,7 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
     withAuth(request, { _ =>
       withRequiredParam("employee_ids", request, { rawEmployee_ids =>
         val employeeIds = rawEmployee_ids.split(',')
-        println(employeeIds.mkString(", "))
         val employees = employeeIds.flatMap { employeeId =>
-          println(employeeId)
           Context.store.get(employeeId) match {
             case Some(rawEmployee) =>
               Context.parse(Employee.parseFrom, new ByteArrayInputStream(rawEmployee)) match {
@@ -122,6 +120,13 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
               setUserCookie(userPair)
             } catch {
               case _: UserManagerException => BadRequest("Incorrect user pair")
+              case e: WithJedisException =>
+                if (e.innerException.isInstanceOf[UserManagerException]) {
+                  BadRequest(e.innerException.getMessage)
+                }
+                else {
+                  InternalServerError(e.getMessage)
+                }
             }
           case None => BadRequest("Incorrect protobuf")
         }

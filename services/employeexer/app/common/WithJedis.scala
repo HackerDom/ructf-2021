@@ -3,7 +3,7 @@ package common
 import redis.clients.jedis.{Jedis, JedisPool, Transaction}
 
 
-class WithJedisException(message: String) extends Exception(message)
+class WithJedisException(val innerException: Throwable, message: String) extends Exception(message)
 
 
 class WithJedis(private val jedisPool: JedisPool) {
@@ -15,7 +15,7 @@ class WithJedis(private val jedisPool: JedisPool) {
       block(jedis)
     } catch {
       case e: Throwable => e.printStackTrace()
-        throw new WithJedisException(s"Error during jedis operation: ${e.getMessage}")
+        throw new WithJedisException(e, s"Error during jedis operation: ${e.getMessage}")
     } finally {
       jedisForClose match {
         case Some(value) => value.close()
