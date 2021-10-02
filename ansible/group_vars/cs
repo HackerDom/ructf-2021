@@ -73,7 +73,7 @@ teams: |
 
 services: |
   {name => 'metrics',       path => 'checkers/metrics/checker.py',                 timeout => 30, tcp_port => 5051},
-  {name => 'track battle',  path => 'checkers/trackbattle/trackbattle.checker.py', timeout => 30, tcp_port => 8080},
+  {name => 'track battle',  path => 'checkers/trackbattle/checker.py', timeout => 30, tcp_port => 8080},
   {name => 'studio',        path => 'checkers/studio/checker.py',                  timeout => 30, tcp_port => 8000},
   {name => 'white_album',   path => 'checkers/white_album/checker.py',             timeout => 30, tcp_port => 1234},
   {name => 'employyxer',    path => 'checkers/employeexer/checker.py',             timeout => 30, tcp_port => 9000},
