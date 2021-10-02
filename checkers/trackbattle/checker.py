@@ -297,6 +297,9 @@ def check_latest(check_request, session, user_agent, auth_token):
     if r.status_code != 200 or posts is None or len(posts) > 100:
         return None, mumble
 
+    if len(posts) == 0:
+        return [], None
+
     return [random.choice(posts) for _ in range(5)], None
 
 
