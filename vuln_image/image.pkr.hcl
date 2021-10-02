@@ -215,7 +215,7 @@ build {
 
   provisioner "shell" {
     inline = [
-      "docker image prune --filter label=stage=builder",
+      "docker image prune --filter label=stage=builder -f",
     ]
   }
 }
