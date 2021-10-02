@@ -2,7 +2,7 @@ FROM hseeberger/scala-sbt:8u222_1.3.5_2.13.1
 
 COPY . /build
 WORKDIR /build
-RUN sbt dist || sbt dist
+RUN sbt dist || sbt dist || sbt dist
 
 FROM openjdk:13-jdk-alpine3.10
 WORKDIR /build
