@@ -2,12 +2,18 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Vostok.Commons.Time;
+using Vostok.Logging.Abstractions;
 using WhiteAlbum.Entities;
 using WhiteAlbum.Entities.Users;
+using WhiteAlbum.Helpers;
 using WhiteAlbum.Requests;
+using WhiteAlbum.Settings;
 
 namespace WhiteAlbum.Stores
 {
@@ -17,12 +23,49 @@ namespace WhiteAlbum.Stores
         private readonly ConcurrentDictionary<UserId, ImmutableArray<AlbumId>> albumsByUser = new();
         private readonly ConcurrentDictionary<Date, ConcurrentBag<AlbumId>> albumsByDate = new();
 
+        private readonly Func<WhiteAlbumSettings> getSettings;
+        
+        public AlbumStore(Func<WhiteAlbumSettings> getSettings, ILog log)
+        {
+            this.getSettings = getSettings;
+
+            var action = new PeriodicalAction(() => Dump(), e => log.Error(e), () => 1.Seconds());
+            action.Start();
+        }
+
+        public void Dump()
+        {
+            if (!File.Exists(getSettings().AlbumsLogPath))
+                File.Create(getSettings().AlbumsLogPath).Dispose();
+            
+            var tmpFileName = $"{getSettings().AlbumsLogPath}_tmp_{Guid.NewGuid()}";
+            using (var tmpFile = new FileStream(tmpFileName, FileMode.Create))
+            {
+                tmpFile.Write(Encoding.UTF8.GetBytes(albums.ToJson()));
+            }
+            
+            File.Replace(tmpFileName, getSettings().AlbumsLogPath, null);
+        }
+        
+        public void Initialize(Dictionary<string, Album> dictionary)
+        {
+            foreach (var (albumId, album) in dictionary)
+            {
+                CreateInternal(album);
+            }
+        }
+
         public async Task<Album> Create(CreateAlbumRequest request)
         {
             var album = new Album(request.Id, request.Name, request.Meta) {
                 Owner = Context.User?.Id ?? throw new UnauthorizedAccessException("User is empty.")
             };
-            var result = albums.GetOrAdd(request.Id, album);
+            return CreateInternal(album);
+        }
+
+        private Album CreateInternal(Album album)
+        {
+            var result = albums.GetOrAdd(album.Id, album);
 
             var now = Date.Now();
             

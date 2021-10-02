@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using DoNotIncludeThisPlease.Client;
 using FluentAssertions;
@@ -32,9 +33,17 @@ namespace DoNotIncludeThisPlease
         private SingleId? singleId;
         private SingleName? singleName;
 
+        private AlbumId persistentAlbumId = new AlbumId(new Guid(1, 3, 4, 2, 2, 3, 5, 7, 2, 3, 1));
+        private AlbumName persistentAlbumName = new AlbumName("persistent_album_name");
+        
+        // private UserId persistentUserId = new UserId(new Guid(1, 3, 4, 2, 2, 3, 5, 7, 2, 3, 1));
+        // private UserName persistentUserName = new UserName("persistent_album_name");
+
         [SetUp]
         public void SetUp()
         {
+            Environment.CurrentDirectory = @"D:\ructf2021\ructf-2021\services\white_album\DoNotIncludeThisPlease\bin\Release\net5.0";
+            
             void EnvironmentSetup(IVostokHostingEnvironmentBuilder builder)
             {
                 builder
@@ -71,12 +80,43 @@ namespace DoNotIncludeThisPlease
             var authProvider = new AsyncLocalAuthProvider();
 
             client = new Client.Client("http://localhost:1234/", authProvider, log);
+            
+
         }
 
         [TearDown]
         public async Task TearDown()
         {
             await host.StopAsync();
+        }
+
+        [Test]
+        public async Task Album_should_persist()
+        {
+            var userToken = (await client.UsersClient.Create(new CreateUserRequest(userId, userName), 60.Seconds())).Result;
+
+            ApiKey.Set(userToken.Id.ToString());
+            
+            var createAlbumRequest = new CreateAlbumRequest(persistentAlbumId, persistentAlbumName, new AlbumMeta(null, null));
+
+            var createResult = await client.AlbumClient.Create(createAlbumRequest, 60.Seconds());
+            createResult.ResponseCode.Should().Be(ResponseCode.Ok);
+
+            var getResult = await client.AlbumClient.Get(new GetAlbumRequest(persistentAlbumId), 60.Seconds());
+            getResult.Result.Id.Id.Should().Be(persistentAlbumId.Id);
+            
+            Thread.Sleep(10_000);
+        }
+
+        [Test]
+        public async Task pers_alb_should_existe()
+        {
+            var token = "54215d94-e6b6-4751-bcbb-6975dc994f5c";
+            ApiKey.Set(token);
+            
+            var getResult = await client.AlbumClient.Get(new GetAlbumRequest(persistentAlbumId), 60.Seconds());
+            getResult.Result.Id.Id.Should().Be(persistentAlbumId.Id);
+            
         }
         
         [Test]
@@ -103,7 +143,7 @@ namespace DoNotIncludeThisPlease
 
             ApiKey.Set(userToken.Id.ToString());
         
-            var creteSingleRequest = new CreateSingleRequest(singleId, new SingleMeta("author", null), singleName, new Track());
+            var creteSingleRequest = new CreateSingleRequest(singleId, new SingleMeta("author", null), singleName, new Track(Array.Empty<string>()));
 
             var createResult = (await client.SinglesClient.Create(creteSingleRequest, 60.Seconds()));
             createResult.EnsureSuccess();
@@ -120,7 +160,7 @@ namespace DoNotIncludeThisPlease
 
             ApiKey.Set(userToken.Id.ToString());
         
-            var creteSingleRequest = new CreateSingleRequest(singleId, new SingleMeta("author", null), singleName, new Track());
+            var creteSingleRequest = new CreateSingleRequest(singleId, new SingleMeta("author", null), singleName, new Track(Array.Empty<string>()));
 
             var createResult = (await client.SinglesClient.Create(creteSingleRequest, 60.Seconds()));
             createResult.EnsureSuccess();
@@ -178,7 +218,7 @@ namespace DoNotIncludeThisPlease
 
             ApiKey.Set(userToken.Id.ToString());
         
-            var createSingleRequest = new CreateSingleRequest(singleId, new SingleMeta("author", null), singleName, new Track());
+            var createSingleRequest = new CreateSingleRequest(singleId, new SingleMeta("author", null), singleName, new Track(Array.Empty<string>()));
 
             var createResult = (await client.SinglesClient.Create(createSingleRequest, 60.Seconds()));
             createResult.EnsureSuccess();
@@ -209,7 +249,7 @@ namespace DoNotIncludeThisPlease
             
             getResult.EnsureSuccess();
             
-            var createSingleRequest = new CreateSingleRequest(singleId, new SingleMeta("author", null), singleName, new Track());
+            var createSingleRequest = new CreateSingleRequest(singleId, new SingleMeta("author", null), singleName, new Track(Array.Empty<string>()));
             var createSingleResult = (await client.SinglesClient.Create(createSingleRequest, 60.Seconds()));
             
             createSingleResult.EnsureSuccess();
@@ -235,7 +275,7 @@ namespace DoNotIncludeThisPlease
             
             var singleId2 = new SingleId(Guid.NewGuid());
             var singleName2 = singleName;
-            var createSingleRequest2 = new CreateSingleRequest(singleId2, new SingleMeta("author2", null), singleName2, new Track());
+            var createSingleRequest2 = new CreateSingleRequest(singleId2, new SingleMeta("author2", null), singleName2, new Track(Array.Empty<string>()));
             var createSingleResult2 = (await client.SinglesClient.Create(createSingleRequest2, 60.Seconds()));
             
             createSingleResult2.EnsureSuccess();
@@ -267,7 +307,7 @@ namespace DoNotIncludeThisPlease
 
             var singleId = new SingleId(Guid.NewGuid());
             var singleName = new SingleName($"single_name_{singleId}");
-            var createSingleRequest = new CreateSingleRequest(singleId, new SingleMeta("author", null), singleName, new Track());
+            var createSingleRequest = new CreateSingleRequest(singleId, new SingleMeta("author", null), singleName, new Track(Array.Empty<string>()));
             var createSingleResult = (await client.SinglesClient.Create(createSingleRequest, 60.Seconds()));
             
             createSingleResult.EnsureSuccess();
@@ -293,7 +333,7 @@ namespace DoNotIncludeThisPlease
             
             var singleId2 = new SingleId(Guid.NewGuid());
             var singleName2 = new SingleName($"single_name2_{singleId2}");
-            var createSingleRequest2 = new CreateSingleRequest(singleId2, new SingleMeta("author2", null), singleName2, new Track());
+            var createSingleRequest2 = new CreateSingleRequest(singleId2, new SingleMeta("author2", null), singleName2, new Track(Array.Empty<string>()));
             var createSingleResult2 = (await client.SinglesClient.Create(createSingleRequest2, 60.Seconds()));
             
             createSingleResult2.EnsureSuccess();
