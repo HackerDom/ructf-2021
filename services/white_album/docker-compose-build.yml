@@ -1,0 +1,9 @@
+version: '3'
+services:
+  white_album:
+    container_name: white_album_build
+    build:
+      context: .
+      dockerfile: Dockerfile-build
+    volumes:
+      - ./publish:/app/publish
