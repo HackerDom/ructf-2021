@@ -2,5 +2,5 @@
 
 - targets:
 {% for item in groups['cs'] %}
-  - {{ hostvars[item]['private_ip'] }}:9100
+  - {{ hostvars[item]['private_addr'] }}:9100
 {% endfor %}
