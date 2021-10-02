@@ -53,7 +53,7 @@ build {
 
       # Add users for services
       "useradd -m -u 10000 -s /bin/bash employeexer",
-      "useradd -m -u 10001 -s /bin/bash demo",
+      "useradd -m -u 10001 -s /bin/bash studio",
     ]
   }
 
@@ -83,11 +83,19 @@ build {
 
   ### Copy services
 
-  # FW service
+  # Employeexer service
 
   provisioner "file" {
     source = "../services/employeexer/"
     destination = "/home/employeexer/"
+  }
+
+  # Studio service
+  provisioner "shell" {
+    inline = [
+      "cd ~sandbox",
+      "mkdir image",
+    ]
   }
 
   # For two following steps you need to run build scripts from ../services/sandbox/sandbox_vm_image and ../services/sandbox/sandbox_docker_image first
@@ -98,7 +106,7 @@ build {
   }
   provisioner "file" {
     source = "/home/images/studio/studio-vm.service"
-    destination = "/home/studio/image/studio-vm.service"
+    destination = "/etc/systemd/system/studio-vm.service"
   }
 
   # Build and run services for the first time
@@ -129,8 +137,8 @@ build {
       "VBoxManage hostonlyif ipconfig vboxnet0 --ip 192.168.56.1",
       "VBoxManage modifyvm Studio --nic1 hostonly --hostonlyadapter1 vboxnet0",
       "VBoxManage modifyvm Studio --autostart-enabled on",
-      "VBoxManage modifyvm Studio --cpus 4",
-      "VBoxManage modifyvm Studio --memory 8192",
+      "VBoxManage modifyvm Studio --cpus 2",
+      "VBoxManage modifyvm Studio --memory 4096",
 
       "systemctl start studio-vm",
       "systemctl enable studio-vm",
