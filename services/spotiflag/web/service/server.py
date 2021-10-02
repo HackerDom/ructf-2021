@@ -73,6 +73,7 @@ async def api_listen(id: uuid.UUID, range: str=Header(...)):
         media_type='audio/wav',
         headers={
             'Content-Range': f'bytes {new_start}-{new_end}/{new_length}',
+            'Content-Length': f'{len(data)}',
         }
     )
 
