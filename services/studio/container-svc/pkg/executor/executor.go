@@ -19,7 +19,7 @@ func Run(ctx context.Context, payload workerpool.JobDescriptor) (workerpool.Exec
 	defer DeallocMemory(payload.ID)
 	v, err := AllocMemory(payload.ID, payload.RunCredential)
 	if err != nil {
-		errMsg := fmt.Sprintf("Executor: failed to allocate memory: %s, %v", v, err)
+		errMsg := fmt.Sprintf("Executor: failed to allocate memory: %s, %v; job_id %s, mem_id %s, runcred %s", v, err, payload.ID, payload.MemID, payload.RunCredential)
 		logging.Error(errMsg)
 		return workerpool.ExecResult{Res: []byte(errMsg), TimeInfo: timeInfo}, nil
 	}
@@ -29,7 +29,7 @@ func Run(ctx context.Context, payload workerpool.JobDescriptor) (workerpool.Exec
 	timeInfo.StopContainer = time.Now()
 
 	if err != nil {
-		errMsg := fmt.Sprintf("Executor: failed to run the container: %s, %v", v, err)
+		errMsg := fmt.Sprintf("Executor: failed to run the container: %s, %v; job_id %s, mem_id %s, runcred %s", v, err, payload.ID, payload.MemID, payload.RunCredential)
 		logging.Error(errMsg)
 		return workerpool.ExecResult{Res: []byte(errMsg), TimeInfo: timeInfo}, nil
 	}
@@ -37,7 +37,7 @@ func Run(ctx context.Context, payload workerpool.JobDescriptor) (workerpool.Exec
 	timeInfo.ReadMem = time.Now()
 	res, err := readResult(payload.ID)
 	if err != nil {
-		errMsg := fmt.Sprintf("Executor: failed to read the container job result: %s, %v", res, err)
+		errMsg := fmt.Sprintf("Executor: failed to read the container job result: %s, %v; job_id %s, mem_id %s, runcred %s", res, err, payload.ID, payload.MemID, payload.RunCredential)
 		logging.Error(errMsg)
 		return workerpool.ExecResult{Res: []byte(errMsg), TimeInfo: timeInfo}, nil
 	}
