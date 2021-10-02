@@ -24,7 +24,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
-  selenium:
+  selenium0:
     image: selenium/standalone-chrome
     environment:
       - JAVA_OPTS=-Dwebdriver.chrome.whitelistedIps=
@@ -32,7 +32,19 @@ services:
     privileged: true
     shm_size: 2g
     ports:
-      - "4444:4444"
+      - "4440:4444"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  selenium1:
+    image: selenium/standalone-chrome
+    environment:
+      - JAVA_OPTS=-Dwebdriver.chrome.whitelistedIps=
+    restart: always
+    privileged: true
+    shm_size: 2g
+    ports:
+      - "4441:4444"
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
@@ -57,18 +69,6 @@ services:
     shm_size: 2g
     ports:
       - "4443:4444"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-
-  selenium4:
-    image: selenium/standalone-chrome
-    environment:
-      - JAVA_OPTS=-Dwebdriver.chrome.whitelistedIps=
-    restart: always
-    privileged: true
-    shm_size: 2g
-    ports:
-      - "4444:4444"
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
