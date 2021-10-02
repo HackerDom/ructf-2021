@@ -10,7 +10,7 @@ services:
     volumes:
       - data:/app/data
 
-    restart: unless-stopped
+    restart: always
 
 volumes:
     data:
