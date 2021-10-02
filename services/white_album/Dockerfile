@@ -11,6 +11,4 @@ ENV DOTNET_CLI_TELEMETRY_OPTOUT=1 COMPlus_JitTelemetry=0 COMPlus_legacyCorrupted
 
 RUN adduser --system --home /app --shell /usr/sbin/nologin --no-create-home --disabled-password deployer
 
-RUN find / | grep WhiteAlbum.dll
-
 CMD ["dotnet", "WhiteAlbum/bin/Debug/net5.0/WhiteAlbum.dll"]
