@@ -1,4 +1,4 @@
-FROM python:3.9-alpine
+FROM python:3.8-slim
 
 RUN adduser -s /bin/false -D -H -u 1000 spotiflag
 
