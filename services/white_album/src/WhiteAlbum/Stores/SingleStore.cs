@@ -66,6 +66,5 @@ namespace WhiteAlbum.Stores
             
             return ImmutableArray<Single>.Empty;
         }
-
     }
 }
