@@ -108,7 +108,7 @@ def get(get_request: GetRequest) -> Verdict:
                 return Verdict.CORRUPT("corrupt response")
 
             resp_json = resp.json()
-            if resp and "data" not in resp_json or "status" not in resp_json["data"]:
+            if "data" not in resp_json or "status" not in resp_json["data"]:
                 return Verdict.CORRUPT("corrupt response")
 
             if resp_json["data"]["status"] == "created":
