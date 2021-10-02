@@ -82,7 +82,10 @@ def put(put_request: PutRequest) -> Verdict:
         )
 
         resp_json = resp.json()
-        nc.verdict = Verdict.OK(resp_json["data"]["id"])
+        if "data" not in resp_json or "id" not in resp_json["data"]:
+            nc.verdict = Verdict.CORRUPT("corrupt response")
+        else:
+            nc.verdict = Verdict.OK(resp_json["data"]["id"])
 
     return nc.verdict
 
