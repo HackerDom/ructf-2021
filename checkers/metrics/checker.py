@@ -19,7 +19,7 @@ def get_random_str(length=10, only_chars=False):
 
 @checker.define_check
 async def check_service(request: CheckRequest) -> Verdict:
-    api = Api(f"{request.hostname}:8080")
+    api = Api(f"{request.hostname}:5051")
     device = random.choice(devices)
     metric_type = random.choice(types)
     metainfo = get_random_str()
@@ -46,7 +46,7 @@ async def check_service(request: CheckRequest) -> Verdict:
 
 @checker.define_put(vuln_rate=1, vuln_num=1)
 async def put(request: PutRequest) -> Verdict:
-    api = Api(f"{request.hostname}:8080")
+    api = Api(f"{request.hostname}:5051")
     device = random.choice(devices)
     metric_type = random.choice(types)
     metainfo = request.flag
@@ -61,7 +61,7 @@ async def put(request: PutRequest) -> Verdict:
 
 @checker.define_get(vuln_num=1)
 async def get(request: GetRequest) -> Verdict:
-    api = Api(f"{request.hostname}:8080")
+    api = Api(f"{request.hostname}:5051")
     token = request.flag_id.strip()
     # print(token)
     err, metric = api.get_metric(token)
