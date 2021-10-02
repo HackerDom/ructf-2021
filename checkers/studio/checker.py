@@ -43,6 +43,7 @@ checker = Checker()
 
 TCP_PORT = 8000
 
+
 class NetworkChecker:
     def __init__(self):
         self.verdict = Verdict.OK()
@@ -62,9 +63,11 @@ class NetworkChecker:
             traceback.print_tb(exc_traceback, file=sys.stdout)
         return True
 
+
 @checker.define_check
 def check(check_request: CheckRequest) -> Verdict:
     return Verdict.OK()
+
 
 @checker.define_put(vuln_num=1, vuln_rate=1)
 def put(put_request: PutRequest) -> Verdict:
@@ -76,12 +79,8 @@ def put(put_request: PutRequest) -> Verdict:
             data=request_data
         )
 
-        resp_json = response.json()
+        resp_json = resp.json()
         return Verdict.OK(resp_json["id"])
-    
-    except Exception as e:
-        print(e, print_exc())
-        return Verdict.DOWN("can't send u anything")
 
 
 @checker.define_get(vuln_num=1)
@@ -94,7 +93,7 @@ def get(get_request: GetRequest) -> Verdict:
                 headers={"User-Agent": get_user_agent()},
                 timeout=3
             )
-            resp_json = response.json()
+            resp_json = resp.json()
             if resp_json["status"] == "created":
                 time.sleep(2)
                 continue
