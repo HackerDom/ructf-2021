@@ -12,4 +12,6 @@ RUN pip install -r requirements.txt
 
 COPY service .
 
+USER spotiflag
+
 ENTRYPOINT ["uvicorn", "--workers", "8", "--host", "0.0.0.0", "server:app"]
