@@ -20,6 +20,9 @@ namespace DoNotIncludeThisPlease.Client
             
         public Task<ClientResult<Album>> Get(GetAlbumRequest request, TimeSpan timeout) =>
             Method<Album>("get").CallAsync(request, timeout);
+        
+        public Task<ClientResult<AlbumEntry[]>> GetByDate(GetByDateRequest request, TimeSpan timeout) =>
+            Method<AlbumEntry[]>("get_by_date").CallAsync(request, timeout);
             
             
         public Task<ClientResult> Attach(AttachSingleToAlbumRequest request, TimeSpan timeout) =>

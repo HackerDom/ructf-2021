@@ -153,8 +153,43 @@ namespace DoNotIncludeThisPlease
         [Test]
         public async Task AlbumGetByDateShouldWork()
         {
+            var userToken = (await client.UsersClient.Create(new CreateUserRequest(userId, userName), 60.Seconds())).Result;
+
+            ApiKey.Set(userToken.Id.ToString());
+        
+            var createAlbumRequest = new CreateAlbumRequest(albumId, albumName, new AlbumMeta(null, null));
+
+            var createResult = (await client.AlbumClient.Create(createAlbumRequest, 60.Seconds()));
+            createResult.EnsureSuccess();
+
+            ApiKey.Set(null);
+
+            var getByDateRequest = new GetByDateRequest(Date.Now());
+            var getAlbumsByDate = await client.AlbumClient.GetByDate(getByDateRequest, 60.Seconds());
+
+            getAlbumsByDate.Result.Should()
+                .Contain(x => x.Id.Id.Equals(albumId.Id) && x.Name.ToString().Equals(albumName.ToString()));
+        }
+        
+        [Test]
+        public async Task SingleGetByDateShouldWork()
+        {
+            var userToken = (await client.UsersClient.Create(new CreateUserRequest(userId, userName), 60.Seconds())).Result;
+
+            ApiKey.Set(userToken.Id.ToString());
+        
+            var createSingleRequest = new CreateSingleRequest(singleId, new SingleMeta("author", null), singleName, new Track());
+
+            var createResult = (await client.SinglesClient.Create(createSingleRequest, 60.Seconds()));
+            createResult.EnsureSuccess();
+
+            ApiKey.Set(null);
             
-            
+            var getByDateRequest = new GetByDateRequest(Date.Now());
+            var getAlbumsByDate = await client.SinglesClient.GetByDate(getByDateRequest, 60.Seconds());
+
+            getAlbumsByDate.Result.Should()
+                .Contain(x => x.Id.Id.Equals(singleId.Id) && x.Name.ToString().Equals(singleName.ToString()));
         }
         
         [Test]
