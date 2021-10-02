@@ -76,7 +76,7 @@ def put(put_request: PutRequest) -> Verdict:
     request_data = get_payload(put_request.flag)
     with NetworkChecker() as nc:
         resp = requests_with_retry().put(
-            f"http://{put_request.hostname}:{TCP_PORT}/jobs",
+            f"http://{put_request.hostname}:{TCP_PORT}/api/v1/jobs",
             headers={"User-Agent": get_user_agent()},
             data=request_data
         )
@@ -91,7 +91,7 @@ def get(get_request: GetRequest) -> Verdict:
         retry_count = 0
         while retry_count < 15:
             resp = requests_with_retry().get(
-                f"http://{get_request.hostname}:{TCP_PORT}/jobs/{get_request.flag_id.strip()}",
+                f"http://{get_request.hostname}:{TCP_PORT}/api/v1/jobs/{get_request.flag_id.strip()}",
                 headers={"User-Agent": get_user_agent()},
                 timeout=3
             )
