@@ -1,11 +1,10 @@
 package common
 
-import redis.clients.jedis.JedisPool
 
 class UserManagerException(message: String) extends Exception(message)
 
 
-class UserManager(jedisPool: JedisPool) extends WithJedis(jedisPool) {
+class UserManager(private val store: Store) {
   private val usernameRegex = "[0-9a-zA-Z]{1,20}".r
 
   def validateUserPair(username: String, password: String): Unit = {
@@ -19,10 +18,8 @@ class UserManager(jedisPool: JedisPool) extends WithJedis(jedisPool) {
   }
 
   def validateExisting(username: String): Unit = {
-    withJedis { jedis =>
-      if (jedis.get(s"user/$username") != null) {
-        throw new UserManagerException("User is already exist")
-      }
+    if (store.get(s"user/$username").isDefined) {
+      throw new UserManagerException("User is already exist")
     }
   }
 
@@ -30,20 +27,15 @@ class UserManager(jedisPool: JedisPool) extends WithJedis(jedisPool) {
     validateUserPair(username, password)
     validateExisting(username)
 
-    withJedis { jedis =>
-      val passwordHash = Utils.baseHash(password)
-      jedis.set(s"user/$username", passwordHash)
-    }
+    val passwordHash = Utils.baseHash(password)
+    store += s"user/$username" -> passwordHash.getBytes()
+
   }
 
   def validateUserPassword(username: String, password: String): Boolean = {
-    withJedis { jedis =>
-      val passwordHash = jedis.get(s"user/$username")
-        if (passwordHash == null) {
-        false
-      } else {
-            Utils.baseHash(password) == passwordHash
-      }
+    store.get(s"user/$username") match {
+      case Some(passwordHash) => Utils.baseHash(password) == new String(passwordHash)
+      case None => false
     }
   }
 }

@@ -5,9 +5,9 @@ WORKDIR /build
 RUN sbt dist || sbt dist
 
 FROM openjdk:13-jdk-alpine3.10
+WORKDIR /build
+COPY --from=0 /build/target/universal/employeexer-1.0-SNAPSHOT.zip /build
+RUN apk add bash && unzip employeexer-1.0-SNAPSHOT.zip && mv employeexer-1.0-SNAPSHOT /app
 WORKDIR /app
-COPY --from=0 /build/target/universal/employeexer-1.0-SNAPSHOT.zip /app
-RUN apk add bash && unzip employeexer-1.0-SNAPSHOT.zip
-WORKDIR /app/employeexer-1.0-SNAPSHOT
 
-CMD ["./bin/employeexer", "-Dplay.http.secret.key='Q0hBTkdFIE1F'"]
+CMD rm RUNNING_PID || true && ./bin/employeexer -Dplay.http.secret.key='Q0hBTkdFIE1F'
