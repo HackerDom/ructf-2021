@@ -8,5 +8,7 @@ jobs:
     runs-on: buildimage
 
     steps:
+    - name: Checkout repo
+      uses: actions/checkout@v2
     - name: try to rebuild image
       run: pwd && ls && packer build  -var "api_token=$(cat /root/do-token)" vuln_image/image.pkr.hcl
