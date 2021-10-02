@@ -2,6 +2,7 @@
 
 SERVICES = [
   'employeexer',
+  'Metrics',
 ]
 
 
