@@ -2,8 +2,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WhiteAlbum", "WhiteAlbum\WhiteAlbum.csproj", "{BC3F5752-F936-4AD4-8029-A40CA2F26477}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DoNotIncludeThisPlease", "DoNotIncludeThisPlease\DoNotIncludeThisPlease.csproj", "{28974FF5-1BA4-40C4-851E-E5C5197CC0BC}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -14,9 +12,5 @@ Global
 		{BC3F5752-F936-4AD4-8029-A40CA2F26477}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BC3F5752-F936-4AD4-8029-A40CA2F26477}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BC3F5752-F936-4AD4-8029-A40CA2F26477}.Release|Any CPU.Build.0 = Release|Any CPU
-		{28974FF5-1BA4-40C4-851E-E5C5197CC0BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{28974FF5-1BA4-40C4-851E-E5C5197CC0BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{28974FF5-1BA4-40C4-851E-E5C5197CC0BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{28974FF5-1BA4-40C4-851E-E5C5197CC0BC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
