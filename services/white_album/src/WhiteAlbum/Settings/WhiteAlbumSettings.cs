@@ -6,11 +6,11 @@ namespace WhiteAlbum.Settings
     public class WhiteAlbumSettings
     {
         [Optional] 
-        public string UsersDumpPath = "users_dump";
+        public string UsersDumpPath = "data/users_dump";
         [Optional] 
-        public string AlbumsDumpPath = "albums_dump";
+        public string AlbumsDumpPath = "data/albums_dump";
 
         [Optional]
-        public string SinglesDumpPath = "singles_dump";
+        public string SinglesDumpPath = "data/singles_dump";
     }
 }
