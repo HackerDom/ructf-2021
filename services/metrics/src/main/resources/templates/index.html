@@ -10,93 +10,169 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.9.0/mdb.dark.min.css"
     integrity="sha512-N+OclQllMs0JzalDNddiIqGSjYSRblWfaHp9Qc/IRipFI7CJtNUd4/usVCtgvhFpdIEgFeNHYD5k2C+6Lx7ebA=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <title>Hello, world!</title>
+  <title>Metrics</title>
 </head>
 
 <body>
-  <div style="display: flex;">
-  <div style="height: 300px; width: 50%">
+  <div style="display: flex; justify-content: space-between;">
+  <div style="height: 50vh; width: 48vw;">
+    <canvas id="barChart1"></canvas>
+    </div>
+    <div style="height: 50vh; width: 48vw;">
+    <canvas id="barChart2"></canvas>
+  </div>
+  </div>
+  <div style="height: 50vh;">
     <canvas id="pieChart"></canvas>
-  </div>
-  <div style="height: 300px; width: 50%">
-    <canvas id="barChart"></canvas>
-  </div>
   </div>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.1/chart.min.js"
   integrity="sha512-Wt1bJGtlnMtGP0dqNFH1xlkLBNpEodaiQ8ZN5JLA5wpc1sUlk/O5uuOMNgvzddzkpvZ9GLyYNa8w2s7rqiTk5Q=="
   crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
-  let ctx = document.getElementById('pieChart').getContext('2d');
-  let pieChart = new Chart(ctx, {
-    type: 'pie',
-    data: {
-      labels: [
-        'Honor',
-        'JBL',
-        'Samsung'
-      ],
-      datasets: [{
-        label: '% of devices',
-        data: [10, 50, 40],
-        backgroundColor: [
-          'rgb(25, 99, 132)',
-          'rgb(54, 162, 235)',
-          'rgb(55, 205, 86)'
+  fetch("/metrics").then(async (response) => {
+    let metrics = (await response.json())["metrics"]
+
+    let huawei = metrics.filter((metric) => metric["device"] === "Huawei");
+    let xiaomi = metrics.filter((metric) => metric["device"] === "Xiaomi");
+    let jbl = metrics.filter((metric) => metric["device"] === "JBL");
+    let sony = metrics.filter((metric) => metric["device"] === "Sony");
+    let samsung = metrics.filter((metric) => metric["device"] === "Samsung");
+
+    let samsung_volume_sum = samsung.filter((metric) => metric["type"] === "volume").reduce((sum, metric) => sum + metric["value"], 0);
+    let sony_volume_sum = sony.filter((metric) => metric["type"] === "volume").reduce((sum, metric) => sum + metric["value"], 0);
+    let jbl_volume_sum = jbl.filter((metric) => metric["type"] === "volume").reduce((sum, metric) => sum + metric["value"], 0);
+    let xiaomi_volume_sum = xiaomi.filter((metric) => metric["type"] === "volume").reduce((sum, metric) => sum + metric["value"], 0);
+    let huawei_volume_sum = huawei.filter((metric) => metric["type"] === "volume").reduce((sum, metric) => sum + metric["value"], 0);
+    
+    let samsung_time_sum = samsung.filter((metric) => metric["type"] === "time").reduce((sum, metric) => sum + metric["value"], 0);
+    let sony_time_sum = sony.filter((metric) => metric["type"] === "time").reduce((sum, metric) => sum + metric["value"], 0);
+    let jbl_time_sum = jbl.filter((metric) => metric["type"] === "time").reduce((sum, metric) => sum + metric["value"], 0);
+    let xiaomi_time_sum = xiaomi.filter((metric) => metric["type"] === "time").reduce((sum, metric) => sum + metric["value"], 0);
+    let huawei_time_sum = huawei.filter((metric) => metric["type"] === "time").reduce((sum, metric) => sum + metric["value"], 0);
+
+    
+    let ctx1 = document.getElementById("barChart1").getContext("2d");
+    let barChart = new Chart(ctx1, {
+      type: "bar",
+      data: {
+        labels: [
+          "Huawei",
+          "Xiaomi",
+          "Samsung",
+          "Sony",
+          "JBL"
         ],
-        hoverOffset: 10,
-        borderWidth: 0
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-            title: {
-                display: true,
-                text: '% of devices'
+        datasets: [{
+          label: "Time listened",
+          data: [huawei_time_sum, xiaomi_time_sum, samsung_time_sum, sony_time_sum, jbl_time_sum],
+          backgroundColor: [
+            'rgb(25, 99, 132)',
+            'rgb(54, 162, 235)',
+            'rgb(55, 205, 86)',
+            'rgb(255, 100, 100)',
+            'rgb(200, 140, 10)'
+          ]
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero: true
             }
-        }
-    }
-  });
-</script>
-<script>
-  let ctx1 = document.getElementById("barChart").getContext("2d");
-  let barChart = new Chart(ctx1, {
-    type: "bar",
-    data: {
-      labels: [
-        "Honor",
-        "JBL",
-        "Samsung"
-      ],
-      datasets: [{
-        label: "Time listened",
-        data: [1000, 500, 480],
-        backgroundColor: [
-          'rgb(25, 99, 132)',
-          'rgb(54, 162, 235)',
-          'rgb(55, 205, 86)'
-        ]
-      }],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        yAxes: [{
-          ticks: {
-            beginAtZero: true
+          }]
+        },
+        plugins: {
+              title: {
+                  display: true,
+                  text: 'Time listened'
+              }
           }
+      }
+    });
+    let ctx2 = document.getElementById("barChart2").getContext("2d");
+    let barChart1 = new Chart(ctx2, {
+      type: "bar",
+      data: {
+        labels: [
+          "Huawei",
+          "Xiaomi",
+          "Samsung",
+          "Sony",
+          "JBL"
+        ],
+        datasets: [{
+          label: "Average volume",
+          data: [huawei_volume_sum / huawei.length, xiaomi_volume_sum / xiaomi.length,
+           samsung_volume_sum / samsung.length, sony_volume_sum / sony.length, jbl_volume_sum / jbl.length],
+          backgroundColor: [
+            'rgb(25, 99, 132)',
+            'rgb(54, 162, 235)',
+            'rgb(55, 205, 86)',
+            'rgb(255, 100, 100)',
+            'rgb(200, 140, 10)'
+          ]
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero: true
+            }
+          }]
+        },
+        plugins: {
+              title: {
+                  display: true,
+                  text: 'Average volume'
+              }
+          }
+      }
+    });
+
+
+    let ctx = document.getElementById('pieChart').getContext('2d');
+    let pieChart = new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: [
+          'Huawei',
+          'Xiaomi',
+          'Samsung',
+          'Sony',
+          'JBL'
+        ],
+        datasets: [{
+          label: 'devices',
+          data: [huawei.length, xiaomi.length, samsung.length, sony.length, jbl.length],
+          backgroundColor: [
+            'rgb(25, 99, 132)',
+            'rgb(54, 162, 235)',
+            'rgb(55, 205, 86)',
+            'rgb(255, 100, 100)',
+            'rgb(200, 140, 10)'
+          ],
+          hoverOffset: 10,
+          borderWidth: 0
         }]
       },
-      plugins: {
-            title: {
-                display: true,
-                text: 'Time listened'
-            }
-        }
-    }
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+              title: {
+                  display: true,
+                  text: 'Devices'
+              }
+          }
+      }
+    });
   })
 </script>
 
