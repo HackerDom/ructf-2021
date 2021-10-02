@@ -69,6 +69,7 @@ teams: |
   {name => 'C4T BuT S4D', network => '10.60.22.0/24', host => '10.60.22.3', token => '22_55665dddc62c4fed2113da4bae49d6c3', logo => '/data/logos/22.png'},
   {name => '%secretclub%power', network => '10.60.23.0/24', host => '10.60.23.3', token => '23_38f6596b95866f399e834f160d745279', logo => '/data/logos/23.png'},
   {name => 'SPbCTF', network => '10.60.24.0/24', host => '10.60.24.3', token => '24_ebd8a77c7cac1621c7a4ab1958dd74f4', logo => '/data/logos/24.png'},
+  {name => 'Pixels', network => '10.60.26.0/24', host => '10.60.26.3', token => '26_2684c5a799b66882bfe386e47ffd02bf', logo => '/data/logos/26.png'},
 
 services: |
   {name => 'metrics',       path => 'checkers/metrics/checker.py',                 timeout => 30, tcp_port => 5051},
