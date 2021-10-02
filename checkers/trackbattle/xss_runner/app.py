@@ -165,7 +165,7 @@ def build_host_to_users_map(users):
 
 
 def select_random_selenium():
-    selenium_idx = randint(1, SELENIUMS_AMOUNT)
+    selenium_idx = randint(0, SELENIUMS_AMOUNT - 1)
 
     return f'http://selenium{selenium_idx}:{4440 + selenium_idx}/wd/hub'
 
