@@ -30,7 +30,7 @@ void vector_clear(vector_t *vector) {
         return;
     }
 
-    for (size_t i = 0; i < vector->max_size; i++) {
+    for (size_t i = 0; i < vector->size; i++) {
         if (vector->items[i] == NULL) {
             continue;
         }
