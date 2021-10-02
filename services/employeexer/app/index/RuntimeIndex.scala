@@ -37,8 +37,6 @@ class RuntimeIndex(private val jedisPool: JedisPool) extends WithJedis(jedisPool
 
     Tokenizer.split(text).foreach { token =>
       withJedis { jedis =>
-        println(token)
-        println(jedis.get(token))
         if (jedis.get("idx/" + token) == "idx") {
           val relatedIdsRecord = jedis.get(token)
           if (relatedIdsRecord != null) {
