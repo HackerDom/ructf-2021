@@ -77,7 +77,7 @@ namespace WhiteAlbum.Stores
             return CreateInternal(user);
         }
 
-        private User CreateInternal(User user)
+        public User CreateInternal(User user)
         {
             try
             {

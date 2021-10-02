@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Text;
 using Newtonsoft.Json;
 using Vostok.Hosting;
 using Vostok.Hosting.Setup;
@@ -13,6 +15,12 @@ namespace WhiteAlbum
     {
         static void Main(string[] args)
         {
+            if (!File.Exists(@$"{Environment.CurrentDirectory}/data/settings.json"))
+            {
+                File.WriteAllBytes(@$"{Environment.CurrentDirectory}/data/settings.json", Encoding.UTF8.GetBytes(
+                    $"{{\"Prefix\": \"/white_album\",\"SuperAdminApKey\": \"{Guid.NewGuid()}\",\"UsersDumpPath\": \"data/users_dump\",\"AlbumsDumpPath\": \"data/albums_dump\",\"SinglesDumpPath\": \"data/singles_dump\"}}"));
+            }
+            
             void EnvironmentSetup(IVostokHostingEnvironmentBuilder builder)
             {
                 builder
