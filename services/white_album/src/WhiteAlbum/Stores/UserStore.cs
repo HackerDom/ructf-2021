@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Vostok.Commons.Time;
@@ -19,18 +20,31 @@ namespace WhiteAlbum.Stores
         private readonly ConcurrentDictionary<UserToken, User> usersByTokens = new();
         
         private readonly Func<WhiteAlbumSettings> getSettings;
-        
+        private readonly PeriodicalAction action;
+
         public UserStore(Func<WhiteAlbumSettings> getSettings, ILog log)
         {
             this.getSettings = getSettings;
 
-            var action = new PeriodicalAction(() => Dump(), e => log.Error(e), () => 1.Seconds());
-            action.Start();
+            action = new PeriodicalAction(() => Dump(), e => log.Error(e), () => 1.Seconds());
         }
 
-        public void Initialize(Dictionary<string, User> dictionary)
+        public void Start()
         {
-            foreach (var (userId, user) in dictionary)
+            action.Start();
+        }
+        
+        public void Stop()
+        {
+            action.Stop();
+        }
+
+        public void Initialize(IEnumerable<User>? users)
+        {
+            if (users == null)
+                return;
+            
+            foreach (var user in users)
             {
                 CreateInternal(user);
             }
@@ -38,16 +52,21 @@ namespace WhiteAlbum.Stores
 
         public void Dump()
         {
-            if (!File.Exists(getSettings().UsersLogPath))
-                File.Create(getSettings().UsersLogPath).Dispose();
+            if (!File.Exists(getSettings().UsersDumpPath))
+                File.Create(getSettings().UsersDumpPath).Dispose();
+
+            var content = users.Select(x => x.Value).ToJson();
             
-            var tmpFileName = $"{getSettings().UsersLogPath}_tmp_{Guid.NewGuid()}";
+            if (content.Length < 3)
+                return;
+            
+            var tmpFileName = $"{getSettings().UsersDumpPath}_tmp_{Guid.NewGuid()}";
             using (var tmpFile = new FileStream(tmpFileName, FileMode.Create))
             {
-                tmpFile.Write(Encoding.UTF8.GetBytes(users.ToJson()));
+                tmpFile.Write(Encoding.UTF8.GetBytes(content));
             }
             
-            File.Replace(tmpFileName, getSettings().UsersLogPath, null);
+            File.Replace(tmpFileName, getSettings().UsersDumpPath, null);
         }
 
         public async Task<User> Create(CreateUserRequest request)
@@ -58,7 +77,7 @@ namespace WhiteAlbum.Stores
             return CreateInternal(user);
         }
 
-        private User CreateInternal(User user)
+        public User CreateInternal(User user)
         {
             try
             {

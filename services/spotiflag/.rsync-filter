@@ -1,0 +1,8 @@
++ /spotiflag/Dockerfile
++ /spotiflag/spotiflag
++ /web
++ /web/**
++ cleaner
++ cleaner/**
++ /docker-compose.yml
+- /*

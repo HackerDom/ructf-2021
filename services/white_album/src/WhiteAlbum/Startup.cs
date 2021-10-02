@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using WhiteAlbum.Authentication;
 using WhiteAlbum.Helpers;
 using WhiteAlbum.Middleware;
+using WhiteAlbum.Settings;
 using AuthenticationMiddleware = WhiteAlbum.Middleware.AuthenticationMiddleware;
 
 namespace WhiteAlbum
@@ -17,8 +18,6 @@ namespace WhiteAlbum
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            // services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
-            
             services
                 .AddControllers()
                 .AddNewtonsoftJson(
@@ -56,7 +55,7 @@ namespace WhiteAlbum
 
         public void Configure(IApplicationBuilder application)
         {
-            application.UsePathBase("/white_album");
+            application.UsePathBase(WhiteAlbumApplication.ConfigurationProvider.Get<WhiteAlbumSettings>().Prefix);
 
             application.UseRouting();
             

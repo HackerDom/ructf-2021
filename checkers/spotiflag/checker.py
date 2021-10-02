@@ -14,6 +14,7 @@ from gornilo import Checker, Verdict, CheckRequest, PutRequest, GetRequest
 
 checker = Checker()
 timeout = 30
+chunks_count = 8
 
 
 def wrap_errors(func: typing.Callable[..., Verdict]) -> typing.Callable[..., Verdict]:
@@ -51,8 +52,6 @@ async def song_generate(description: bytes) -> bytes:
 
     data = await io.stdout.readexactly(data_length)
 
-    io.kill()
-
     return data
 
 
@@ -73,7 +72,10 @@ async def do_check(request: CheckRequest) -> Verdict:
     if str(id) not in await api.list():
         return Verdict.MUMBLE('/api/list/: can\'t find song')
 
-    data_actual = await api.listen(id, 8)
+    data_actual = await api.listen(id, chunks_count)
+
+    if data_actual is None:
+        return Verdict.MUMBLE('/api/listen/: can\'t get song')
 
     if data_expected[:len(data_actual)] != data_actual:
         return Verdict.MUMBLE('invalid song')
@@ -102,9 +104,12 @@ async def do_get(request: GetRequest) -> Verdict:
         return Verdict.CORRUPT('/api/list/: can\'t find flag')
 
     data_actual, data_expected = await asyncio.gather(
-        api.listen(id, 8),
+        api.listen(id, chunks_count),
         song_generate(request.flag.encode()),
     )
+
+    if data_actual is None:
+        return Verdict.MUMBLE('/api/listen/: can\'t get flag')
 
     if data_expected[:len(data_actual)] != data_actual:
         return Verdict.CORRUPT('invalid flag')

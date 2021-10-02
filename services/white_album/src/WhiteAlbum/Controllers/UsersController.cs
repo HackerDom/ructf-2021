@@ -11,7 +11,6 @@ namespace WhiteAlbum.Controllers
     {
         private readonly UserRepository userRepository;
 
-
         public UsersController(UserRepository userRepository, IAuthorizationProvider authorizationProvider) : base(authorizationProvider)
         {
             this.userRepository = userRepository;

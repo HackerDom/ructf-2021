@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Text;
 using Newtonsoft.Json;
 using Vostok.Hosting;
 using Vostok.Hosting.Setup;
@@ -13,6 +15,15 @@ namespace WhiteAlbum
     {
         static void Main(string[] args)
         {
+            if (!Directory.Exists($"{Environment.CurrentDirectory}/data")) 
+                Directory.CreateDirectory($"{Environment.CurrentDirectory}/data");
+            
+            if (!File.Exists(@$"{Environment.CurrentDirectory}/data/settings.json"))
+            {
+                File.WriteAllBytes(@$"{Environment.CurrentDirectory}/data/settings.json", Encoding.UTF8.GetBytes(
+                    $"{{\"Prefix\": \"/white_album\",\"SuperAdminApKey\": \"{Guid.NewGuid()}\",\"UsersDumpPath\": \"data/users_dump\",\"AlbumsDumpPath\": \"data/albums_dump\",\"SinglesDumpPath\": \"data/singles_dump\"}}"));
+            }
+            
             void EnvironmentSetup(IVostokHostingEnvironmentBuilder builder)
             {
                 builder
@@ -22,6 +33,7 @@ namespace WhiteAlbum
                             .SetProject("White")
                             .SetApplication("Album")
                             .SetInstance("0"))
+                    .DisableClusterConfig()
                     .SetupLog(logBuilder => logBuilder.SetupFileLog())
                     .SetPort(1234);
             }

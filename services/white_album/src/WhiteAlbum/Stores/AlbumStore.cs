@@ -24,32 +24,50 @@ namespace WhiteAlbum.Stores
         private readonly ConcurrentDictionary<Date, ConcurrentBag<AlbumId>> albumsByDate = new();
 
         private readonly Func<WhiteAlbumSettings> getSettings;
-        
+        private readonly PeriodicalAction action;
+
         public AlbumStore(Func<WhiteAlbumSettings> getSettings, ILog log)
         {
             this.getSettings = getSettings;
 
-            var action = new PeriodicalAction(() => Dump(), e => log.Error(e), () => 1.Seconds());
+            this.action  = new PeriodicalAction(() => Dump(), e => log.Error(e), () => 1.Seconds());
+        }
+        
+        public void Start()
+        {
             action.Start();
+        }
+        
+        public void Stop()
+        {
+            action.Stop();
         }
 
         public void Dump()
         {
-            if (!File.Exists(getSettings().AlbumsLogPath))
-                File.Create(getSettings().AlbumsLogPath).Dispose();
+            if (!File.Exists(getSettings().AlbumsDumpPath))
+                File.Create(getSettings().AlbumsDumpPath).Dispose();
             
-            var tmpFileName = $"{getSettings().AlbumsLogPath}_tmp_{Guid.NewGuid()}";
+            var content = albums.Select(x => x.Value).ToJson();
+            
+            if (content.Length < 3)
+                return;
+            
+            var tmpFileName = $"{getSettings().AlbumsDumpPath}_tmp_{Guid.NewGuid()}";
             using (var tmpFile = new FileStream(tmpFileName, FileMode.Create))
             {
-                tmpFile.Write(Encoding.UTF8.GetBytes(albums.ToJson()));
+                tmpFile.Write(Encoding.UTF8.GetBytes(content));
             }
             
-            File.Replace(tmpFileName, getSettings().AlbumsLogPath, null);
+            File.Replace(tmpFileName, getSettings().AlbumsDumpPath, null);
         }
         
-        public void Initialize(Dictionary<string, Album> dictionary)
+        public void Initialize(IEnumerable<Album>? albums)
         {
-            foreach (var (albumId, album) in dictionary)
+            if (albums == null)
+                return;
+            
+            foreach (var album in albums)
             {
                 CreateInternal(album);
             }
@@ -57,7 +75,9 @@ namespace WhiteAlbum.Stores
 
         public async Task<Album> Create(CreateAlbumRequest request)
         {
-            var album = new Album(request.Id, request.Name, request.Meta) {
+            var now = Date.Now();
+
+            var album = new Album(request.Id, request.Name, request.Meta, now) {
                 Owner = Context.User?.Id ?? throw new UnauthorizedAccessException("User is empty.")
             };
             return CreateInternal(album);
@@ -67,8 +87,6 @@ namespace WhiteAlbum.Stores
         {
             var result = albums.GetOrAdd(album.Id, album);
 
-            var now = Date.Now();
-            
             try
             {
                 if (!ReferenceEquals(result, album))
@@ -88,7 +106,7 @@ namespace WhiteAlbum.Stores
                     if (albumsByUser.TryUpdate(result.Owner, usersAlbum.Add(album.Id), usersAlbum))
                         break;
                 }
-                albumsByDate.GetOrAdd(now, _ => new()).Add(album.Id);
+                albumsByDate.GetOrAdd(album.CreatedAt, _ => new()).Add(album.Id);
             }
         }
 
@@ -98,7 +116,7 @@ namespace WhiteAlbum.Stores
             {
                 var album = albums[albumId];
 
-                if (albums.TryUpdate(albumId, new Album(album.Id, album.Name, album.Meta)
+                if (albums.TryUpdate(albumId, new Album(album.Id, album.Name, album.Meta, album.CreatedAt)
                 {
                     Owner = album.Owner,
                     Singles = album.Singles.Add(singleId)
@@ -152,21 +170,21 @@ namespace WhiteAlbum.Stores
             var result = album;
 
             if (request.Name != null)
-                result = new Album(album.Id, request.Name.Value ?? throw new Exception("Name cannot be null"), album.Meta)
+                result = new Album(album.Id, request.Name.Value ?? throw new Exception("Name cannot be null"), album.Meta, album.CreatedAt)
                 {
                     Owner = album.Owner,
                     Singles = album.Singles
                 };
             
             if (request.Description != null)
-                result = new Album(album.Id, album.Name, new AlbumMeta(album.Meta.Author, request.Description.Value))
+                result = new Album(album.Id, album.Name, new AlbumMeta(album.Meta.Author, request.Description.Value), album.CreatedAt)
                 {
                     Owner = album.Owner,
                     Singles = album.Singles
                 };
 
             if (request.Author != null)
-                result = new Album(album.Id, album.Name, new AlbumMeta(request.Author.Value, album.Meta.Description))
+                result = new Album(album.Id, album.Name, new AlbumMeta(request.Author.Value, album.Meta.Description), album.CreatedAt)
                 {
                     Owner = album.Owner,
                     Singles = album.Singles

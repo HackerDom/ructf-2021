@@ -21,7 +21,7 @@ namespace WhiteAlbum.Authorization
 
         public async Task<bool> HasSuperAdministratorAccess(UserId user)
         {
-            return false;
+            return User.SuperAdmin.Id.Id.Equals(user.Id);
         }
         
         public async Task<bool> HasAccessTo(UserId user, IEnumerable<Album> albums, IEnumerable<Single> singles, Permission permission)

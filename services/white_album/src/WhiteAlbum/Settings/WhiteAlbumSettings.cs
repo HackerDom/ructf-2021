@@ -5,12 +5,15 @@ namespace WhiteAlbum.Settings
 {
     public class WhiteAlbumSettings
     {
-        [Optional] 
-        public string UsersLogPath = "users_dump";
-        [Optional] 
-        public string AlbumsLogPath = "albums_dump";
+        [Required] 
+        public string Prefix = "/prefix";
 
-        [Optional]
-        public string SinglesLogPath = "singles_dump";
+        public string SuperAdminApiKey = "with_this_api_key_you_have_access_to_everything";
+        
+        public string UsersDumpPath = "data/users_dump";
+        
+        public string AlbumsDumpPath = "data/albums_dump";
+
+        public string SinglesDumpPath = "data/singles_dump";
     }
 }
