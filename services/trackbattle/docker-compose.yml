@@ -1,0 +1,44 @@
+version: "3"
+
+services:
+  postgres:
+    image: postgres:13.2-alpine
+    restart: always
+    env_file:
+      - variables.env
+    ports:
+      - 5432:5432
+    volumes:
+      - trackbattle-postgres-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  nginx:
+    image: nginx:1.21.0-alpine
+    restart: unless-stopped
+    tty: true
+    ports:
+      - 8080:8080
+    volumes:
+      - ./src/front/build/:/var/www
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - app-network
+
+  trackbattle:
+    build: .
+    restart: on-failure
+    env_file:
+      - variables.env
+    depends_on:
+      - postgres
+    networks:
+      - app-network
+
+volumes:
+  trackbattle-postgres-data:
+
+networks:
+  app-network:
+    driver: bridge
+
