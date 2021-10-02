@@ -1,0 +1,41 @@
+version: "3"
+
+services:
+  postgres:
+    image: postgres:13.2-alpine
+    restart: always
+    env_file:
+      - variables.env
+    ports:
+      - "5000:5432"
+    volumes:
+      - xss-runner-data:/var/lib/postgresql/data
+
+  trackbattle:
+    build: .
+    restart: on-failure
+    env_file:
+      - variables.env
+    depends_on:
+      - postgres
+      - selenium
+    ports:
+      - "31337:31337"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  selenium:
+    image: selenium/standalone-chrome
+    environment:
+      - JAVA_OPTS=-Dwebdriver.chrome.whitelistedIps=
+    restart: always
+    privileged: true
+    shm_size: 2g
+    ports:
+      - "4444:4444"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  xss-runner-data:
+
