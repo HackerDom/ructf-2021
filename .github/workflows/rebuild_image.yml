@@ -9,4 +9,4 @@ jobs:
 
     steps:
     - name: try to rebuild image
-      run: echo pwd && ls && packer build  -var "api_token=$(cat /root/do-token)" vuln_image/image.pkr.hcl
+      run: pwd && ls && packer build  -var "api_token=$(cat /root/do-token)" vuln_image/image.pkr.hcl
