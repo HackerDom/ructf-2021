@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using WhiteAlbum.Entities;
@@ -14,8 +15,8 @@ namespace WhiteAlbum.Stores
     {
         private readonly ConcurrentDictionary<AlbumId, Album> albums = new();
         private readonly ConcurrentDictionary<UserId, ImmutableArray<AlbumId>> albumsByUser = new();
-        // private readonly SortedDictionary<DateTimeOffset, Album> albumsByCreatedAt = new();
-        
+        private readonly ConcurrentDictionary<Date, ConcurrentBag<AlbumId>> albumsByDate = new();
+
         public async Task<Album> Create(CreateAlbumRequest request)
         {
             var album = new Album(request.Id, request.Name, request.Meta) {
@@ -23,6 +24,8 @@ namespace WhiteAlbum.Stores
             };
             var result = albums.GetOrAdd(request.Id, album);
 
+            var now = Date.Now();
+            
             try
             {
                 if (!ReferenceEquals(result, album))
@@ -42,6 +45,7 @@ namespace WhiteAlbum.Stores
                     if (albumsByUser.TryUpdate(result.Owner, usersAlbum.Add(album.Id), usersAlbum))
                         break;
                 }
+                albumsByDate.GetOrAdd(now, _ => new()).Add(album.Id);
             }
         }
 
@@ -65,9 +69,9 @@ namespace WhiteAlbum.Stores
             return albums[albumId];
         }
 
-        public async Task<AlbumEntry[]> GetRecent(DateTimeOffset since, int take)
+        public async Task<AlbumEntry[]> GetByDate(Date date)
         {
-            throw new NotImplementedException();
+            return albumsByDate[date].Select(x => albums[x]).Select(x => new AlbumEntry(x.Id, x.Name, date)).ToArray();
         }
 
         public async Task Update(UpdateAlbumRequest request)

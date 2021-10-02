@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Threading.Tasks;
 using WhiteAlbum.Entities;
 using WhiteAlbum.Entities.Users;
@@ -13,13 +14,15 @@ namespace WhiteAlbum.Stores
     {
         private readonly ConcurrentDictionary<SingleId, Single> singles = new();
         private readonly ConcurrentDictionary<UserId, ImmutableArray<Single>> singlesByUser = new();
-        
+        private readonly ConcurrentDictionary<Date, ConcurrentBag<SingleId>> singlesByDate = new();
 
         public async Task<Single> Create(CreateSingleRequest request)
         {
             var single = new Single(request.Id, request.Name, request.Meta, request.Track, Context.User?.Id ?? throw new Exception("User is empty")) ;
             var result = singles.GetOrAdd(request.Id, single);
 
+            var now = Date.Now();
+            
             try
             {
                 if (!ReferenceEquals(result, single))
@@ -39,6 +42,8 @@ namespace WhiteAlbum.Stores
                     if (singlesByUser.TryUpdate(result.Owner, usersAlbum.Add(single), usersAlbum))
                         break;
                 }
+                
+                singlesByDate.GetOrAdd(now, _ => new()).Add(single.Id);
             }
         }
         
@@ -47,6 +52,10 @@ namespace WhiteAlbum.Stores
             return singles[singleId];
         }
         
+        public async Task<SingleEntry[]> GetByDate(Date date)
+        {
+            return singlesByDate[date].Select(x => singles[x]).Select(x => new SingleEntry(x.Id, x.Name, date)).ToArray();
+        }
         
         public async Task<ImmutableArray<Single>> Get(UserId userId)
         {
