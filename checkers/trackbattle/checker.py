@@ -95,7 +95,7 @@ def put(put_request: PutRequest) -> Verdict:
             json={
                 "nickname": nickname,
                 "password_sha256": password_sha256,
-                "flag": put_request.flag
+                "payment_info": put_request.flag
             },
         )
 
