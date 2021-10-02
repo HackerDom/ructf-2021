@@ -1,2 +1,3 @@
 gornilo
 requests
+protobuf
