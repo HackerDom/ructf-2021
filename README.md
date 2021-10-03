@@ -24,4 +24,10 @@ RuCTF 2021 was held online on October 3. [Results](https://ructf.org/2021/scoreb
 - Vasiliy Pahomov aka [vaspahomov](https://github.com/vaspahomov) (vuln image pipeline master & ```STUDIO``` service developer)
 - Vladimir Cherepanov aka [keltecc](https://github.com/keltecc) (```SPOTIFLAG``` service developer)
 
+## And our awesome orgteam
+
+- Alexander Alexeev aka [alexqq11](https://github.com/alexqq11)
+- Vik Kotwizkiy aka [ktwzk](https://github.com/ktwzk)
+- Daria Kazanceva aka [still_at_the_party](https://github.com/stillattheparty)
+
 Copyright (C) 2021 HackerDom
