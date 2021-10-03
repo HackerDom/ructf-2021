@@ -21,7 +21,6 @@ public class ServerUDP {
         pool = (ThreadPoolExecutor) Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() + 1);
         try {
             InetAddress addr = InetAddress.getLocalHost();
-            System.out.println(addr.getHostAddress());
             socket = new DatagramSocket(PORT, addr);
         } catch (SocketException | UnknownHostException e) {
             throw new RuntimeException(e);
@@ -45,7 +44,6 @@ public class ServerUDP {
     private void talk() throws IOException {
         DatagramPacket pack = new DatagramPacket(new byte[512], 512);
         socket.receive(pack);
-        System.out.println(new String(pack.getData()));
         socket.send(pack);
     }
 
