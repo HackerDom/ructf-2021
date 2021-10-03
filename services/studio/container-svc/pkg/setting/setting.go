@@ -30,6 +30,7 @@ type App struct {
 	CredPoolList         []string
 	ContainerMaxExecTime time.Duration
 	ContainerKillPeriod  time.Duration
+	SeccompProfile       string
 }
 
 var AppSetting = &App{}
