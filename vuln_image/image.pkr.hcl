@@ -15,7 +15,7 @@ source "digitalocean" "vuln_image" {
   api_token    = var.api_token
   image        = "ubuntu-20-04-x64"
   region       = "ams3"
-  size         = "s-2vcpu-4gb"
+  size         = "s-8vcpu-16gb"
   ssh_username = "root"
 }
 
@@ -217,7 +217,7 @@ build {
   provisioner "shell" {
     inline = [
       "docker image prune --filter label=stage=builder -f",
-      "docker image rm hseeberger/scala-sbt:8u222_1.3.5_2.13.1 mcr.microsoft.com/dotnet/sdk:5.0",
+      "docker image rm hseeberger/scala-sbt:8u222_1.3.5_2.13.1 mcr.microsoft.com/dotnet/sdk:5.0 maven:3.8.2-openjdk-16-slim",
     ]
   }
 }

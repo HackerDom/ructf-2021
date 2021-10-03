@@ -28,7 +28,6 @@ const (
 
 type JobExecStat struct {
 	AllocMemStart  time.Time
-	AllocMemFinish time.Time
 	StartContainer time.Time
 	StopContainer  time.Time
 	ReadMem        time.Time
@@ -36,8 +35,8 @@ type JobExecStat struct {
 }
 
 type Job struct {
-	ID       string      `json:"id"`
-	MemID    string      `json:"mem_id"`
+	ID       string      `json:"run_id"`
+	MemID    string      `json:"id"`
 	Status   JobStatus   `json:"status"`
 	Result   string      `json:"result"`
 	TimeInfo JobExecStat `json:"time_info"`
@@ -49,7 +48,7 @@ func NewJob(id string, memId string) (*Job, error) {
 		MemID:  memId,
 		Status: Created,
 	}
-	err := gredis.Set(e.PREFIX_JOB+id, job, getJobLifetime())
+	err := gredis.Set(e.PREFIX_JOB+memId, job, getJobLifetime())
 	if err != nil {
 		return nil, err
 	}
@@ -57,12 +56,12 @@ func NewJob(id string, memId string) (*Job, error) {
 }
 
 func (j *Job) Update() error {
-	return gredis.Set(e.PREFIX_JOB+j.ID, j, getJobLifetime())
+	return gredis.Set(e.PREFIX_JOB+j.MemID, j, getJobLifetime())
 }
 
-func GetJob(id string) (*Job, error) {
+func GetJob(memId string) (*Job, error) {
 	job := &Job{}
-	key := e.PREFIX_JOB + id
+	key := e.PREFIX_JOB + memId
 	if gredis.Exists(key) {
 		data, err := gredis.Get(key)
 		if err != nil {
@@ -79,7 +78,7 @@ func GetJob(id string) (*Job, error) {
 		return job, nil
 	}
 
-	return nil, NewNonExistJobError(id)
+	return nil, NewNonExistJobError(memId)
 }
 
 func getJobLifetime() int {

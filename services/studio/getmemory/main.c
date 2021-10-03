@@ -175,7 +175,7 @@ int main_internal(long long file_id, char * key_path)
 
 int main(int argc, char *argv[]) {
     if(argc<=2) {         printf("usage: [bin] job_id /path/to/key\n");         exit(1);      }
-    int job_id = atoi(argv[1]);
+    long long job_id = atoll(argv[1]);
     main_internal(job_id, argv[2]);
 
     return 0;

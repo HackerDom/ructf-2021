@@ -6,6 +6,32 @@
         <link rel="stylesheet" href="/static/styles.css">
     </head>
     <body>
+        <div class="content">
+            <img src="/static/logo.svg" class="logo">
+            <p class="text">
+                Spotiflag™ — a new era of music generation
+            </p>
+            <div class="block" id="block-generate" hidden>
+                <p class="text-small">
+                    Just type a few words...
+                </p>
+                <textarea class="description" id="description" placeholder="Enter a description"></textarea><br>
+                <span class="button" id="button-generate">Generate</span>
+            </div>
+            <div class="block" id="block-listen" hidden>
+                <p class="text-small">
+                    Now playing
+                </p>
+                <p class="text-small" id="id"></p>
+                <audio class="audio" id="audio" controls autoplay></audio>
+                <span class="button" id="button-back">Back</span>
+            </div>
+            <div class="block" id="block-list" hidden>
+                <p class="text-medium">
+                    Other users have already generated:
+                </p>
+            </div>
+        </div>
         <script src="/static/scripts.js"></script>
     </body>
 </html>

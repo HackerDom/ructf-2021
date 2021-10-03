@@ -17,8 +17,8 @@ type App struct {
 	LogFileExt  string
 	TimeFormat  string
 
-	JobLifetimeMinutes    time.Duration
-	WorkersCount          int
+	JobLifetimeMinutes   time.Duration
+	WorkersCount         int
 	AllocatorPath        string
 	DeallocatorPath      string
 	ReaderPath           string
@@ -30,6 +30,7 @@ type App struct {
 	CredPoolList         []string
 	ContainerMaxExecTime time.Duration
 	ContainerKillPeriod  time.Duration
+	SeccompProfile       string
 }
 
 var AppSetting = &App{}

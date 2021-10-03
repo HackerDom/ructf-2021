@@ -4,12 +4,13 @@ import os
 import uuid
 import typing
 import struct
-import secrets
 import asyncio
 import aiohttp
 
-from api import Spotiflag, MumbleException
 from gornilo import Checker, Verdict, CheckRequest, PutRequest, GetRequest
+
+from api import Spotiflag, MumbleException
+from generator import random_text
 
 
 checker = Checker()
@@ -62,7 +63,7 @@ async def do_check(request: CheckRequest) -> Verdict:
 
     await api.ping()
 
-    description = secrets.token_hex(1024).encode()
+    description = random_text(128, 1024).encode()
 
     id, data_expected = await asyncio.gather(
         api.generate(description),

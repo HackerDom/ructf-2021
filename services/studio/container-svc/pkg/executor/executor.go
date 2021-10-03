@@ -17,6 +17,7 @@ import (
 func Run(ctx context.Context, payload workerpool.JobDescriptor) (workerpool.ExecResult, error) {
 	timeInfo := payload.TimeInfo
 	defer DeallocMemory(payload.ID)
+	timeInfo.AllocMemStart = time.Now()
 	v, err := AllocMemory(payload.ID, payload.RunCredential)
 	if err != nil {
 		errMsg := fmt.Sprintf("Executor: failed to allocate memory: %s, %v; job_id %s, mem_id %s, runcred %s", v, err, payload.ID, payload.MemID, payload.RunCredential)
@@ -37,7 +38,7 @@ func Run(ctx context.Context, payload workerpool.JobDescriptor) (workerpool.Exec
 	timeInfo.ReadMem = time.Now()
 	res, err := readResult(payload.ID)
 	if err != nil {
-		errMsg := fmt.Sprintf("Executor: failed to read the container job result: %s, %v; job_id %s, mem_id %s, runcred %s", res, err, payload.ID, payload.MemID, payload.RunCredential)
+		errMsg := fmt.Sprintf("Executor: failed to read the container job result: %v; job_id %s, mem_id %s, runcred %s", err, payload.ID, payload.MemID, payload.RunCredential)
 		logging.Error(errMsg)
 		return workerpool.ExecResult{Res: []byte(errMsg), TimeInfo: timeInfo}, nil
 	}
@@ -49,7 +50,8 @@ func Run(ctx context.Context, payload workerpool.JobDescriptor) (workerpool.Exec
 func runContainer(memId string, payload io.Reader, username string) (string, error) {
 	launchArgs := fmt.Sprintf("cat > ~/payload && chmod +x ~/payload && ~/payload %s", memId)
 	containerId := uuid.NewString()
-	args := []string{"run", "--rm", "--network", "none", "--cpus", ".05", "--memory", "25M", "--name", containerId, "--user", username, "--ipc", "host", "-i", "basealpine", "timeout", "1", "ash", "-c", launchArgs}
+	seccompSetting := fmt.Sprintf("seccomp=%s", setting.AppSetting.SeccompProfile)
+	args := []string{"run", "--security-opt", seccompSetting, "--rm", "--network", "host", "--cpus", "0.5", "--memory", "100M", "--name", containerId, "--user", username, "--ipc", "host", "-i", "basealpine", "timeout", "1", "ash", "-c", launchArgs}
 
 	cmd := exec.Command("docker", args...)
 	outputBuf := bytes.NewBuffer(nil)
@@ -109,7 +111,7 @@ func GetJobKey(jobId string, cred string) (string, error) {
 	}
 	err = cmd.Wait()
 	if err != nil {
-		return "", fmt.Errorf("failed togenerate key: err %v, out: %s", err, outputBuf.String())
+		return "", fmt.Errorf("failed to generate key: err %v, out: %s", err, outputBuf.String())
 	}
 
 	return outputBuf.String(), nil
