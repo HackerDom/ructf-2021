@@ -26,7 +26,7 @@ export const CreateUserPage: React.FC = () => {
             return;
         }
 
-        const request = createObject(User, {nickname: user.nickname, password_sha256: await sha256(user.password_sha256), payment_info: user.payment_info});
+        const request = createObject(User, {nickname: user.nickname, password_sha256: sha256(user.password_sha256), payment_info: user.payment_info});
         const result = await api.createUser(request);
 
         if (!result.data) {

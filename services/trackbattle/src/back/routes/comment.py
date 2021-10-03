@@ -4,8 +4,7 @@ from flask import Blueprint, request, jsonify
 
 from models.comment import Comment
 from models.post import Post
-from routes.common import find_entity_by_id_in_session, get_entity_not_found_response, get_invalid_request_response, \
-    MAX_TRACK_LENGTH, invalid_track_length_response
+from routes.common import find_entity_by_id_in_session, get_entity_not_found_response
 from tools.routes.functools import need_authentication, expected_json_arguments
 
 comments_blueprint = Blueprint('comments', __name__)
@@ -20,9 +19,6 @@ def create_comment(track=None, description=None, post_id=None, user=None, sessio
 
         if post is None:
             return get_entity_not_found_response(Post, post_id)
-
-        if len(track) > MAX_TRACK_LENGTH:
-            return invalid_track_length_response()
 
         new_comment = Comment(
             id=str(uuid4()),
