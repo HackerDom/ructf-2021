@@ -14,5 +14,5 @@ Every index employeexer makes tokens from desctiption and tags and update index 
 * Use secret in cookies and get flag in personal info (bank card number).
 
 # Defense 
-Use two different redis databases.
+Use two different redis databases for employee index and user sessions.
 
