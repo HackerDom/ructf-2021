@@ -23,9 +23,14 @@ def generate_flag():
     flag_symbols = string.ascii_uppercase + string.digits
     return "".join((flag_symbols[random.randint(0, len(flag_symbols)-1)] for _ in range(31))) + "="
 
-def define_str():
+def define_flag():
     s = ''.join(random.choices(string.ascii_lowercase, k=10))
     val = generate_flag()
+    return f'char * {s} = "{val}";', val
+
+def define_string(l):
+    s = ''.join(random.choices(string.ascii_lowercase, k=10))
+    val = ''.join(random.choices(string.ascii_lowercase, k=l))
     return f'char * {s} = "{val}";', val
 
 def generate_shit():
@@ -43,6 +48,18 @@ def generate_shit():
     ops = []
     for i in range(strs_count):
         op, name = define_str()
+        ops.append(op)
+    
+    strs_count = random.randint(20, 100)
+    ops = []
+    for i in range(strs_count):
+        op, name = define_string(random.randint(10, 100))
+        ops.append(op)
+
+    strs_count = random.randint(2, 5)
+    ops = []
+    for i in range(strs_count):
+        op, name = define_string(random.randint(10000, 640000))
         ops.append(op)
     
     #flag_var_name = "".join(random.choices(string.ascii_lowercase, k=10))
