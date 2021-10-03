@@ -9,6 +9,7 @@ import requests
 import traceback
 
 from random import randint
+from selenium.webdriver.support.ui import WebDriverWait
 from filelock import FileLock, Timeout
 from flask import Flask, request, make_response, jsonify
 from requests.adapters import HTTPAdapter
@@ -18,6 +19,8 @@ from sqlalchemy import create_engine, Column, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Session
 from sqlalchemy_utils import database_exists, create_database, drop_database
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 
 from user_agent_randomizer import get_random_user_agent
 
@@ -73,9 +76,6 @@ BaseModel = declarative_base()
 
 
 def init_database():
-    if database_exists(postgres_engine.url):
-        drop_database(postgres_engine.url)
-
     if not database_exists(postgres_engine.url):
         create_database(postgres_engine.url)
 
@@ -93,7 +93,11 @@ class User(BaseModel):
             .format(self.auth_token, self.host, self.create_date)
 
     def is_old(self, now: datetime.datetime):
-        return (now - self.create_date).min > datetime.timedelta(minutes=15)
+        ans = (now - self.create_date) > datetime.timedelta(minutes=15)
+
+        print(f'{self.create_date} and {now}, answer is {ans}')
+
+        return ans
 
 
 def make_session():
@@ -202,10 +206,9 @@ def run_execute_play_page(host, user, track, title, description):
 
             driver.get(f'http://{host}:{TB_PORT}/#/track?{full}')
 
+            # wait.until(EC.element_to_be_clickable((By.XPATH, "//button[text()='play']")))
+
             driver.find_element_by_xpath("//button[text()='play']").click()
-
-            time.sleep(1)
-
             print(f'running for http://{host}:{TB_PORT}/#/track?{full} completed', file=sys.stderr)
         except Exception as e:
             print(e, file=sys.stderr)
@@ -219,9 +222,10 @@ def run_execute_play_page(host, user, track, title, description):
 
 def get_posts_list(host, user_on_host, user_agent):
     r = get_session_with_retry().get(
-        f"http://{host}:{TB_API_PORT}/api/posts/latest?limit=100",
+        f"http://{host}:{TB_API_PORT}/api/posts/latest?limit=200",
         headers={'User-Agent': user_agent, TB_AUTH_HEADER: user_on_host.auth_token}
     )
+    print(r.text, file=sys.stderr)
 
     if r.status_code != 200:
         return None
@@ -259,7 +263,7 @@ def get_comment_content(comment, host, user, user_agent):
 
 
 def run_pages_for_user_on_host(user, host, posts, user_agent):
-    tasks_args = []
+    threads = []
 
     for post in posts:
         track, title, description, comments = get_post_content(post, host, user, user_agent)
@@ -267,15 +271,21 @@ def run_pages_for_user_on_host(user, host, posts, user_agent):
         if track is None or comments is None:
             continue
 
-        threading.Thread(target=run_execute_play_page, args=(host, user, track, title, description)).start()
+        t = threading.Thread(target=run_execute_play_page, args=(host, user, track, title, description))
+        t.start()
+        threads.append(t)
 
-        for comment in comments:
-            comment_track, description = get_comment_content(comment, host, user, user_agent)
+        # for comment in comments:
+        #     comment_track, description = get_comment_content(comment, host, user, user_agent)
+        #
+        #     if comment_track is None:
+        #         continue
+        #
+        #     t = threading.Thread(target=run_execute_play_page, args=(host, user, comment_track, title, description))
+        #     t.start()
+        #     threads.append(t)
 
-            if comment_track is None:
-                continue
-
-            threading.Thread(target=run_execute_play_page, args=(host, user, comment_track, title, description)).start()
+    return threads
 
     # with mp.Pool() as pool:
     #     pool.map(run_execute_play_page, tasks_args)
@@ -293,22 +303,37 @@ def run_cycle(lock):
 
         for (host, users_on_host) in host_to_users.items():
             try:
-                if len(users_on_host) <= 1:
+                if len(users_on_host) < 1:
                     continue
 
                 post_list = get_posts_list(host, users_on_host[0], user_agent)
 
+                if post_list is None:
+                    continue
+
                 print(f'posts are: {post_list}', file=sys.stderr)
 
+                threads = []
+
                 for user in users_on_host:
-                    run_pages_for_user_on_host(user, host, post_list, user_agent)
+                    for t in run_pages_for_user_on_host(user, host, post_list, user_agent):
+                        threads.append(t)
+
+                print(f'joining {len(threads)} threads...', file=sys.stderr)
+                for k in threads:
+                    try:
+                        k.join(3)
+                    except Exception as e:
+                        print(f'thread joining failed: ', e, file=sys.stderr)
+                        traceback.print_tb(e, file=sys.stderr)
 
             except Exception as e:
                 print(e, file=sys.stderr)
                 traceback.print_tb(e, file=sys.stderr)
 
     finally:
-        lock.release()
+        if lock is not None:
+            lock.release()
 
 
 def run_cycle_in_thread(lock):
@@ -321,14 +346,14 @@ def run_cycle_with_acquired_lock(lock):
 
 
 def try_run():
-    lock = FileLock('running.lock')
-
-    try:
-        lock.acquire(timeout=1)
-        run_cycle_with_acquired_lock(lock)
+    # lock = FileLock('running.lock')
+    #
+    # try:
+    #     lock.acquire(timeout=1)
+        run_cycle_with_acquired_lock(None)
         return True
-    except Timeout:
-        return False
+    # except Timeout:
+    #     return False
 
 
 @app.route('/run', methods=['POST'])
@@ -351,34 +376,43 @@ def run():
 
 def remove_old_users():
     while True:
-        try:
-            print('waiting 15 minutes to clean up old users', file=sys.stderr)
+        time.sleep(15 * 60)
 
-            time.sleep(15 * 60)
+        clean_old_users()
 
-            with make_session() as session:
-                users = session.query(User).all()
-                now = datetime.datetime.utcnow()
-                old = list(filter(lambda u: u.is_old(now), users))
 
-                print(f'now date is {now}', file=sys.stderr)
-                print('users to delete:', file=sys.stderr)
-                print(old)
+def clean_old_users():
+    try:
+        print('waiting 15 minutes to clean up old users', file=sys.stderr)
 
-                for old_user in old:
-                    session.delete(old_user)
+        with make_session() as session:
+            users = session.query(User).all()
+            now = datetime.datetime.utcnow()
+            old = list(filter(lambda u: u.is_old(now), users))
 
-                session.commit()
-        except Exception as e:
-            print('error while cleaning users')
-            print(e, file=sys.stderr)
+            print(f'now date is {now}', file=sys.stderr)
+            print('users to delete:', file=sys.stderr)
+            print(old)
+
+            for old_user in old:
+                session.delete(old_user)
+
+            session.commit()
+    except Exception as e:
+        print('error while cleaning users')
+        print(e, file=sys.stderr)
 
 
 def run_playing():
     while True:
-        time.sleep(60)
-
         try_run()
+
+
+@app.route('/clean', methods=['POST'])
+def clean():
+    clean_old_users()
+
+    return make_response()
 
 
 threading.Thread(target=remove_old_users).start()

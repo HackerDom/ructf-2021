@@ -30,7 +30,7 @@ services:
       - JAVA_OPTS=-Dwebdriver.chrome.whitelistedIps=
     restart: always
     privileged: true
-    shm_size: 2g
+    shm_size: 48g
     ports:
       - "4444:4444"
     extra_hosts:
