@@ -183,6 +183,8 @@ build {
   provisioner "shell" {
     inline = [
       "cd ~studio",
+      # Wait apt-get lock
+      "while ps -opid= -C apt-get > /dev/null; do sleep 1; done",
       "apt-get -y -q install virtualbox",
   
       "systemctl daemon-reload",
