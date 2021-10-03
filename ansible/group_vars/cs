@@ -40,7 +40,7 @@ cs_round_length: 60
 cs_flag_life_time: 15
 # Note: this is EKB time (local time on servers)
 cs_time: "['2021-10-01 07:30:00', '2021-10-03 10:00:00']"
-#cs_time: "['2021-10-03 08:00:00', '2021-10-03 15:00:00']"
+#cs_time: "['2021-10-03 08:15:00', '2021-10-03 15:15:00']"
 #cs_time: "['2019-10-15 10:00:00', '2019-10-15 17:00:00'], ['2019-10-16 10:00:00', '2019-10-16 17:00:00'], ['2019-10-17 07:59:59', '2019-10-17 15:59:00']"
 
 cs_static_path: '/home/cs/ctf-scoreboard-client/scoreboard/build'
@@ -77,10 +77,9 @@ teams: |
 services: |
   {name => 'metrics',       path => 'checkers/metrics/checker.py',                 timeout => 30, tcp_port => 5051},
   {name => 'studio',        path => 'checkers/studio/checker.py',                  timeout => 30, tcp_port => 8000},
+  {name => 'track battle',  path => 'checkers/trackbattle/checker.py',             timeout => 30, tcp_port => 8080},
   {name => 'white_album',   path => 'checkers/white_album/checker.py',             timeout => 30, tcp_port => 1234},
   {name => 'employyxer',    path => 'checkers/employeexer/checker.py',             timeout => 30, tcp_port => 9000},
   {name => 'spotiflag',     path => 'checkers/spotiflag/checker.py',               timeout => 30, tcp_port => 17171},
 
 
-# well =(
-#  {name => 'track battle',  path => 'checkers/trackbattle/checker.py', timeout => 30, tcp_port => 8080},
