@@ -30,4 +30,4 @@ RuCTF 2021 was held online on October 3. [Results](https://ructf.org/2021/scoreb
 - Vik Kotwizkiy aka [ktwzk](https://github.com/ktwzk)
 - Daria Kazanceva aka [still_at_the_party](https://github.com/stillattheparty)
 
-Copyright (C) 2021 HackerDom
+Copyright © 2021 HackerDom
