@@ -4,6 +4,7 @@
         <OutputType>Exe</OutputType>
         <TargetFramework>net5.0</TargetFramework>
         <Nullable>enable</Nullable>
+        <RootNamespace>DoNotIncludeThisPlease</RootNamespace>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
@@ -20,8 +21,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\src\WhiteAlbum\WhiteAlbum.csproj" />
-      <ProjectReference Include="..\WhiteAlbum\WhiteAlbum.csproj" />
+      <ProjectReference Include="..\..\..\services\white_album\src\WhiteAlbum\WhiteAlbum.csproj" />
+      <ProjectReference Include="..\..\..\services\white_album\src\WhiteAlbum\WhiteAlbum.csproj" />
     </ItemGroup>
 
 </Project>

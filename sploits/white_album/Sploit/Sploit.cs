@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
 using DoNotIncludeThisPlease.Client;
 using FluentAssertions;
 using FluentAssertions.Extensions;
 using NUnit.Framework;
-using Vostok.Clusterclient.Core.Model;
-using Vostok.Configuration.Sources.Object;
 using Vostok.Hosting;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Console;
@@ -39,7 +36,7 @@ namespace DoNotIncludeThisPlease
         [SetUp]
         public void SetUp()
         {
-            Environment.CurrentDirectory = @"D:\ructf2021\ructf-2021\services\white_album\DoNotIncludeThisPlease\bin\Release\net5.0";
+            Environment.CurrentDirectory = @"D:\ructf2021\ructf-2021\services\white_album\Sploit\bin\Release\net5.0";
             
             void EnvironmentSetup(IVostokHostingEnvironmentBuilder builder)
             {
