@@ -27,7 +27,7 @@ cs_nginx_workers: 8
 #cs_nginx_listen: 10.10.10.10:80
 cs_nginx_listen: 0.0.0.0:80
 
-cs_nginx_auth_enabled: true
+cs_nginx_auth_enabled: false
 cs_nginx_auth_user: root
 # use this to generate: `echo 'deepfriedructfpanic' | openssl passwd -apr1 -stdin`
 cs_nginx_auth_password: $apr1$nbfQX.UC$yuexIWujEabv9ZzSwPEEO0
@@ -38,9 +38,9 @@ cs_ctf_name: RuCTF 2021
 cs_flags_secret: rDSrOlVAhpPzKkkI
 cs_round_length: 60
 cs_flag_life_time: 15
-# Note: this is EKB time (local time on servers)
-cs_time: "['2021-10-01 07:30:00', '2021-10-03 10:00:00']"
-#cs_time: "['2021-10-03 08:15:00', '2021-10-03 15:15:00']"
+# Note: this is UTC time (and its local time on servers)
+#cs_time: "['2021-10-01 07:30:00', '2021-10-03 10:00:00']"
+cs_time: "['2021-10-03 08:30:00', '2021-10-03 15:30:00']"
 #cs_time: "['2019-10-15 10:00:00', '2019-10-15 17:00:00'], ['2019-10-16 10:00:00', '2019-10-16 17:00:00'], ['2019-10-17 07:59:59', '2019-10-17 15:59:00']"
 
 cs_static_path: '/home/cs/ctf-scoreboard-client/scoreboard/build'
