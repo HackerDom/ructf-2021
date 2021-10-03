@@ -1,0 +1,2 @@
+grafana_admin_pass: STYrdKXFhv6p
+prometheus_uri: http://10.10.10.12:9090

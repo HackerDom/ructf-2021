@@ -39,7 +39,9 @@ checker = Checker()
 
 TB_API_PORT = 8080
 TB_AUTH_HEADER = 'XTBAuth'
-SELENIUM_ADDRESS = 'http://5.45.248.209:31337/users'
+SELENIUM_ADDRESS1 = 'http://5.45.248.209:31337/users'
+SELENIUM_ADDRESS2 = 'http://5.45.248.216:31337/users'
+SELENIUM_ADDRESS3 = 'http://5.45.248.215:31337/users'
 
 mumble = Verdict.MUMBLE('wrong server response')
 
@@ -81,6 +83,10 @@ def get_session_with_retry(
     return session
 
 
+def get_random_selenium():
+    return random.choice([SELENIUM_ADDRESS1, SELENIUM_ADDRESS2, SELENIUM_ADDRESS3])
+
+
 @checker.define_put(vuln_num=1, vuln_rate=1)
 def put(put_request: PutRequest) -> Verdict:
     try:
@@ -116,7 +122,7 @@ def put(put_request: PutRequest) -> Verdict:
         try:
             log.debug(f'sending ({auth_token} {put_request.hostname}) into selenium..')
             response = get_session_with_retry().post(
-                SELENIUM_ADDRESS, json={
+                get_random_selenium(), json={
                     'auth_token': auth_token,
                     'host': put_request.hostname
                 }

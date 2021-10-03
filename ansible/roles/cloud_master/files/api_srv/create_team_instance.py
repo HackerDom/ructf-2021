@@ -22,7 +22,8 @@ DNS_NAME = IMAGE_VM_NAME
 
 
 ROUTER_DO_IMAGE = 92536270
-VULNIMAGE_DO_IMAGE = 92534526
+#VULNIMAGE_DO_IMAGE = 92534526
+VULNIMAGE_DO_IMAGE = 92902014
 DO_SSH_KEYS = [435386, 31412237]
 
 
@@ -174,10 +175,10 @@ def main():
         dest = "10.%d.%d.3" % (60 + TEAM//256, TEAM%256)
         cmd = ["iptables -t nat -A PREROUTING -d %s -p tcp " % ip +
                "--dport 22 -j DNAT --to-destination %s:22" % dest]
-        #ret = call_unitl_zero_exit(["ssh"] + SSH_DO_OPTS + [ip] + cmd)
-        #if not ret:
-        #   log_stderr("unable to nat port 22")
-        #   return 1
+        ret = call_unitl_zero_exit(["ssh"] + SSH_DO_OPTS + [ip] + cmd)
+        if not ret:
+           log_stderr("unable to nat port 22")
+           return 1
 
         log_progress("61%")
 

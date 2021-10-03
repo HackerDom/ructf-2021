@@ -18,16 +18,13 @@ services:
       - variables.env
     depends_on:
       - postgres
-      - selenium0
-      - selenium1
-      - selenium2
-      - selenium3
+      - selenium
     ports:
       - "31337:31337"
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
-  selenium0:
+  selenium:
     image: selenium/standalone-chrome
     environment:
       - JAVA_OPTS=-Dwebdriver.chrome.whitelistedIps=
@@ -35,45 +32,45 @@ services:
     privileged: true
     shm_size: 2g
     ports:
-      - "4440:4444"
+      - "4444:4444"
     extra_hosts:
       - "host.docker.internal:host-gateway"
-
-  selenium1:
-    image: selenium/standalone-chrome
-    environment:
-      - JAVA_OPTS=-Dwebdriver.chrome.whitelistedIps=
-    restart: always
-    privileged: true
-    shm_size: 2g
-    ports:
-      - "4441:4444"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-
-  selenium2:
-    image: selenium/standalone-chrome
-    environment:
-      - JAVA_OPTS=-Dwebdriver.chrome.whitelistedIps=
-    restart: always
-    privileged: true
-    shm_size: 2g
-    ports:
-      - "4442:4444"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-
-  selenium3:
-    image: selenium/standalone-chrome
-    environment:
-      - JAVA_OPTS=-Dwebdriver.chrome.whitelistedIps=
-    restart: always
-    privileged: true
-    shm_size: 2g
-    ports:
-      - "4443:4444"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+#
+#  selenium1:
+#    image: selenium/standalone-chrome
+#    environment:
+#      - JAVA_OPTS=-Dwebdriver.chrome.whitelistedIps=
+#    restart: always
+#    privileged: true
+#    shm_size: 2g
+#    ports:
+#      - "4441:4444"
+#    extra_hosts:
+#      - "host.docker.internal:host-gateway"
+#
+#  selenium2:
+#    image: selenium/standalone-chrome
+#    environment:
+#      - JAVA_OPTS=-Dwebdriver.chrome.whitelistedIps=
+#    restart: always
+#    privileged: true
+#    shm_size: 2g
+#    ports:
+#      - "4442:4444"
+#    extra_hosts:
+#      - "host.docker.internal:host-gateway"
+#
+#  selenium3:
+#    image: selenium/standalone-chrome
+#    environment:
+#      - JAVA_OPTS=-Dwebdriver.chrome.whitelistedIps=
+#    restart: always
+#    privileged: true
+#    shm_size: 2g
+#    ports:
+#      - "4443:4444"
+#    extra_hosts:
+#      - "host.docker.internal:host-gateway"
 
 
 volumes:
