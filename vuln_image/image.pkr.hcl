@@ -57,7 +57,6 @@ build {
       "useradd -m -u 10002 -s /bin/bash metrics",
       "useradd -m -u 10003 -s /bin/bash white_album",
       "useradd -m -u 10004 -s /bin/bash spotiflag",
-      "useradd -m -u 10005 -s /bin/bash trackbattle",
     ]
   }
 
@@ -115,13 +114,6 @@ build {
     destination = "/home/spotiflag/"
   }
 
-  # trackbattle service
-
-  provisioner "file" {
-    source = "../services/trackbattle/"
-    destination = "/home/trackbattle/"
-  }
-
   # Studio service
   provisioner "shell" {
     inline = [
@@ -169,13 +161,6 @@ build {
   provisioner "shell" {
     inline = [
       "cd ~spotiflag",
-      "docker-compose up --build -d || true",
-    ]
-  }
-
-  provisioner "shell" {
-    inline = [
-      "cd ~trackbattle",
       "docker-compose up --build -d || true",
     ]
   }
