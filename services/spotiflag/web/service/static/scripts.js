@@ -62,7 +62,7 @@ async function clickGenerate() {
     }
 
     const id = await apiGenerate(elementDescription.value);
-    const link = createLink(id);
+    const link = await createLink(id);
 
     blockList.appendChild(link);
 
@@ -79,7 +79,7 @@ async function initList() {
     const ids = await apiList();
 
     for (const id of ids) {
-        const link = createLink(id);
+        const link = await createLink(id);
 
         blockList.appendChild(link);
     }
