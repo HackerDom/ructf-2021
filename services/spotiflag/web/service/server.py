@@ -20,6 +20,9 @@ expire = int(os.getenv('EXPIRE'))
 
 app.mount("/static", StaticFiles(directory="static"))
 
+MAX_WAV_LENGTH = 1 * 1024 * 1024
+MAX_DESCRIPTION_LENGTH = 16 * 1024
+
 
 @app.route('/')
 async def main(_: Request):
@@ -33,11 +36,9 @@ async def ping(_: Request):
 
 @app.post('/api/generate/')
 async def api_generate(request: Request):
-    max_description_length = 16 * 1024
-
     description = await request.body()
 
-    if not 0 < len(description) <= max_description_length:
+    if not 0 < len(description) <= MAX_DESCRIPTION_LENGTH:
         raise HTTPException(status.HTTP_400_BAD_REQUEST)
 
     id = uuid.uuid4()
@@ -66,17 +67,12 @@ async def api_listen(id: uuid.UUID, range_header: str=Header(..., alias='range')
     if data is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND)
 
-    new_start = offset
-    new_end = offset + len(data)
-    new_length = new_end + len(data)
-
     return Response(
         data,
         status_code=status.HTTP_206_PARTIAL_CONTENT,
         media_type='audio/wav',
         headers={
-            'Content-Range': f'bytes {new_start}-{new_end}/{new_length}',
-            'Content-Length': f'{len(data)}',
+            'Content-Range': f'bytes {offset}-{offset + len(data)}/{MAX_WAV_LENGTH}'
         }
     )
 
