@@ -24,18 +24,6 @@ services:
     networks:
       - app-network
 
-#  nginx:
-#    image: nginx:1.21.0-alpine
-#    restart: always
-#    tty: true
-#    volumes:
-#      - ./nginx/conf.d/:/etc/nginx/conf.d/
-#      - front_content:/var/www/
-#    ports:
-#      - "8080:8080"
-#    networks:
-#      - app-network
-
   trackbattle:
     build:
       context: .
