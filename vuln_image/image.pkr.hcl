@@ -212,4 +212,12 @@ build {
   provisioner "shell" {
     script = "digital_ocean_specific_setup.sh"
   }
+
+  # cleanup after multistage build
+  provisioner "shell" {
+    inline = [
+      "docker image prune --filter label=stage=builder -f",
+      "docker image rm hseeberger/scala-sbt:8u222_1.3.5_2.13.1 mcr.microsoft.com/dotnet/sdk:5.0",
+    ]
+  }
 }

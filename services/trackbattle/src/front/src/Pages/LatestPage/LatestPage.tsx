@@ -4,7 +4,7 @@ import {Cell} from "../Components/Cell";
 import {Button} from "../Components/Button";
 import {TrackBattleLayout} from "../Components/TrackBattleLayout";
 import {api} from "../../api/api";
-import {LocalStorage} from "../../Utilities/LocalStorage";
+import {CookiesStorage} from "../../Utilities/CookiesStorage";
 import {Posts} from "./Posts";
 
 export const LatestPage: React.FC = () => {
@@ -27,7 +27,7 @@ export const LatestPage: React.FC = () => {
     if (!posts) {
         return (
             <TrackBattleLayout>
-                {!LocalStorage.getAuth() ? (
+                {!CookiesStorage.getAuth() ? (
                     <Cell center>You have to create user to battle with other users</Cell>
                 ) : null}
             </TrackBattleLayout>

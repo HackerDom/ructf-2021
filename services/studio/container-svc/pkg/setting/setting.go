@@ -17,17 +17,19 @@ type App struct {
 	LogFileExt  string
 	TimeFormat  string
 
-	JobLifetimeMinutes  time.Duration
-	WorkersCount        int
-	AllocatorPath       string
-	DeallocatorPath     string
-	ReaderPath          string
-	KeyGenPath          string
-	KeyPath             string
-	QueueStatInterval   time.Duration
-	RequestStatInterval time.Duration
-	DockerfilePath      string
-	CredPoolList        []string
+	JobLifetimeMinutes    time.Duration
+	WorkersCount          int
+	AllocatorPath        string
+	DeallocatorPath      string
+	ReaderPath           string
+	KeyGenPath           string
+	KeyPath              string
+	QueueStatInterval    time.Duration
+	RequestStatInterval  time.Duration
+	DockerfilePath       string
+	CredPoolList         []string
+	ContainerMaxExecTime time.Duration
+	ContainerKillPeriod  time.Duration
 }
 
 var AppSetting = &App{}
@@ -69,7 +71,8 @@ func Setup() {
 	ServerSetting.ReadTimeout = ServerSetting.ReadTimeout * time.Second
 	ServerSetting.WriteTimeout = ServerSetting.WriteTimeout * time.Second
 	RedisSetting.IdleTimeout = RedisSetting.IdleTimeout * time.Second
-
+	AppSetting.ContainerMaxExecTime = AppSetting.ContainerMaxExecTime * time.Second
+	AppSetting.ContainerKillPeriod = AppSetting.ContainerKillPeriod * time.Second
 }
 
 // mapTo map section

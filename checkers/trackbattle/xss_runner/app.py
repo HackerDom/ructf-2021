@@ -2,8 +2,10 @@ import datetime
 import os
 import threading
 import time
-
+import multiprocessing as mp
 import requests
+
+from random import randint
 from filelock import FileLock, Timeout
 from flask import Flask, request, make_response, jsonify
 from requests.adapters import HTTPAdapter
@@ -42,6 +44,7 @@ def get_session_with_retry(
 TB_API_PORT = 8080
 TB_PORT = 8080
 TB_AUTH_HEADER = 'XTBAuth'
+SELENIUMS_AMOUNT = 4
 
 
 def _get_env(name):
@@ -90,6 +93,9 @@ class User(BaseModel):
     def __repr__(self):
         return "<User(auth_token='{}', host={}, create_date={})>" \
             .format(self.auth_token, self.host, self.create_date)
+
+    def is_old(self, now: datetime.datetime):
+        return (now - self.create_date).min > 15
 
 
 def make_session():
@@ -158,13 +164,19 @@ def build_host_to_users_map(users):
     return host_to_users
 
 
+def select_random_selenium():
+    selenium_idx = randint(0, SELENIUMS_AMOUNT - 1)
+
+    return f'http://selenium{selenium_idx}:{4440 + selenium_idx}/wd/hub'
+
+
 def run_execute_play_page(host, user, track):
     options = webdriver.ChromeOptions()
     options.add_argument("--headless")
     options.add_argument("--disable-xss-auditor")
     driver = None
     try:
-        driver = webdriver.Remote("http://selenium:4444/wd/hub", options=options)
+        driver = webdriver.Remote(select_random_selenium(), options=options)
         driver.get(f'http://{host}:{TB_PORT}/#/track?{track}')
 
         driver.add_cookie({
@@ -182,10 +194,6 @@ def run_execute_play_page(host, user, track):
     finally:
         if driver is not None:
             driver.close()
-
-
-def run_execute_play_page_in_thread(host, user, track):
-    threading.Thread(target=run_execute_play_page, args=(host, user, track)).start()
 
 
 def get_posts_list(host, user_on_host, user_agent):
@@ -229,13 +237,15 @@ def get_comment_content(comment, host, user, user_agent):
 
 
 def run_pages_for_user_on_host(user, host, posts, user_agent):
+    tasks_args = []
+
     for post in posts:
         track, comments = get_post_content(post, host, user, user_agent)
 
         if track is None or comments is None:
             continue
 
-        run_execute_play_page_in_thread(host, user, track)
+        tasks_args.append((host, user, track))
 
         for comment in comments:
             comment_track = get_comment_content(comment, host, user, user_agent)
@@ -243,7 +253,10 @@ def run_pages_for_user_on_host(user, host, posts, user_agent):
             if comment_track is None:
                 continue
 
-            run_execute_play_page_in_thread(host, user, comment_track)
+            tasks_args.append((host, user, track))
+
+    with mp.Pool() as pool:
+        pool.map(run_execute_play_page, tasks_args)
 
 
 def run_cycle(lock, session):
@@ -302,11 +315,42 @@ def run():
 
     return make_response(
         jsonify(
-            message='pages execution successfully started'
+            message='previous playing not finished yet'
         ),
         409
     )
 
+
+def remove_old_users():
+    while True:
+        time.sleep(15 * 60)
+
+        lock = FileLock('running.lock')
+
+        try:
+            lock.acquire()
+
+            with make_session() as session:
+                users = session.query(User).all()
+                now = datetime.datetime.utcnow()
+
+                for old_user in filter(lambda u: u.is_old(now), users):
+                    session.delete(old_user)
+
+                session.commit()
+        finally:
+            lock.release()
+
+
+def run_playing():
+    while True:
+        time.sleep(60)
+
+        try_run()
+
+
+threading.Thread(target=remove_old_users).start()
+# threading.Thread(target=run_playing).start()
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=31337, debug=True)

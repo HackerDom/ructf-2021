@@ -7,27 +7,39 @@ services:
     env_file:
       - variables.env
     ports:
-      - 5432:5432
+      - "5432:5432"
     volumes:
       - trackbattle-postgres-data:/var/lib/postgresql/data
     networks:
       - app-network
 
+  front_builder:
+    restart: always
+    build:
+      context: .
+      dockerfile: ./docker/front_builder/Dockerfile
+    volumes:
+      - front_content:/build
+
   nginx:
     image: nginx:1.21.0-alpine
-    restart: unless-stopped
+    restart: always
     tty: true
-    ports:
-      - 8080:8080
     volumes:
-      - ./src/front/build/:/var/www
       - ./nginx/conf.d/:/etc/nginx/conf.d/
+      - front_content:/var/www/
+    ports:
+      - "8080:8080"
     networks:
       - app-network
+    depends_on:
+      - front_builder
 
   trackbattle:
-    build: .
-    restart: on-failure
+    build:
+      context: .
+      dockerfile: ./docker/trackbattle/Dockerfile
+    restart: always
     env_file:
       - variables.env
     depends_on:
@@ -37,6 +49,7 @@ services:
 
 volumes:
   trackbattle-postgres-data:
+  front_content:
 
 networks:
   app-network:

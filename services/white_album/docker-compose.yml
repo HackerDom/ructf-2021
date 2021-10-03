@@ -1,6 +1,7 @@
 version: '3.3'
 services:
   white_album:
+
     image: white_album
     build:
       context: .
@@ -10,7 +11,12 @@ services:
     volumes:
       - data:/app/data
 
-    restart: unless-stopped
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
 
 volumes:
     data:

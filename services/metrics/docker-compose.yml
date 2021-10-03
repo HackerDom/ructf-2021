@@ -13,7 +13,7 @@ services:
     pids_limit: 50
 
   postgres:
-    image: postgres:13.1-alpine
+    image: postgres:13.2-alpine
     restart: always
     mem_limit: 1G
     memswap_limit: 1G
