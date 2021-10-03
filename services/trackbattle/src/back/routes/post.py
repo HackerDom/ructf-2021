@@ -4,8 +4,7 @@ from flask import Blueprint, request, jsonify
 from sqlalchemy import desc
 
 from models.post import Post
-from routes.common import get_entity_not_found_response, find_entity_by_id_in_session, get_invalid_request_response, \
-    MAX_TRACK_LENGTH, invalid_track_length_response
+from routes.common import get_entity_not_found_response, find_entity_by_id_in_session, get_invalid_request_response
 from tools.routes.functools import need_authentication, expected_json_arguments, expected_uri_arguments
 
 posts_blueprint = Blueprint('posts', __name__)
@@ -16,9 +15,6 @@ posts_blueprint = Blueprint('posts', __name__)
 @expected_json_arguments('track', 'title', 'description')
 def create_post(track=None, title=None, description=None, user=None, session=None):
     with session:
-        if len(track) > MAX_TRACK_LENGTH:
-            return invalid_track_length_response()
-
         new_post = Post(
             id=str(uuid4()),
             author_nickname=user.nickname,

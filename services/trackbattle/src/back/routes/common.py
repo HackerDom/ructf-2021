@@ -1,12 +1,10 @@
 from flask import request, make_response, jsonify
 
 from models.user import User
-from models.sessions import make_session
 
 AUTH_HEADER = 'XTBAuth'
 CONTENT_TYPE_FROM_URL = 'application/x-www-form-urlencoded'
 CONTENT_TYPE_JSON = 'application/json'
-MAX_TRACK_LENGTH = 124
 
 
 def get_auth_token_from_request():
@@ -70,16 +68,6 @@ def get_expected_uri_argument_response(arg_name):
         jsonify(
             status='error',
             message=f'expected url argument "{arg_name}" but not found'
-        ),
-        400
-    )
-
-
-def invalid_track_length_response():
-    return make_response(
-        jsonify(
-            status='error',
-            message=f'invalid track length (max is {MAX_TRACK_LENGTH})'
         ),
         400
     )
