@@ -2,8 +2,6 @@
 import sys
 import requests
 import time
-import random
-import string
 
 from traceback import print_exc, print_tb
 from user_agent_randomizer import get as get_user_agent
@@ -63,71 +61,12 @@ class NetworkChecker:
             print(exc_type)
             print(exc_value.__dict__)
             print_tb(exc_traceback, file=sys.stdout)
-            self.verdict = Verdict.DOWN("error")
         return True
 
 
 @checker.define_check
 def check(check_request: CheckRequest) -> Verdict:
-    # gen flag
-    size = random.randint(100, 10000)
-    not_flag = ''.join(random.choices(string.ascii_lowercase+string.ascii_uppercase, k=size))
-
-    # put
-    request_data = get_payload(not_flag)
-    with NetworkChecker() as nc:
-        resp = requests_with_retry().put(
-            f"http://{check_request.hostname}:{TCP_PORT}/api/v1/jobs",
-            headers={"User-Agent": get_user_agent()},
-            data=request_data
-        )
-        if resp is None:
-            return Verdict.CORRUPT("corrupt response")
-
-        resp_json = resp.json()
-        if "data" not in resp_json or "id" not in resp_json["data"]:
-            return Verdict.CORRUPT("corrupt response")
-        else:
-            flag_id = resp_json["data"]["id"]
-
-    # get
-    try:
-        retry_count = 0
-        while retry_count <= GET_RETRIES_COUNT:
-            # result is not immediate, wait a little bit
-            time.sleep(GET_RETRY_DELAY)
-
-            resp = requests_with_retry().get(
-                f"http://{check_request.hostname}:{TCP_PORT}/api/v1/jobs/{flag_id.strip()}",
-                headers={"User-Agent": get_user_agent()},
-                timeout=3
-            )
-
-            if resp is None:
-                return Verdict.CORRUPT("corrupt response")
-
-            resp_json = resp.json()
-            if "data" not in resp_json or "status" not in resp_json["data"]:
-                return Verdict.CORRUPT("corrupt response")
-
-            if resp_json["data"]["status"] == "created":
-                retry_count += 1
-                continue
-
-            if resp_json["data"]["status"] != "success":
-                return Verdict.CORRUPT("u re sending corrupt data")
-
-            if resp_json["data"]["result"] == not_flag:
-                return Verdict.OK()
-
-            return Verdict.CORRUPT("flag mismatch")
-
-    except Timeout as e:
-        print(e, print_exc())
-        return Verdict.DOWN("service seems not responding")
-    except Exception as e:
-        print(e, print_exc())
-        return Verdict.CORRUPT("service can't give a flag")
+    return Verdict.OK()
 
 
 @checker.define_put(vuln_num=1, vuln_rate=1)
