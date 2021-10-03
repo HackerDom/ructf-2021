@@ -55,6 +55,8 @@ The reference code in [mt.py](mt.py) is using the second approach.
 
 ## Fix
 
+The important fact: one needs to know the entire `state` of MT to reverse the seed. If the attacker have got less than the full `state`, he can't efficiently recovert the seed. The `state` itself could be recovered from MT outputs, using the inverse function of `random_temper()`.
+
 When one starts downloading the WAV file from server, he doesn't get the entire file at once. Instead, the server splits the WAV file to the chunks of 64 KB each.
 
 The entire WAV file contains about 12 chunks, but checker **always** downloads only 8 chunks.
