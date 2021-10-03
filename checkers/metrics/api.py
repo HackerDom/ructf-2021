@@ -34,7 +34,8 @@ class Api:
             return CONNECTION_FAILURE, None
         try:
             metric = resp.json()
-            print(metric)
+            if not isinstance(metric, list):
+                return INVALID_FORMAT, None
         except Exception as e:
             print(e)
             return INVALID_FORMAT, None
