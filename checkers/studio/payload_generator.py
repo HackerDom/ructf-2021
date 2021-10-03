@@ -19,7 +19,7 @@ def __get(flag):
     res = bytearray()
     dir_path = os.path.dirname(os.path.realpath(__file__))
 
-    files = os.listdir(TARGET)
+    files = os.listdir(os.path.join(dir_path,TARGET))
     payload_name = random.choice(files)
 
     with open(os.path.join(dir_path, TARGET + payload_name), 'rb') as f:
