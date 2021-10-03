@@ -32,7 +32,7 @@ cs_nginx_auth_user: root
 # use this to generate: `echo 'deepfriedructfpanic' | openssl passwd -apr1 -stdin`
 cs_nginx_auth_password: $apr1$nbfQX.UC$yuexIWujEabv9ZzSwPEEO0
 
-cs_base_url: http://10.10.10.10/
+cs_base_url: https://monitor.ructf.org/
 cs_admin_auth: root:deepfriedructfpanic
 cs_ctf_name: RuCTF 2021
 cs_flags_secret: rDSrOlVAhpPzKkkI
