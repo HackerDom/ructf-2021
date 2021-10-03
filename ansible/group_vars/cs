@@ -33,7 +33,7 @@ cs_nginx_auth_user: root
 cs_nginx_auth_password: $apr1$nbfQX.UC$yuexIWujEabv9ZzSwPEEO0
 
 cs_base_url: http://10.10.10.10/
-cs_admin_auth: root:vWhvhqHnmAtlfxfr
+cs_admin_auth: root:deepfriedructfpanic
 cs_ctf_name: RuCTF 2021
 cs_flags_secret: rDSrOlVAhpPzKkkI
 cs_round_length: 60
@@ -46,7 +46,7 @@ cs_time: "['2021-10-01 07:30:00', '2021-10-03 10:00:00']"
 
 teams: |
   {name => 'SiBears', network => '10.60.1.0/24', host => '10.60.1.3', token => '1_0537de7051d4c1145a02444bc1f7635f', logo => '/data/logos/1.png'},
-  {name => 'FAUST', network => '10.60.2.0/24', host => '10.60.2.3', token => '2_04e20b0f438182bcc6feaa7e3dd906f9', logo => '/data/logos/2.png'},
+  {name => 'FAUST', network => '10.60.25.0/24', host => '10.60.25.3', token => '25_a954f52a3e47b5d8a7c17ba1de99b4a5', logo => '/data/logos/25.png'},
   {name => 'WE_0WN_Y0U', network => '10.60.3.0/24', host => '10.60.3.3', token => '3_2955bb9559dd89a9bf54d2b32c8b32f3', logo => '/data/logos/3.png'},
   {name => 'SFT0', network => '10.60.4.0/24', host => '10.60.4.3', token => '4_53a14bc423450b146fb7cdd960f89976', logo => '/data/logos/4.png'},
   {name => 'Luchshie na svete druz\'ya', network => '10.60.5.0/24', host => '10.60.5.3', token => '5_51394e1e9052a02d89ba7714aaa6d98c', logo => '/data/logos/5.png'},

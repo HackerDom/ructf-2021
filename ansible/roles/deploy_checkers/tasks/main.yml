@@ -24,4 +24,4 @@
     install_recommends: no
 
 - name: python deps
-  command: python3.8 -m pip install requests pycrypto pillow aiohttp numpy gornilo pwntools pycryptodome
+  command: python3.8 -m pip install requests pycrypto pillow aiohttp numpy gornilo pwntools pycryptodome protobuf
