@@ -73,6 +73,9 @@ teams: |
   {name => 'Pixels', network => '10.60.26.0/24', host => '10.60.26.3', token => '26_2684c5a799b66882bfe386e47ffd02bf', logo => '/data/logos/26.png'},
   {name => 'ZenHack', network => '10.60.27.0/24', host => '10.60.27.3', token => '27_f07b3b080f62dc7cee37665f0680c6b2', logo => '/data/logos/27.png'},
   {name => 'SPRUSH', network => '10.60.28.0/24', host => '10.60.28.3', token => '28_aaf1aa967f1d6913304eb9b9607e8d9c', logo => '/data/logos/28.png'},
+  {name => 'ENOFLAG', network => '10.60.29.0/24', host => '10.60.29.3', token => '29_2af9ac162bb4fc6d89b6656146b37b2b', logo => '/data/logos/29.png'},
+  {name => 'Omaviat', network => '10.60.30.0/24', host => '10.60.30.3', token => '30_3b13233bb9881c4b69fca1cee206a0f8', logo => '/data/logos/30.png'},
+
 
 services: |
   {name => 'metrics',       path => 'checkers/metrics/checker.py',                 timeout => 30, tcp_port => 5051},
