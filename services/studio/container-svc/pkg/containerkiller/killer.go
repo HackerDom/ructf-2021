@@ -8,7 +8,7 @@ import (
 )
 
 func KillStuckContainers(excludedPeriods string) {
-	command := fmt.Sprintf("/usr/bin/docker ps --format '{{.RunningFor}} {{.Names}}' | grep -v '[%s] seconds ago' | awk '{print $NF}' | xargs -r docker rm -f", excludedPeriods)
+	command := fmt.Sprintf("timeout 10 /usr/bin/docker ps --format '{{.RunningFor}} {{.Names}}' | grep -v '[%s] seconds ago' | awk '{print $NF}' | xargs -r docker rm -f", excludedPeriods)
 	args := []string{"-c", command}
 	cmd := exec.Command("bash", args...)
 	outputBuf := bytes.NewBuffer(nil)
