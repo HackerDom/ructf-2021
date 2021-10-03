@@ -1,3 +1,4 @@
+import base64
 import datetime
 import os
 import sys
@@ -5,6 +6,7 @@ import threading
 import time
 import multiprocessing as mp
 import requests
+import traceback
 
 from random import randint
 from filelock import FileLock, Timeout
@@ -80,11 +82,6 @@ def init_database():
     BaseModel.metadata.create_all(postgres_engine)
 
 
-@app.before_first_request
-def app_init():
-    init_database()
-
-
 class User(BaseModel):
     __tablename__ = 'users'
     auth_token = Column(String, primary_key=True)
@@ -101,6 +98,9 @@ class User(BaseModel):
 
 def make_session():
     return Session(postgres_engine)
+
+
+init_database()
 
 
 @app.route("/users", methods=['POST'])
@@ -166,35 +166,55 @@ def build_host_to_users_map(users):
 
 
 def select_random_selenium():
-    selenium_idx = randint(0, SELENIUMS_AMOUNT - 1)
+    # selenium_idx = randint(0, SELENIUMS_AMOUNT - 1)
 
-    return f'http://selenium{selenium_idx}:{4440 + selenium_idx}/wd/hub'
+    return f'http://selenium:4444/wd/hub'
 
 
-def run_execute_play_page(host, user, track):
-    options = webdriver.ChromeOptions()
-    options.add_argument("--headless")
-    options.add_argument("--disable-xss-auditor")
-    driver = None
+sem = threading.Semaphore(mp.cpu_count() * 2)
+
+
+def run_execute_play_page(host, user, track, title, description):
     try:
-        driver = webdriver.Remote(select_random_selenium(), options=options)
-        driver.get(f'http://{host}:{TB_PORT}/#/track?{track}')
+        sem.acquire()
+        options = webdriver.ChromeOptions()
+        options.add_argument("--headless")
+        options.add_argument("--disable-xss-auditor")
+        driver = None
+        try:
+            full = []
+            if title is not None:
+                full.append('title=' + title)
+            if description is not None:
+                full.append('description=' + description)
+            full.append('track=' + track)
+            full = '&'.join(full)
+            print(f'running for http://{host}:{TB_PORT}/#/track?{full}', file=sys.stderr)
+            full = base64.b64encode(full.encode('utf-8')).decode('utf-8')
+            driver = webdriver.Remote(select_random_selenium(), options=options)
+            driver.get(f'http://{host}:{TB_PORT}/#/track?{full}')
 
-        driver.add_cookie({
-            'name': TB_AUTH_HEADER,
-            'value': user.auth_token,
-            'path': '/'
-        })
+            driver.add_cookie({
+                'name': TB_AUTH_HEADER,
+                'value': user.auth_token,
+                'path': '/'
+            })
 
-        driver.get(f'http://{host}:{TB_PORT}/#/track?{track}')
+            driver.get(f'http://{host}:{TB_PORT}/#/track?{full}')
 
-        driver.find_element_by_xpath("//button[text()='play']").click()
+            driver.find_element_by_xpath("//button[text()='play']").click()
 
-        time.sleep(1)
+            time.sleep(1)
 
+            print(f'running for http://{host}:{TB_PORT}/#/track?{full} completed', file=sys.stderr)
+        except Exception as e:
+            print(e, file=sys.stderr)
+            traceback.print_tb(e, file=sys.stderr)
+        finally:
+            if driver is not None:
+                driver.close()
     finally:
-        if driver is not None:
-            driver.close()
+        sem.release()
 
 
 def get_posts_list(host, user_on_host, user_agent):
@@ -216,11 +236,12 @@ def get_post_content(post, host, user, user_agent):
     )
 
     if response.status_code != 200:
-        return None, None
+        return None, None, None, None
 
     response_json = response.json()
 
-    return response_json.get('track'), response_json.get('comments')
+    return response_json.get('track'), response_json.get('title'), response_json.get('description'), response_json.get(
+        'comments')
 
 
 def get_comment_content(comment, host, user, user_agent):
@@ -230,42 +251,45 @@ def get_comment_content(comment, host, user, user_agent):
     )
 
     if response.status_code != 200:
-        return None
+        return None, None
 
     response_json = response.json()
 
-    return response_json.get('track')
+    return response_json.get('track'), response_json.get('description')
 
 
 def run_pages_for_user_on_host(user, host, posts, user_agent):
     tasks_args = []
 
     for post in posts:
-        track, comments = get_post_content(post, host, user, user_agent)
+        track, title, description, comments = get_post_content(post, host, user, user_agent)
 
         if track is None or comments is None:
             continue
 
-        tasks_args.append((host, user, track))
+        threading.Thread(target=run_execute_play_page, args=(host, user, track, title, description)).start()
 
         for comment in comments:
-            comment_track = get_comment_content(comment, host, user, user_agent)
+            comment_track, description = get_comment_content(comment, host, user, user_agent)
 
             if comment_track is None:
                 continue
 
-            tasks_args.append((host, user, track))
+            threading.Thread(target=run_execute_play_page, args=(host, user, comment_track, title, description)).start()
 
-    with mp.Pool() as pool:
-        pool.map(run_execute_play_page, tasks_args)
+    # with mp.Pool() as pool:
+    #     pool.map(run_execute_play_page, tasks_args)
 
 
-def run_cycle(lock, session):
+def run_cycle(lock):
     try:
-        with session:
+        with make_session() as session:
             users = session.query(User).all()
         host_to_users = build_host_to_users_map(users)
         user_agent = get_random_user_agent()
+
+        print('started pages execution for:', file=sys.stderr)
+        print(host_to_users, file=sys.stderr)
 
         for (host, users_on_host) in host_to_users.items():
             try:
@@ -274,23 +298,26 @@ def run_cycle(lock, session):
 
                 post_list = get_posts_list(host, users_on_host[0], user_agent)
 
+                print(f'posts are: {post_list}', file=sys.stderr)
+
                 for user in users_on_host:
                     run_pages_for_user_on_host(user, host, post_list, user_agent)
 
-            except Exception:
-                continue
+            except Exception as e:
+                print(e, file=sys.stderr)
+                traceback.print_tb(e, file=sys.stderr)
 
     finally:
         lock.release()
 
 
-def run_cycle_in_thread(lock, session):
-    threading.Thread(target=run_cycle, args=(lock, session)).start()
+def run_cycle_in_thread(lock):
+    run_cycle(lock)
+    # threading.Thread(target=run_cycle, args=(lock,)).start()
 
 
 def run_cycle_with_acquired_lock(lock):
-    with make_session() as session:
-        run_cycle_in_thread(lock, session)
+    run_cycle_in_thread(lock)
 
 
 def try_run():

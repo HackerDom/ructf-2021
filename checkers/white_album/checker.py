@@ -53,15 +53,11 @@ async def check_service(request: CheckRequest) -> Verdict:
         }
 
         single_response = client.CreateSingle(single_first).Get()
-        single_response.pop('signature')
-        single_response.pop('createdAt')
-        single_response.pop('owner')
+        cleanup_dto(single_response)
         Check(single_response, single_first, "single")
 
         single_response2 = client.CreateSingle(single_second).Get()
-        single_response2.pop('signature')
-        single_response2.pop('createdAt')
-        single_response2.pop('owner')
+        cleanup_dto(single_response2)
 
         now = datetime.utcnow()
         single_by_date = client.GetSinglesByDate(now)
@@ -87,18 +83,15 @@ async def check_service(request: CheckRequest) -> Verdict:
         if not album["name"] in [s["name"] for s in album_by_date]:
             return Verdict.MUMBLE(f'{album["name"]} not present in album/get_by_date response')
 
-        album_response.pop("owner")
-        album_response.pop("createdAt")
-        album_response.pop("singles")  # TODO: check
+        cleanup_dto(album_response)
+        album_response.pop("singles")
 
         Check(album_response, album, "album")
 
         all_singles = album_client.GetAllSingles()
 
         for single in all_singles:
-            single.pop("signature")
-            single.pop("createdAt")
-            single.pop("owner")
+            cleanup_dto(single)
 
         Check(all_singles, [single_first, single_second], "singles")
 
@@ -110,7 +103,25 @@ async def check_service(request: CheckRequest) -> Verdict:
         print(e)
         return e.verdict
     except Exception as e:
-        print(e)
+        print(json.dumps(e))
+        return Verdict.CORRUPT("corrupted")
+
+
+def cleanup_dto(single_response):
+    try:
+        single_response.pop('createdAt')
+    except Exception:
+        pass
+
+    try:
+        single_response.pop('signature')
+    except Exception:
+        pass
+
+    try:
+        single_response.pop('owner')
+    except Exception:
+        pass
 
 
 def Check(actual, target, subject):
@@ -143,17 +154,15 @@ def put_flag_into_the_service(request: PutRequest) -> Verdict:
         }
 
         single_response = client.CreateSingle(single).Get()
-        single_response.pop('signature')
-        single_response.pop('createdAt')
-        single_response.pop('owner')
+
+        cleanup_dto(single_response)
         Check(single_response, single, "single")
 
         album_client = client.CreateAlbum(album)
         album_response = album_client.Get()
         album_client.AttachSingle(single_response["id"])
 
-        album_response.pop("owner")
-        album_response.pop("createdAt")
+        cleanup_dto(album_response)
         album_response.pop("singles")
         Check(album_response, album, "album")
 
@@ -161,6 +170,9 @@ def put_flag_into_the_service(request: PutRequest) -> Verdict:
 
     except HTTPException as e:
         return e.verdict
+
+    except Exception as e:
+        return Verdict.CORRUPT("corrupted")
 
 
 @checker.define_get(vuln_num=1)
