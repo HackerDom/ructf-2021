@@ -47,7 +47,7 @@ def generate_shit():
     strs_count = random.randint(5, 10)
     ops = []
     for i in range(strs_count):
-        op, name = define_str()
+        op, name = define_flag()
         ops.append(op)
     
     strs_count = random.randint(20, 100)
