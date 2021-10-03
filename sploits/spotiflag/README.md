@@ -57,7 +57,7 @@ The reference code in [mt.py](mt.py) is using the second approach.
 
 When one starts downloading the WAV file from server, he doesn't get the entire file at once. Instead, the server splits the WAV file to the chunks of 64 KB each.
 
-The entire WAV file contains about 12 chunks, but checker in `CHECK` operation **always** downloads only 8 chunks.
+The entire WAV file contains about 12 chunks, but checker **always** downloads only 8 chunks.
 
 So, it's easy to fix the service: just limit the downloading WAV file by 8 chunks.
 
