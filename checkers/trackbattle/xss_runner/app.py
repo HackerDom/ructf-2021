@@ -1,5 +1,6 @@
 import datetime
 import os
+import sys
 import threading
 import time
 import multiprocessing as mp
@@ -95,7 +96,7 @@ class User(BaseModel):
             .format(self.auth_token, self.host, self.create_date)
 
     def is_old(self, now: datetime.datetime):
-        return (now - self.create_date).min > 15
+        return (now - self.create_date).min > datetime.timedelta(minutes=15)
 
 
 def make_session():
@@ -323,23 +324,27 @@ def run():
 
 def remove_old_users():
     while True:
-        time.sleep(15 * 60)
-
-        lock = FileLock('running.lock')
-
         try:
-            lock.acquire()
+            print('waiting 15 minutes to clean up old users', file=sys.stderr)
+
+            time.sleep(15 * 60)
 
             with make_session() as session:
                 users = session.query(User).all()
                 now = datetime.datetime.utcnow()
+                old = list(filter(lambda u: u.is_old(now), users))
 
-                for old_user in filter(lambda u: u.is_old(now), users):
+                print(f'now date is {now}', file=sys.stderr)
+                print('users to delete:', file=sys.stderr)
+                print(old)
+
+                for old_user in old:
                     session.delete(old_user)
 
                 session.commit()
-        finally:
-            lock.release()
+        except Exception as e:
+            print('error while cleaning users')
+            print(e, file=sys.stderr)
 
 
 def run_playing():
@@ -350,7 +355,7 @@ def run_playing():
 
 
 threading.Thread(target=remove_old_users).start()
-# threading.Thread(target=run_playing).start()
+threading.Thread(target=run_playing).start()
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=31337, debug=True)
