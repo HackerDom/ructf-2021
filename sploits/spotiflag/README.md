@@ -46,6 +46,13 @@ Each frequency of WAV file tones contains 10 bits of consecutive output of the g
 
 Example algorithm for MT seed recovering is described in [mt.py](mt.py).
 
+Participants don't really need to implement it by hand, because the used MT algorithm is similar to well-known existing implementations, such as [cpython's `_randommodule.c`](https://github.com/python/cpython/blob/main/Modules/_randommodule.c). So, there already are a lot of articles about attacking Mersenne twister in Internet. But, basically, there are only two different approaches:
+
+- use [z3 solver](https://github.com/Z3Prover/z3) to define the same algorithm in symbolic expressions and solve the equations (slower)
+- carefully write the inverse algorithm to each random function and use them in right order (faster)
+
+The reference code in [mt.py](mt.py) is using the second approach.
+
 ## Fix
 
 When one starts downloading the WAV file from server, he doesn't get the entire file at once. Instead, the server splits the WAV file to the chunks of 64 KB each.
