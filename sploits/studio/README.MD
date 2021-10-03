@@ -37,6 +37,8 @@ sploits/studio/payload/main.c:
     memcpy(p, to_write, len);
 ```
 
+Here is how to manually trigger this vulnerability: 
+
 ```sh
 # allocate the shared memory region
 $ services/studio/allocmemory/allocmemory 1337 container-svc/secret.key
