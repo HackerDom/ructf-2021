@@ -27,22 +27,23 @@ cs_nginx_workers: 8
 #cs_nginx_listen: 10.10.10.10:80
 cs_nginx_listen: 0.0.0.0:80
 
-cs_nginx_auth_enabled: true
+cs_nginx_auth_enabled: false
 cs_nginx_auth_user: root
 # use this to generate: `echo 'deepfriedructfpanic' | openssl passwd -apr1 -stdin`
 cs_nginx_auth_password: $apr1$nbfQX.UC$yuexIWujEabv9ZzSwPEEO0
 
-cs_base_url: http://10.10.10.10/
+cs_base_url: https://monitor.ructf.org/
 cs_admin_auth: root:deepfriedructfpanic
 cs_ctf_name: RuCTF 2021
 cs_flags_secret: rDSrOlVAhpPzKkkI
 cs_round_length: 60
 cs_flag_life_time: 15
-# Note: this is EKB time (local time on servers)
-cs_time: "['2021-10-01 07:30:00', '2021-10-03 10:00:00']"
-#cs_time: "['2021-10-03 08:00:00', '2021-10-03 15:00:00']"
+# Note: this is UTC time (and its local time on servers)
+#cs_time: "['2021-10-01 07:30:00', '2021-10-03 10:00:00']"
+cs_time: "['2021-10-03 08:30:00', '2021-10-03 15:30:00']"
 #cs_time: "['2019-10-15 10:00:00', '2019-10-15 17:00:00'], ['2019-10-16 10:00:00', '2019-10-16 17:00:00'], ['2019-10-17 07:59:59', '2019-10-17 15:59:00']"
 
+cs_static_path: '/home/cs/ctf-scoreboard-client/scoreboard/build'
 
 teams: |
   {name => 'SiBears', network => '10.60.1.0/24', host => '10.60.1.3', token => '1_0537de7051d4c1145a02444bc1f7635f', logo => '/data/logos/1.png'},
@@ -72,12 +73,16 @@ teams: |
   {name => 'Pixels', network => '10.60.26.0/24', host => '10.60.26.3', token => '26_2684c5a799b66882bfe386e47ffd02bf', logo => '/data/logos/26.png'},
   {name => 'ZenHack', network => '10.60.27.0/24', host => '10.60.27.3', token => '27_f07b3b080f62dc7cee37665f0680c6b2', logo => '/data/logos/27.png'},
   {name => 'SPRUSH', network => '10.60.28.0/24', host => '10.60.28.3', token => '28_aaf1aa967f1d6913304eb9b9607e8d9c', logo => '/data/logos/28.png'},
+  {name => 'ENOFLAG', network => '10.60.29.0/24', host => '10.60.29.3', token => '29_2af9ac162bb4fc6d89b6656146b37b2b', logo => '/data/logos/29.png'},
+  {name => 'Omaviat', network => '10.60.30.0/24', host => '10.60.30.3', token => '30_3b13233bb9881c4b69fca1cee206a0f8', logo => '/data/logos/30.png'},
+
 
 services: |
   {name => 'metrics',       path => 'checkers/metrics/checker.py',                 timeout => 30, tcp_port => 5051},
-  {name => 'track battle',  path => 'checkers/trackbattle/checker.py', timeout => 30, tcp_port => 8080},
   {name => 'studio',        path => 'checkers/studio/checker.py',                  timeout => 30, tcp_port => 8000},
+  {name => 'track battle',  path => 'checkers/trackbattle/checker.py',             timeout => 30, tcp_port => 8080},
   {name => 'white_album',   path => 'checkers/white_album/checker.py',             timeout => 30, tcp_port => 1234},
   {name => 'employyxer',    path => 'checkers/employeexer/checker.py',             timeout => 30, tcp_port => 9000},
   {name => 'spotiflag',     path => 'checkers/spotiflag/checker.py',               timeout => 30, tcp_port => 17171},
+
 
