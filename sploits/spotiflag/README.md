@@ -26,7 +26,7 @@ TLDR:
 2. Find out how to reverse MT state and retrieve the initial seed array.
 3. Find out how to extract MT output from WAV file frequencies array.
 
-First look at the file [src/main.c](../../internal/spotiflag/src/main.c). At the entry point it just starts the forking UNIX-socket server and waits for connections. On each connection it reads `description` text and construct the WAV file from it.
+First look at the file [src/main.c](../../internal/spotiflag/src/main.c). At the entry point it just starts the forking UNIX-socket server and waits for connections. On each connection it reads `description` text and construct the WAV file from it. The WAV file is constructed from sequence of frequencies, each frequency is delivered from some PRNG, and the PRNG itself is seeding by `description` bytes.
 
 Look at the file [src/random.c](../../internal/spotiflag/src/random.c). It contains typical functions for MT:
 
