@@ -4,6 +4,8 @@ services:
     ports:
       - "5051:8080"
     restart: always
+    volumes:
+      - "${HOME}/.m2:/root/.m2"
     depends_on:
       - postgres
     stop_grace_period: 3s
@@ -25,3 +27,4 @@ services:
 
 volumes:
     data:
+    dependencies:
