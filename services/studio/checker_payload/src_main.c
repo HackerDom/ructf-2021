@@ -7,6 +7,8 @@
 #define STORAGE_SIZE 320000
 
 int main(int argc, char *argv[]) {
+
+    obfuscator_inject_pos
     int fd;
     size_t len;
     void * addr;
