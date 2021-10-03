@@ -13,27 +13,28 @@ services:
     networks:
       - app-network
 
-  front_builder:
+  front:
     restart: always
     build:
       context: .
       dockerfile: ./docker/front_builder/Dockerfile
-    volumes:
-      - front_content:/build
-
-  nginx:
-    image: nginx:1.21.0-alpine
-    restart: always
     tty: true
-    volumes:
-      - ./nginx/conf.d/:/etc/nginx/conf.d/
-      - front_content:/var/www/
     ports:
       - "8080:8080"
     networks:
       - app-network
-    depends_on:
-      - front_builder
+
+#  nginx:
+#    image: nginx:1.21.0-alpine
+#    restart: always
+#    tty: true
+#    volumes:
+#      - ./nginx/conf.d/:/etc/nginx/conf.d/
+#      - front_content:/var/www/
+#    ports:
+#      - "8080:8080"
+#    networks:
+#      - app-network
 
   trackbattle:
     build:
@@ -49,7 +50,6 @@ services:
 
 volumes:
   trackbattle-postgres-data:
-  front_content:
 
 networks:
   app-network:

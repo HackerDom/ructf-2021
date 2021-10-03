@@ -26,7 +26,7 @@ export const LoginPage: React.FC = () => {
             return;
         }
 
-        const request = createObject(User, {nickname: user.nickname, password_sha256: await sha256(user.password_sha256)});
+        const request = createObject(User, {nickname: user.nickname, password_sha256: sha256(user.password_sha256)});
         const result = await api.loginUser(request);
 
         if (!result.data) {
