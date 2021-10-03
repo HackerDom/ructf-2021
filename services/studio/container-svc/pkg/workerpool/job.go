@@ -15,7 +15,6 @@ type ExecResult struct {
 
 type JobTimeInfo struct {
 	AllocMemStart  time.Time
-	AllocMemFinish time.Time
 	StartContainer time.Time
 	StopContainer  time.Time
 	ReadMem        time.Time

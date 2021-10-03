@@ -17,6 +17,7 @@ import (
 func Run(ctx context.Context, payload workerpool.JobDescriptor) (workerpool.ExecResult, error) {
 	timeInfo := payload.TimeInfo
 	defer DeallocMemory(payload.ID)
+	timeInfo.AllocMemStart = time.Now()
 	v, err := AllocMemory(payload.ID, payload.RunCredential)
 	if err != nil {
 		errMsg := fmt.Sprintf("Executor: failed to allocate memory: %s, %v; job_id %s, mem_id %s, runcred %s", v, err, payload.ID, payload.MemID, payload.RunCredential)

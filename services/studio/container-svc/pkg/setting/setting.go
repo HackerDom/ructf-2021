@@ -17,8 +17,8 @@ type App struct {
 	LogFileExt  string
 	TimeFormat  string
 
-	JobLifetimeMinutes    time.Duration
-	WorkersCount          int
+	JobLifetimeMinutes   time.Duration
+	WorkersCount         int
 	AllocatorPath        string
 	DeallocatorPath      string
 	ReaderPath           string

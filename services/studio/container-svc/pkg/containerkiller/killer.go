@@ -2,9 +2,9 @@ package containerkiller
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/usernamedt/container-service-gin/pkg/logging"
 	"os/exec"
-	"fmt"
 )
 
 func KillStuckContainers(excludedPeriods string) {
@@ -28,5 +28,3 @@ func KillStuckContainers(excludedPeriods string) {
 		logging.Infof("stuck container killer out: %s", outputBuf.String())
 	}
 }
-
-
