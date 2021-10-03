@@ -26,7 +26,7 @@ def generate_flag():
 def define_str():
     s = ''.join(random.choices(string.ascii_lowercase, k=10))
     val = generate_flag()
-    return f'string {s} = "{val}";', val
+    return f'char * {s} = "{val}";', val
 
 def generate_shit():
     code = ''
