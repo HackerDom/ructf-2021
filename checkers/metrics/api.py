@@ -1,6 +1,8 @@
 import re
+import user_agent_randomizer
 from requests import Session
 from errs import INVALID_FORMAT, CONNECTION_FAILURE
+
 
 class Api:
     def __init__(self, address):
@@ -10,7 +12,7 @@ class Api:
 
     def send_metric(self, metric):
         try:
-            resp = self.session.put(f"{self.url}/metrics/save_metric", json=metric)
+            resp = self.session.put(f"{self.url}/metrics/save_metric", json=metric, headers={"User-Agent": user_agent_randomizer.get()})
         except Exception as e:
             print(e)
             return CONNECTION_FAILURE, None
@@ -28,7 +30,7 @@ class Api:
     def get_metric(self, token):
         data = {"token": token}
         try:
-            resp = self.session.post(f"{self.url}/metrics/metric", json=data)
+            resp = self.session.post(f"{self.url}/metrics/metric", json=data, headers={"User-Agent": user_agent_randomizer.get()})
         except Exception as e:
             print(e)
             return CONNECTION_FAILURE, None
@@ -43,7 +45,7 @@ class Api:
 
     def get_metrics(self):
         try:
-            resp = self.session.get(f"{self.url}/metrics")
+            resp = self.session.get(f"{self.url}/metrics", headers={"User-Agent": user_agent_randomizer.get()})
         except Exception as e:
             return CONNECTION_FAILURE, None
         try:
