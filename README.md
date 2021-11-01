@@ -20,6 +20,7 @@ RuCTF 2021 was held online on October 3. [Results](https://ructf.org/results.htm
 - Nastya Svalova aka [wacky_rubia](https://github.com/SvalovaNastya) (```TRACK BATTLE``` service developer)
 - Roman Bykov aka [rx00](https://github.com/rx00) (devteam lead)
 - Roman Khapov aka [rkhapov](https://github.com/rkhapov) (```TRACK BATTLE``` service developer)
+- Tatiana Kikhtenko aka [alliznat](https://github.com/pornoiya) (```EMPLOYYXER``` frontend service developer)
 - Valery Vedernikov aka [OxyEho](https://github.com/OxyEho) (```METRICS``` service developer)
 - Vasiliy Pahomov aka [vaspahomov](https://github.com/vaspahomov) (vuln image pipeline master & ```STUDIO``` service developer)
 - Vladimir Cherepanov aka [keltecc](https://github.com/keltecc) (```SPOTIFLAG``` service developer)
